@@ -27,6 +27,7 @@ interface DayDetailSheetProps {
   date: string | null;
   hasTaken: boolean;
   canEdit: boolean;
+  isMedicationDay: boolean;
   isDrinkingDate: boolean;
   warningLevel: DrinkingWarningLevel | null;
   skinRecord?: SkinRecord;
@@ -41,6 +42,7 @@ export function DayDetailSheet({
   date,
   hasTaken,
   canEdit,
+  isMedicationDay,
   isDrinkingDate,
   warningLevel,
   skinRecord,
@@ -212,8 +214,8 @@ export function DayDetailSheet({
             </View>
           )}
 
-          {/* 피부 상태 기록 섹션 (복용 완료 날짜만) */}
-          {hasTaken && canEdit && (
+          {/* 피부 상태 기록 섹션 (복용일: 복용 완료 시, 휴약일: 항상) */}
+          {canEdit && (hasTaken || !isMedicationDay) && (
             <View className="my-5 ">
               <Text className="mb-3 text-sm font-semibold text-gray-700">
                 피부 상태
@@ -284,7 +286,7 @@ export function DayDetailSheet({
           )}
 
           {/* 피부 기록 읽기 전용 표시 (수정 불가한 과거 날짜) */}
-          {hasTaken && !canEdit && skinRecord && (
+          {!canEdit && skinRecord && (hasTaken || !isMedicationDay) && (
             <View className="mt-5 rounded-xl bg-gray-50 p-4">
               <Text className="mb-2 text-sm font-semibold text-gray-700">
                 피부 상태

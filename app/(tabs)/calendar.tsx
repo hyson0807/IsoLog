@@ -26,6 +26,7 @@ export default function CalendarScreen() {
     toggleMedication,
     hasTaken,
     canEditDate,
+    isMedicationDay,
     isLoading,
     getDrinkingWarningLevel,
     hasDrinkingPlan,
@@ -137,6 +138,7 @@ export default function CalendarScreen() {
         date={selectedDate}
         hasTaken={selectedDate ? hasTaken(selectedDate) : false}
         canEdit={selectedDate ? canEditDate(selectedDate) : false}
+        isMedicationDay={selectedDate ? isMedicationDay(selectedDate) : true}
         isDrinkingDate={selectedDate ? hasDrinkingPlan(selectedDate) : false}
         warningLevel={selectedDate ? getDrinkingWarningLevel(selectedDate) : null}
         skinRecord={selectedDate ? getSkinRecord(selectedDate) : undefined}
