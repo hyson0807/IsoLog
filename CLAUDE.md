@@ -37,6 +37,7 @@ npm run lint         # Run ESLint
 - **State Management**: React Context API (`MedicationContext`)
 - **Storage**: AsyncStorage for data persistence
 - **Localization**: `expo-localization` for global date formatting
+- **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
 - **Path Aliases**: `@/*` maps to project root
 
 ### Project Structure
@@ -56,7 +57,8 @@ components/
 ├── common/              # Shared components
 │   ├── Header.tsx              # 날짜 표시 + 메뉴 버튼
 │   ├── DrawerMenu.tsx          # 사이드 드로어 메뉴
-│   └── WarningConfirmModal.tsx # 경고 확인 팝업
+│   ├── WarningConfirmModal.tsx # 경고 확인 팝업
+│   └── AdBanner.tsx            # Google AdMob 배너 광고
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
@@ -130,3 +132,22 @@ utils/                   # Utility functions
 - 경고 기간 날짜는 빨간색 그라데이션으로 표시
 - 홈 화면 버튼/상태카드도 경고 색상 동기화
 - 경고 기간 복용 시 확인 팝업 (Double Check)
+
+### AdMob Integration
+
+Google AdMob 배너 광고가 캘린더 탭 상단에 표시됩니다.
+
+**설정**:
+- iOS App ID: `ca-app-pub-2320452683835335~1158955767`
+- Android App ID: `ca-app-pub-2320452683835335~1386186473`
+- Banner Unit ID: `ca-app-pub-2320452683835335/2836845429`
+
+**특징**:
+- 개발 환경에서는 테스트 광고 표시 (`TestIds.ADAPTIVE_BANNER`)
+- 프로덕션에서는 실제 광고 Unit ID 사용
+- 웹 플랫폼에서는 광고 미표시
+- `ANCHORED_ADAPTIVE_BANNER` 사이즈 사용 (화면 너비에 맞게 자동 조절)
+
+**빌드 요구사항**:
+- 네이티브 코드 포함으로 **Expo Go 미지원**
+- Development Build 필요: `npx expo prebuild && npx expo run:ios`

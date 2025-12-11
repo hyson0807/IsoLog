@@ -8,6 +8,7 @@ import {
   MonthlySummary,
   DayDetailSheet,
 } from '@/components/calendar';
+import { AdBanner } from '@/components/common';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { getToday, isDateInMonth } from '@/utils/dateUtils';
 
@@ -93,6 +94,9 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      {/* 상단 배너 광고 */}
+      <AdBanner />
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}
