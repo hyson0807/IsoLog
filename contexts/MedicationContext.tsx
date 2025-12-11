@@ -13,7 +13,9 @@ import {
   MedicationSchedule,
   TodayStatus,
   MedicationStorageData,
+  DrinkingWarningLevel,
 } from '@/types/medication';
+import { getDaysDifference } from '@/utils/dateUtils';
 import { frequencyOptions } from '@/constants/frequency';
 import { getToday, isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
 
@@ -24,17 +26,21 @@ interface MedicationContextValue {
   schedule: MedicationSchedule;
   takenDates: Set<string>;
   firstTakenDate: string | null;
+  drinkingDates: Set<string>;
   isLoading: boolean;
   todayStatus: TodayStatus;
 
   // Actions
   toggleMedication: (date: string) => void;
   updateFrequency: (frequency: FrequencyType) => void;
+  toggleDrinkingDate: (date: string) => void;
 
   // Computed helpers
   isMedicationDay: (date: string) => boolean;
   hasTaken: (date: string) => boolean;
   canEditDate: (date: string) => boolean;
+  getDrinkingWarningLevel: (date: string) => DrinkingWarningLevel | null;
+  hasDrinkingPlan: (date: string) => boolean;
 }
 
 const MedicationContext = createContext<MedicationContextValue | undefined>(undefined);
@@ -46,6 +52,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   });
   const [takenDates, setTakenDates] = useState<Set<string>>(new Set());
   const [firstTakenDate, setFirstTakenDate] = useState<string | null>(null);
+  const [drinkingDates, setDrinkingDates] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
   const today = getToday();
@@ -66,6 +73,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
           setSchedule(data.schedule);
           setTakenDates(new Set(data.takenDates));
           setFirstTakenDate(data.firstTakenDate);
+          setDrinkingDates(new Set(data.drinkingDates || []));
         }
       } catch (error) {
         console.error('Failed to load medication data:', error);
@@ -86,6 +94,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
           schedule,
           takenDates: Array.from(takenDates),
           firstTakenDate,
+          drinkingDates: Array.from(drinkingDates),
         };
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (error) {
@@ -93,7 +102,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       }
     }
     saveData();
-  }, [schedule, takenDates, firstTakenDate, isLoading]);
+  }, [schedule, takenDates, firstTakenDate, drinkingDates, isLoading]);
 
   // 특정 날짜의 복용 상태 토글
   const toggleMedication = useCallback((date: string) => {
@@ -123,6 +132,50 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       referenceDate: getToday(),
     }));
   }, []);
+
+  // 술 약속 토글
+  const toggleDrinkingDate = useCallback((date: string) => {
+    setDrinkingDates((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(date)) {
+        newSet.delete(date);
+      } else {
+        newSet.add(date);
+      }
+      return newSet;
+    });
+  }, []);
+
+  // 특정 날짜의 술 경고 레벨 계산
+  const getDrinkingWarningLevel = useCallback(
+    (date: string): DrinkingWarningLevel | null => {
+      if (drinkingDates.size === 0) return null;
+
+      let minDistance = Infinity;
+
+      drinkingDates.forEach((drinkingDate) => {
+        const distance = getDaysDifference(date, drinkingDate);
+        if (distance < minDistance) {
+          minDistance = distance;
+        }
+      });
+
+      // 가장 가까운 술 약속과의 거리로 경고 레벨 결정 (D±4일까지)
+      if (minDistance === 0) return 'dday';
+      if (minDistance === 1) return 'day1';
+      if (minDistance === 2) return 'day2';
+      if (minDistance === 3) return 'day3';
+      if (minDistance === 4) return 'day4';
+      return null;
+    },
+    [drinkingDates]
+  );
+
+  // 특정 날짜에 술 약속이 있는지 확인
+  const hasDrinkingPlan = useCallback(
+    (date: string) => drinkingDates.has(date),
+    [drinkingDates]
+  );
 
   // 특정 날짜가 복용일인지 확인
   const isMedicationDay = useCallback(
@@ -169,25 +222,33 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       schedule,
       takenDates,
       firstTakenDate,
+      drinkingDates,
       isLoading,
       todayStatus,
       toggleMedication,
       updateFrequency,
+      toggleDrinkingDate,
       isMedicationDay,
       hasTaken,
       canEditDate,
+      getDrinkingWarningLevel,
+      hasDrinkingPlan,
     }),
     [
       schedule,
       takenDates,
       firstTakenDate,
+      drinkingDates,
       isLoading,
       todayStatus,
       toggleMedication,
       updateFrequency,
+      toggleDrinkingDate,
       isMedicationDay,
       hasTaken,
       canEditDate,
+      getDrinkingWarningLevel,
+      hasDrinkingPlan,
     ]
   );
 

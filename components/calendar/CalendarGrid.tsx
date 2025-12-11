@@ -24,7 +24,13 @@ export function CalendarGrid({
   startDay = 0,
   onDayPress,
 }: CalendarGridProps) {
-  const { takenDates, schedule, canEditDate } = useMedicationContext();
+  const {
+    takenDates,
+    schedule,
+    canEditDate,
+    getDrinkingWarningLevel,
+    hasDrinkingPlan,
+  } = useMedicationContext();
   const today = getToday();
 
   // 주기 일수 계산
@@ -42,11 +48,28 @@ export function CalendarGrid({
   // 42개 날짜 배열 생성
   const dates = getCalendarDates(year, month, startDay);
 
-  // 날짜 상태 결정
+  // 날짜 상태 결정 (경고 상태 우선)
   const getDayCellStatus = (date: string): DayCellStatus => {
     const isTaken = takenDates.has(date);
     const isScheduled = scheduledDates.has(date);
     const isEditable = canEditDate(date);
+    const warningLevel = getDrinkingWarningLevel(date);
+
+    // 경고 상태가 있고, 복용 완료가 아니면 경고 색상 우선
+    if (warningLevel && !isTaken) {
+      switch (warningLevel) {
+        case 'dday':
+          return 'drinking_dday';
+        case 'day1':
+          return 'drinking_warning1';
+        case 'day2':
+          return 'drinking_warning2';
+        case 'day3':
+          return 'drinking_warning3';
+        case 'day4':
+          return 'drinking_warning4';
+      }
+    }
 
     if (date < today) {
       // 과거
@@ -68,6 +91,7 @@ export function CalendarGrid({
         const isCurrentMonth = isDateInMonth(date, year, month);
         const isToday = date === today;
         const status = getDayCellStatus(date);
+        const isDrinkingDay = hasDrinkingPlan(date);
 
         return (
           <DayCell
@@ -77,6 +101,7 @@ export function CalendarGrid({
             status={status}
             isToday={isToday}
             isCurrentMonth={isCurrentMonth}
+            isDrinkingDay={isDrinkingDay}
             onPress={() => onDayPress(date)}
           />
         );

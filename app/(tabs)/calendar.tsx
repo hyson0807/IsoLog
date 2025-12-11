@@ -20,8 +20,16 @@ export default function CalendarScreen() {
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const { takenDates, toggleMedication, hasTaken, canEditDate, isLoading } =
-    useMedicationContext();
+  const {
+    takenDates,
+    toggleMedication,
+    hasTaken,
+    canEditDate,
+    isLoading,
+    getDrinkingWarningLevel,
+    hasDrinkingPlan,
+    toggleDrinkingDate,
+  } = useMedicationContext();
 
   // 현재 월이 오늘이 포함된 월인지 확인
   const isCurrentMonth =
@@ -65,6 +73,13 @@ export default function CalendarScreen() {
   const handleToggle = () => {
     if (selectedDate) {
       toggleMedication(selectedDate);
+    }
+  };
+
+  // 술 약속 토글
+  const handleToggleDrinking = () => {
+    if (selectedDate) {
+      toggleDrinkingDate(selectedDate);
     }
   };
 
@@ -116,7 +131,10 @@ export default function CalendarScreen() {
         date={selectedDate}
         hasTaken={selectedDate ? hasTaken(selectedDate) : false}
         canEdit={selectedDate ? canEditDate(selectedDate) : false}
+        isDrinkingDate={selectedDate ? hasDrinkingPlan(selectedDate) : false}
+        warningLevel={selectedDate ? getDrinkingWarningLevel(selectedDate) : null}
         onToggle={handleToggle}
+        onToggleDrinking={handleToggleDrinking}
         onClose={() => setSelectedDate(null)}
       />
     </SafeAreaView>

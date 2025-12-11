@@ -19,6 +19,13 @@ export const colors = {
     light: '#E0E0E0',
     dark: '#757575',
   },
+  drinking: {
+    dday: '#DC2626', // 가장 진한 빨간색 (술 당일)
+    day1: '#EF4444', // 진한 빨간색 (D±1)
+    day2: '#F87171', // 빨간색 (D±2)
+    day3: '#FCA5A5', // 연한 빨간색 (D±3)
+    day4: '#FEE2E2', // 아주 연한 붉은색 (D±4)
+  },
   background: {
     DEFAULT: '#FFFFFF',
     secondary: '#F5F5F5',

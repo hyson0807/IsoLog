@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **복용 체크**: 매일 앱에서 복용 여부를 체크하고 기록
 - **복용 주기 설정**: 매일/격일/3일/주1회 등 다양한 복용 주기 지원
 - **캘린더**: 월별 복용 기록 조회, 과거 기록 수정, 미래 복용 예정일 표시
+- **술 약속 경고**: 음주 예정일 D±4일 경고 표시, 복용 시 확인 팝업
 - **데이터 영속성**: AsyncStorage로 앱 재시작 후에도 기록 유지
 - **글로벌 지원**: 기기의 locale에 따라 날짜 형식 자동 변환
 
@@ -51,18 +52,20 @@ app/
 └── global.css           # Tailwind CSS imports
 
 components/
-├── common/              # Shared components (Header, etc.)
+├── common/              # Shared components
+│   ├── Header.tsx
+│   └── WarningConfirmModal.tsx  # 경고 확인 팝업
 ├── home/                # Home screen components
-│   ├── StatusCard.tsx
-│   ├── MedicationButton.tsx
+│   ├── StatusCard.tsx           # 상태 + 경고 메시지
+│   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
 │   ├── FrequencySettingButton.tsx
 │   └── FrequencyBottomSheet.tsx
 ├── calendar/            # Calendar components
 │   ├── CalendarHeader.tsx    # Month navigation
 │   ├── WeekdayRow.tsx        # Weekday labels
 │   ├── CalendarGrid.tsx      # Date grid (6x7)
-│   ├── DayCell.tsx           # Individual day cell
-│   ├── DayDetailSheet.tsx    # Day edit bottom sheet
+│   ├── DayCell.tsx           # Individual day cell + 경고 색상
+│   ├── DayDetailSheet.tsx    # 복용/술약속 토글 시트
 │   └── MonthlySummary.tsx    # Monthly taken count
 └── community/           # Community components (TBD)
 
@@ -105,3 +108,23 @@ utils/                   # Utility functions
 
 **데이터 흐름**: `MedicationContext` → 홈/캘린더 양방향 동기화
 **영속성**: AsyncStorage (`@isoCare/medication_data`)
+
+### Drinking Warning Feature
+
+술 약속 경고 시스템은 음주 전후 간 건강을 위해 휴약을 권장합니다.
+
+**경고 레벨 (D±4일)**:
+
+| 레벨 | 거리 | 색상 |
+|------|------|------|
+| `dday` | 당일 | `bg-red-600` |
+| `day1` | D±1 | `bg-red-500` |
+| `day2` | D±2 | `bg-red-400` |
+| `day3` | D±3 | `bg-red-300` |
+| `day4` | D±4 | `bg-red-100` |
+
+**기능**:
+- 캘린더에서 미래 날짜 클릭 → 술 약속 추가/삭제
+- 경고 기간 날짜는 빨간색 그라데이션으로 표시
+- 홈 화면 버튼/상태카드도 경고 색상 동기화
+- 경고 기간 복용 시 확인 팝업 (Double Check)

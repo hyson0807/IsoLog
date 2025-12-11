@@ -24,11 +24,25 @@ export type DayCellStatus =
   | 'scheduled' // 복용 예정 (미래)
   | 'rest' // 휴약 (미래)
   | 'today' // 오늘 (미복용)
-  | 'disabled'; // 비활성 (이전/다음 달 또는 첫 복용일 이전)
+  | 'disabled' // 비활성 (이전/다음 달 또는 첫 복용일 이전)
+  | 'drinking_dday' // 술 당일
+  | 'drinking_warning1' // D±1
+  | 'drinking_warning2' // D±2
+  | 'drinking_warning3' // D±3
+  | 'drinking_warning4'; // D±4
+
+// 술 약속 경고 레벨
+export type DrinkingWarningLevel =
+  | 'dday' // 술 당일 (100%)
+  | 'day1' // D±1 (80%)
+  | 'day2' // D±2 (60%)
+  | 'day3' // D±3 (40%)
+  | 'day4'; // D±4 (20%)
 
 // AsyncStorage에 저장할 데이터 구조
 export interface MedicationStorageData {
   schedule: MedicationSchedule;
   takenDates: string[]; // Set은 직렬화 안되므로 배열로 저장
   firstTakenDate: string | null;
+  drinkingDates: string[]; // 술 약속 날짜들
 }
