@@ -15,11 +15,17 @@ export function PaywallModal({ visible, onClose, onPurchase }: PaywallModalProps
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 items-center justify-center bg-black/50 px-6">
-        <View className="w-full max-w-sm overflow-hidden rounded-2xl bg-white">
+      <View
+        className="flex-1 items-center justify-center px-6"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      >
+        <View className="w-full overflow-hidden rounded-2xl bg-white">
           {/* 헤더 */}
-          <View className="items-center bg-gradient-to-b from-orange-500 to-orange-400 px-6 pb-8 pt-6">
-            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-white/20">
+          <View className="items-center bg-orange-500 px-6 pb-8 pt-6">
+            <View
+              className="mb-4 h-20 w-20 items-center justify-center rounded-full"
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+            >
               <Ionicons name="diamond" size={40} color="white" />
             </View>
             <Text className="text-2xl font-bold text-white">Premium 기능</Text>
@@ -34,7 +40,7 @@ export function PaywallModal({ visible, onClose, onPurchase }: PaywallModalProps
               프리미엄 혜택
             </Text>
 
-            <View className="space-y-3">
+            <View className="gap-3">
               <View className="flex-row items-center">
                 <View className="mr-3 h-8 w-8 items-center justify-center rounded-full bg-orange-100">
                   <Ionicons name="close-circle" size={18} color="#F97316" />

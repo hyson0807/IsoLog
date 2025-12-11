@@ -12,7 +12,7 @@ export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
 
   if (isPremium) {
     return (
-      <View className="rounded-xl bg-gradient-to-r from-orange-50 to-orange-100 p-4">
+      <View className="rounded-xl bg-orange-50 p-4">
         <View className="flex-row items-center">
           <View className="mr-3 h-12 w-12 items-center justify-center rounded-full bg-orange-500">
             <Ionicons name="star" size={24} color="white" />
@@ -40,10 +40,13 @@ export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
       <TouchableOpacity
         onPress={onPurchase}
         activeOpacity={0.8}
-        className="bg-gradient-to-r from-orange-500 to-orange-400 p-5"
+        className="bg-orange-500 p-5"
       >
         <View className="flex-row items-center">
-          <View className="mr-4 h-14 w-14 items-center justify-center rounded-full bg-white/20">
+          <View
+            className="mr-4 h-14 w-14 items-center justify-center rounded-full"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+          >
             <Ionicons name="diamond" size={28} color="white" />
           </View>
           <View className="flex-1">
