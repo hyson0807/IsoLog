@@ -9,7 +9,8 @@ interface SkinRecordCardProps {
   date: string;
   existingRecord?: SkinRecord;
   onSave: (record: SkinRecord) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  isRestDay?: boolean;
 }
 
 export function SkinRecordCard({
@@ -17,6 +18,7 @@ export function SkinRecordCard({
   existingRecord,
   onSave,
   onCancel,
+  isRestDay = false,
 }: SkinRecordCardProps) {
   const [trouble, setTrouble] = useState<TroubleLevel | undefined>(
     existingRecord?.trouble
@@ -59,22 +61,30 @@ export function SkinRecordCard({
 
   const handleCancel = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onCancel();
+    onCancel?.();
   };
 
   return (
     <View className="w-full px-6">
-      {/* 헤더: 복용 완료 + 취소 버튼 */}
+      {/* 헤더: 복용 완료 + 취소 버튼 (복용일) / 휴약일 안내 */}
       <View className="mb-6 flex-row items-center justify-between">
         <View className="flex-row items-center">
-          <Ionicons name="checkmark-circle" size={32} color="#22C55E" />
-          <Text className="ml-3 text-2xl font-bold text-green-600">
-            복용 완료!
+          <Ionicons
+            name={isRestDay ? 'moon' : 'checkmark-circle'}
+            size={32}
+            color={isRestDay ? '#F59E0B' : '#22C55E'}
+          />
+          <Text
+            className={`ml-3 text-2xl font-bold ${isRestDay ? 'text-amber-500' : 'text-green-600'}`}
+          >
+            {isRestDay ? '오늘은 휴약일' : '복용 완료!'}
           </Text>
         </View>
-        <TouchableOpacity onPress={handleCancel} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Text className="text-base text-gray-400">취소</Text>
-        </TouchableOpacity>
+        {!isRestDay && onCancel && (
+          <TouchableOpacity onPress={handleCancel} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Text className="text-base text-gray-400">취소</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* 섹션 타이틀 */}

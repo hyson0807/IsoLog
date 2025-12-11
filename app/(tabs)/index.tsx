@@ -134,7 +134,24 @@ export default function HomeScreen() {
           {(() => {
             const skinRecord = getSkinRecord(today);
             const isSkinRecordComplete = skinRecord?.trouble && skinRecord?.dryness;
+            const isMedicationDay = todayStatus.isMedicationDay;
 
+            // 휴약일: 복용 버튼 없이 바로 피부 기록/데일리 팁 표시
+            if (!isMedicationDay) {
+              if (isSkinRecordComplete) {
+                return <DailyTipCard />;
+              }
+              return (
+                <SkinRecordCard
+                  date={today}
+                  existingRecord={skinRecord}
+                  onSave={saveSkinRecord}
+                  isRestDay
+                />
+              );
+            }
+
+            // 복용일
             if (hasTakenToday && isSkinRecordComplete) {
               // 복용 완료 + 피부 기록 완료 → 데일리 팁 표시
               return <DailyTipCard />;
