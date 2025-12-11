@@ -1,13 +1,124 @@
-import { View, Text } from 'react-native';
+import { useState, useMemo } from 'react';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  CalendarHeader,
+  WeekdayRow,
+  CalendarGrid,
+  MonthlySummary,
+  DayDetailSheet,
+} from '@/components/calendar';
+import { useMedicationContext } from '@/contexts/MedicationContext';
+import { getToday, isDateInMonth } from '@/utils/dateUtils';
 
 export default function CalendarScreen() {
+  const today = getToday();
+  const todayDate = new Date(today + 'T00:00:00');
+
+  const [currentMonth, setCurrentMonth] = useState(
+    new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
+  );
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  const { takenDates, toggleMedication, hasTaken, canEditDate, isLoading } =
+    useMedicationContext();
+
+  // 현재 월이 오늘이 포함된 월인지 확인
+  const isCurrentMonth =
+    currentMonth.getFullYear() === todayDate.getFullYear() &&
+    currentMonth.getMonth() === todayDate.getMonth();
+
+  // 이번 달 복용 횟수 계산
+  const takenCountThisMonth = useMemo(() => {
+    let count = 0;
+    takenDates.forEach((date) => {
+      if (isDateInMonth(date, currentMonth.getFullYear(), currentMonth.getMonth())) {
+        count++;
+      }
+    });
+    return count;
+  }, [takenDates, currentMonth]);
+
+  // 월 이동
+  const handlePrevMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+    );
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+    );
+  };
+
+  const handleTodayPress = () => {
+    setCurrentMonth(new Date(todayDate.getFullYear(), todayDate.getMonth(), 1));
+  };
+
+  // 날짜 선택
+  const handleDayPress = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  // 복용 상태 토글
+  const handleToggle = () => {
+    if (selectedDate) {
+      toggleMedication(selectedDate);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#FF6B35" />
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-xl font-semibold text-gray-800">캘린더</Text>
-        <Text className="mt-2 text-gray-500">복용 기록을 조회할 수 있습니다</Text>
-      </View>
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 헤더: 월 네비게이션 */}
+        <CalendarHeader
+          currentDate={currentMonth}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+          onTodayPress={handleTodayPress}
+          showTodayButton={!isCurrentMonth}
+        />
+
+        {/* 요일 행 */}
+        <WeekdayRow startDay={0} />
+
+        {/* 날짜 그리드 */}
+        <CalendarGrid
+          year={currentMonth.getFullYear()}
+          month={currentMonth.getMonth()}
+          startDay={0}
+          onDayPress={handleDayPress}
+        />
+
+        {/* 월간 요약 */}
+        <MonthlySummary takenCount={takenCountThisMonth} />
+
+        {/* 여백 */}
+        <View className="h-8" />
+      </ScrollView>
+
+      {/* 날짜 상세 바텀시트 */}
+      <DayDetailSheet
+        visible={!!selectedDate}
+        date={selectedDate}
+        hasTaken={selectedDate ? hasTaken(selectedDate) : false}
+        canEdit={selectedDate ? canEditDate(selectedDate) : false}
+        onToggle={handleToggle}
+        onClose={() => setSelectedDate(null)}
+      />
     </SafeAreaView>
   );
 }

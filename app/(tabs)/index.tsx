@@ -8,18 +8,25 @@ import {
   FrequencySettingButton,
   FrequencyBottomSheet,
 } from '@/components/home';
-import { useMedicationSchedule } from '@/hooks';
+import { useMedicationContext } from '@/contexts/MedicationContext';
+import { getToday } from '@/utils/dateUtils';
 
 export default function HomeScreen() {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const today = getToday();
 
   const {
     schedule,
     todayStatus,
-    hasTakenToday,
-    toggleTodayMedication,
+    toggleMedication,
     updateFrequency,
-  } = useMedicationSchedule();
+  } = useMedicationContext();
+
+  const hasTakenToday = todayStatus.hasTakenToday;
+
+  const toggleTodayMedication = () => {
+    toggleMedication(today);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
