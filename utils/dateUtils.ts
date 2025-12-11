@@ -1,14 +1,17 @@
+import { getLocales } from 'expo-localization';
+
 export function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
 export function formatDate(date: Date): string {
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-  const weekday = weekdays[date.getDay()];
+  const locale = getLocales()[0]?.languageTag ?? 'en-US';
 
-  return `${month}월 ${day}일 ${weekday}`;
+  return date.toLocaleDateString(locale, {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  });
 }
 
 export function getDaysDifference(date1: string, date2: string): number {
