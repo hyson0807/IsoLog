@@ -49,12 +49,14 @@ app/
 │   ├── calendar.tsx     # Calendar screen (monthly view)
 │   └── community.tsx    # Community screen (TBD)
 ├── _layout.tsx          # Root layout with MedicationProvider
+├── settings.tsx         # Settings screen (TBD)
 └── global.css           # Tailwind CSS imports
 
 components/
 ├── common/              # Shared components
-│   ├── Header.tsx
-│   └── WarningConfirmModal.tsx  # 경고 확인 팝업
+│   ├── Header.tsx              # 날짜 표시 + 메뉴 버튼
+│   ├── DrawerMenu.tsx          # 사이드 드로어 메뉴
+│   └── WarningConfirmModal.tsx # 경고 확인 팝업
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
