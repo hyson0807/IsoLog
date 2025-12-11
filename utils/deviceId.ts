@@ -13,8 +13,7 @@ export async function getOrCreateDeviceId(): Promise<string> {
     const newId = Crypto.randomUUID();
     await AsyncStorage.setItem(DEVICE_ID_KEY, newId);
     return newId;
-  } catch (error) {
-    console.error('Failed to get/create device ID:', error);
+  } catch {
     // Fallback: generate a temporary ID (not persisted)
     return Crypto.randomUUID();
   }
@@ -23,8 +22,7 @@ export async function getOrCreateDeviceId(): Promise<string> {
 export async function getDeviceId(): Promise<string | null> {
   try {
     return await AsyncStorage.getItem(DEVICE_ID_KEY);
-  } catch (error) {
-    console.error('Failed to get device ID:', error);
+  } catch {
     return null;
   }
 }

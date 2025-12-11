@@ -57,8 +57,8 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
           setPurchaseDate(data.purchaseDate);
           setNotificationEnabledState(data.notificationEnabled);
         }
-      } catch (error) {
-        console.error('Failed to initialize premium context:', error);
+      } catch {
+        // Failed to initialize premium context
       } finally {
         setIsLoading(false);
       }
@@ -70,8 +70,8 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const saveData = useCallback(async (data: PremiumStorageData) => {
     try {
       await AsyncStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-      console.error('Failed to save premium data:', error);
+    } catch {
+      // Failed to save premium data
     }
   }, []);
 
@@ -120,10 +120,10 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       // setPremiumStatus(isPremiumRestored);
       // return isPremiumRestored;
 
-      console.log('Restore purchase called - will be implemented with RevenueCat');
+      // TODO: Will be implemented with RevenueCat
       return false;
-    } catch (error) {
-      console.error('Failed to restore purchase:', error);
+    } catch {
+      // Failed to restore purchase
       return false;
     }
   }, []);

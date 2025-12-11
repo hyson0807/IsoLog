@@ -89,8 +89,8 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
             setSkinRecords(recordsMap);
           }
         }
-      } catch (error) {
-        console.error('Failed to load medication data:', error);
+      } catch {
+        // Failed to load medication data
       } finally {
         setIsLoading(false);
       }
@@ -112,8 +112,8 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
           skinRecords: Array.from(skinRecords.values()),
         };
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch (error) {
-        console.error('Failed to save medication data:', error);
+      } catch {
+        // Failed to save medication data
       }
     }
     saveData();

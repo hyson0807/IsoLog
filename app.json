@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "isoCare",
-    "slug": "isoCare",
+    "name": "IsoCare",
+    "slug": "IsoCare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.welkit.isoCare"
+      "package": "com.hyson.isoCare"
     },
     "web": {
       "output": "static",

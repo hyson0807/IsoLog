@@ -34,7 +34,6 @@ export async function requestNotificationPermission(): Promise<boolean> {
   }
 
   if (finalStatus !== 'granted') {
-    console.log('Notification permission not granted');
     return false;
   }
 
@@ -76,7 +75,6 @@ export async function scheduleReminder(date: string): Promise<string | null> {
 
     // 이미 지난 시간이면 예약하지 않음
     if (triggerDate <= new Date()) {
-      console.log('Skipping notification - time already passed:', date);
       return null;
     }
 
@@ -95,10 +93,8 @@ export async function scheduleReminder(date: string): Promise<string | null> {
       identifier: getNotificationId(date),
     });
 
-    console.log('Scheduled notification for:', date, 'id:', notificationId);
     return notificationId;
-  } catch (error) {
-    console.error('Failed to schedule notification:', error);
+  } catch {
     return null;
   }
 }
@@ -111,9 +107,8 @@ export async function cancelReminder(date: string): Promise<void> {
 
   try {
     await Notifications.cancelScheduledNotificationAsync(getNotificationId(date));
-    console.log('Cancelled notification for:', date);
-  } catch (error) {
-    console.error('Failed to cancel notification:', error);
+  } catch {
+    // Failed to cancel notification
   }
 }
 
@@ -125,9 +120,8 @@ export async function cancelAllReminders(): Promise<void> {
 
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('Cancelled all notifications');
-  } catch (error) {
-    console.error('Failed to cancel all notifications:', error);
+  } catch {
+    // Failed to cancel all notifications
   }
 }
 
@@ -139,8 +133,7 @@ export async function getScheduledReminders(): Promise<Notifications.Notificatio
 
   try {
     return await Notifications.getAllScheduledNotificationsAsync();
-  } catch (error) {
-    console.error('Failed to get scheduled notifications:', error);
+  } catch {
     return [];
   }
 }
