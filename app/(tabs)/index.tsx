@@ -1,7 +1,13 @@
-import { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { View, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Header, WarningConfirmModal, DrawerMenu } from '@/components/common';
+import {
+  Header,
+  WarningConfirmModal,
+  DrawerMenu,
+  PaywallModal,
+  NotificationPromptSnackbar,
+} from '@/components/common';
 import {
   StatusCard,
   MedicationButton,
@@ -9,6 +15,7 @@ import {
   FrequencyBottomSheet,
 } from '@/components/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
+import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { getToday } from '@/utils/dateUtils';
 
@@ -16,7 +23,12 @@ export default function HomeScreen() {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [isPaywallVisible, setIsPaywallVisible] = useState(false);
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const today = getToday();
+
+  // 이전 복용 상태 추적 (스낵바 표시용)
+  const prevHasTakenRef = useRef<boolean | null>(null);
 
   const {
     schedule,
@@ -26,11 +38,30 @@ export default function HomeScreen() {
     getDrinkingWarningLevel,
   } = useMedicationContext();
 
+  const { isPremium, notificationEnabled, setNotificationEnabled } =
+    usePremiumContext();
+
   // 복용 알림 관리 (프리미엄 기능)
   const { handleMedicationToggle } = useMedicationReminder();
 
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
+
+  // 복용 체크 시 스낵바 표시 (무료 유저만)
+  useEffect(() => {
+    // 초기화 시에는 스킵
+    if (prevHasTakenRef.current === null) {
+      prevHasTakenRef.current = hasTakenToday;
+      return;
+    }
+
+    // false → true 변경 시 (복용 체크 완료)
+    if (!prevHasTakenRef.current && hasTakenToday && !isPremium) {
+      setIsSnackbarVisible(true);
+    }
+
+    prevHasTakenRef.current = hasTakenToday;
+  }, [hasTakenToday, isPremium]);
 
   const handleMedicationPress = async () => {
     // 이미 복용한 경우: 바로 토글 (취소)
@@ -57,6 +88,24 @@ export default function HomeScreen() {
     await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
   };
 
+  // 알림 아이콘 클릭 핸들러
+  const handleNotificationPress = () => {
+    if (isPremium) {
+      // 프리미엄 유저: 알림 토글
+      setNotificationEnabled(!notificationEnabled);
+    } else {
+      // 무료 유저: Paywall 표시
+      setIsPaywallVisible(true);
+    }
+  };
+
+  // Paywall 구매 버튼 핸들러
+  const handlePurchase = () => {
+    setIsPaywallVisible(false);
+    // TODO: RevenueCat 결제 로직
+    Alert.alert('준비 중', '인앱 결제 기능을 준비 중입니다.');
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ScrollView
@@ -64,7 +113,12 @@ export default function HomeScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <Header onMenuPress={() => setIsDrawerVisible(true)} />
+        <Header
+          onMenuPress={() => setIsDrawerVisible(true)}
+          isPremium={isPremium}
+          notificationEnabled={notificationEnabled}
+          onNotificationPress={handleNotificationPress}
+        />
 
         <View className="mt-4">
           <StatusCard
@@ -110,6 +164,20 @@ export default function HomeScreen() {
       <DrawerMenu
         visible={isDrawerVisible}
         onClose={() => setIsDrawerVisible(false)}
+      />
+
+      {/* 프리미엄 결제 팝업 */}
+      <PaywallModal
+        visible={isPaywallVisible}
+        onClose={() => setIsPaywallVisible(false)}
+        onPurchase={handlePurchase}
+      />
+
+      {/* 복용 완료 후 알림 유도 스낵바 (무료 유저만) */}
+      <NotificationPromptSnackbar
+        visible={isSnackbarVisible}
+        onPress={() => setIsPaywallVisible(true)}
+        onDismiss={() => setIsSnackbarVisible(false)}
       />
     </SafeAreaView>
   );

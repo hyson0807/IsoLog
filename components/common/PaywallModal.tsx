@@ -26,11 +26,13 @@ export function PaywallModal({ visible, onClose, onPurchase }: PaywallModalProps
               className="mb-4 h-20 w-20 items-center justify-center rounded-full"
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
             >
-              <Ionicons name="diamond" size={40} color="white" />
+              <Ionicons name="sparkles" size={40} color="white" />
             </View>
-            <Text className="text-2xl font-bold text-white">Premium 기능</Text>
+            <Text className="text-2xl font-bold text-white">
+              건강한 피부를 위한 완벽한 습관
+            </Text>
             <Text className="mt-2 text-center text-orange-100">
-              이 기능은 프리미엄 회원 전용입니다
+              프리미엄으로 업그레이드하고 놓치지 마세요
             </Text>
           </View>
 
@@ -43,16 +45,18 @@ export function PaywallModal({ visible, onClose, onPurchase }: PaywallModalProps
             <View className="gap-3">
               <View className="flex-row items-center">
                 <View className="mr-3 h-8 w-8 items-center justify-center rounded-full bg-orange-100">
-                  <Ionicons name="close-circle" size={18} color="#F97316" />
+                  <Ionicons name="notifications" size={18} color="#F97316" />
                 </View>
-                <Text className="flex-1 text-gray-700">광고 완전 제거</Text>
+                <Text className="flex-1 text-gray-700">
+                  매일 밤 10시, 놓치지 않게 알림 발송
+                </Text>
               </View>
 
               <View className="flex-row items-center">
                 <View className="mr-3 h-8 w-8 items-center justify-center rounded-full bg-orange-100">
-                  <Ionicons name="notifications" size={18} color="#F97316" />
+                  <Ionicons name="close-circle" size={18} color="#F97316" />
                 </View>
-                <Text className="flex-1 text-gray-700">복용 알림 기능</Text>
+                <Text className="flex-1 text-gray-700">광고 없는 쾌적한 화면</Text>
               </View>
 
               <View className="flex-row items-center">
