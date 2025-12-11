@@ -1,8 +1,23 @@
-import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { formatDateShort } from '@/utils/dateUtils';
-import { DrinkingWarningLevel } from '@/types/medication';
+import {
+  DrinkingWarningLevel,
+  SkinRecord,
+  TroubleLevel,
+  DrynessLevel,
+} from '@/types/medication';
+import { troubleOptions, drynessOptions } from '@/constants/skin';
 
 interface DayDetailSheetProps {
   visible: boolean;
@@ -11,8 +26,10 @@ interface DayDetailSheetProps {
   canEdit: boolean;
   isDrinkingDate: boolean;
   warningLevel: DrinkingWarningLevel | null;
+  skinRecord?: SkinRecord;
   onToggle: () => void;
   onToggleDrinking: () => void;
+  onSaveSkinRecord: (record: SkinRecord) => void;
   onClose: () => void;
 }
 
@@ -23,10 +40,29 @@ export function DayDetailSheet({
   canEdit,
   isDrinkingDate,
   warningLevel,
+  skinRecord,
   onToggle,
   onToggleDrinking,
+  onSaveSkinRecord,
   onClose,
 }: DayDetailSheetProps) {
+  const [trouble, setTrouble] = useState<TroubleLevel | undefined>(undefined);
+  const [dryness, setDryness] = useState<DrynessLevel | undefined>(undefined);
+  const [memo, setMemo] = useState('');
+
+  // 시트가 열릴 때 기존 기록으로 초기화
+  useEffect(() => {
+    if (visible && skinRecord) {
+      setTrouble(skinRecord.trouble);
+      setDryness(skinRecord.dryness);
+      setMemo(skinRecord.memo || '');
+    } else if (visible) {
+      setTrouble(undefined);
+      setDryness(undefined);
+      setMemo('');
+    }
+  }, [visible, skinRecord]);
+
   if (!date) return null;
 
   const handleToggle = async () => {
@@ -37,6 +73,40 @@ export function DayDetailSheet({
   const handleToggleDrinking = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onToggleDrinking();
+  };
+
+  const handleTroubleSelect = async (value: TroubleLevel) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newValue = trouble === value ? undefined : value;
+    setTrouble(newValue);
+    saveSkinRecordInternal(newValue, dryness, memo);
+  };
+
+  const handleDrynessSelect = async (value: DrynessLevel) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newValue = dryness === value ? undefined : value;
+    setDryness(newValue);
+    saveSkinRecordInternal(trouble, newValue, memo);
+  };
+
+  const handleMemoBlur = () => {
+    saveSkinRecordInternal(trouble, dryness, memo);
+  };
+
+  const saveSkinRecordInternal = (
+    t: TroubleLevel | undefined,
+    d: DrynessLevel | undefined,
+    m: string
+  ) => {
+    if (t || d || m.trim()) {
+      onSaveSkinRecord({
+        date: date!,
+        trouble: t,
+        dryness: d,
+        memo: m.trim() || undefined,
+        recordedAt: new Date().toISOString(),
+      });
+    }
   };
 
   return (
@@ -128,6 +198,107 @@ export function DayDetailSheet({
               <Text className="text-center text-sm text-red-600">
                 음주 전후 4일은 간 건강을 위해 휴약을 권장합니다
               </Text>
+            </View>
+          )}
+
+          {/* 피부 상태 기록 섹션 (복용 완료 날짜만) */}
+          {hasTaken && canEdit && (
+            <View className="mt-5">
+              <Text className="mb-3 text-sm font-semibold text-gray-700">
+                피부 상태
+              </Text>
+
+              {/* 트러블 상태 */}
+              <Text className="mb-2 text-xs text-gray-500">트러블</Text>
+              <View className="mb-3 flex-row gap-2">
+                {troubleOptions.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    onPress={() => handleTroubleSelect(option.value)}
+                    className={`flex-1 items-center rounded-lg py-2 ${
+                      trouble === option.value
+                        ? 'border border-green-500 bg-green-100'
+                        : 'border border-gray-200 bg-gray-50'
+                    }`}
+                  >
+                    <Text>{option.emoji}</Text>
+                    <Text className="mt-1 text-xs text-gray-600">
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* 건조함 정도 */}
+              <Text className="mb-2 text-xs text-gray-500">건조함</Text>
+              <View className="mb-3 flex-row gap-2">
+                {drynessOptions.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    onPress={() => handleDrynessSelect(option.value)}
+                    className={`flex-1 items-center rounded-lg py-2 ${
+                      dryness === option.value
+                        ? 'border border-blue-500 bg-blue-100'
+                        : 'border border-gray-200 bg-gray-50'
+                    }`}
+                  >
+                    <Text>{option.emoji}</Text>
+                    <Text className="mt-1 text-xs text-gray-600">
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* 메모 */}
+              <TextInput
+                placeholder="한 줄 메모 (선택)"
+                placeholderTextColor="#9CA3AF"
+                value={memo}
+                onChangeText={setMemo}
+                onBlur={handleMemoBlur}
+                onSubmitEditing={() => {
+                  Keyboard.dismiss();
+                  handleMemoBlur();
+                }}
+                maxLength={100}
+                returnKeyType="done"
+                className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700"
+              />
+            </View>
+          )}
+
+          {/* 피부 기록 읽기 전용 표시 (수정 불가한 과거 날짜) */}
+          {hasTaken && !canEdit && skinRecord && (
+            <View className="mt-5 rounded-xl bg-gray-50 p-4">
+              <Text className="mb-2 text-sm font-semibold text-gray-700">
+                피부 상태
+              </Text>
+              <View className="flex-row gap-4">
+                {skinRecord.trouble && (
+                  <Text className="text-sm text-gray-600">
+                    트러블:{' '}
+                    {troubleOptions.find((o) => o.value === skinRecord.trouble)
+                      ?.emoji}{' '}
+                    {troubleOptions.find((o) => o.value === skinRecord.trouble)
+                      ?.label}
+                  </Text>
+                )}
+                {skinRecord.dryness && (
+                  <Text className="text-sm text-gray-600">
+                    건조함:{' '}
+                    {drynessOptions.find((o) => o.value === skinRecord.dryness)
+                      ?.emoji}{' '}
+                    {drynessOptions.find((o) => o.value === skinRecord.dryness)
+                      ?.label}
+                  </Text>
+                )}
+              </View>
+              {skinRecord.memo && (
+                <Text className="mt-2 text-sm text-gray-500">
+                  {skinRecord.memo}
+                </Text>
+              )}
             </View>
           )}
         </Pressable>

@@ -30,6 +30,7 @@ export function CalendarGrid({
     canEditDate,
     getDrinkingWarningLevel,
     hasDrinkingPlan,
+    hasMemo,
   } = useMedicationContext();
   const today = getToday();
 
@@ -102,6 +103,7 @@ export function CalendarGrid({
             isToday={isToday}
             isCurrentMonth={isCurrentMonth}
             isDrinkingDay={isDrinkingDay}
+            hasMemo={hasMemo(date)}
             onPress={() => onDayPress(date)}
           />
         );

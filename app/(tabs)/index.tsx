@@ -13,6 +13,8 @@ import {
   MedicationButton,
   FrequencySettingButton,
   FrequencyBottomSheet,
+  SkinRecordCard,
+  DailyTipCard,
 } from '@/components/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
@@ -36,6 +38,8 @@ export default function HomeScreen() {
     toggleMedication,
     updateFrequency,
     getDrinkingWarningLevel,
+    getSkinRecord,
+    saveSkinRecord,
   } = useMedicationContext();
 
   const { isPremium, notificationEnabled, setNotificationEnabled } =
@@ -64,13 +68,6 @@ export default function HomeScreen() {
   }, [hasTakenToday, isPremium]);
 
   const handleMedicationPress = async () => {
-    // 이미 복용한 경우: 바로 토글 (취소)
-    if (hasTakenToday) {
-      toggleMedication(today);
-      await handleMedicationToggle(today, false); // 복용 취소 → 알림 다시 예약
-      return;
-    }
-
     // 경고 상태인 경우: 확인 팝업
     if (todayWarningLevel) {
       setIsWarningModalVisible(true);
@@ -80,6 +77,12 @@ export default function HomeScreen() {
     // 일반 상태: 바로 복용 기록
     toggleMedication(today);
     await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
+  };
+
+  // 복용 취소 핸들러 (SkinRecordCard에서 호출)
+  const handleCancelMedication = async () => {
+    toggleMedication(today);
+    await handleMedicationToggle(today, false); // 복용 취소 → 알림 다시 예약
   };
 
   const handleWarningConfirm = async () => {
@@ -128,12 +131,35 @@ export default function HomeScreen() {
         </View>
 
         <View className="flex-1 items-center justify-center">
-          <MedicationButton
-            hasTaken={hasTakenToday}
-            isMedicationDay={todayStatus.isMedicationDay}
-            warningLevel={todayWarningLevel}
-            onPress={handleMedicationPress}
-          />
+          {(() => {
+            const skinRecord = getSkinRecord(today);
+            const isSkinRecordComplete = skinRecord?.trouble && skinRecord?.dryness;
+
+            if (hasTakenToday && isSkinRecordComplete) {
+              // 복용 완료 + 피부 기록 완료 → 데일리 팁 표시
+              return <DailyTipCard />;
+            } else if (hasTakenToday) {
+              // 복용 완료 + 피부 기록 미완료 → 기록 카드 표시
+              return (
+                <SkinRecordCard
+                  date={today}
+                  existingRecord={skinRecord}
+                  onSave={saveSkinRecord}
+                  onCancel={handleCancelMedication}
+                />
+              );
+            } else {
+              // 미복용 → 복용 버튼 표시
+              return (
+                <MedicationButton
+                  hasTaken={hasTakenToday}
+                  isMedicationDay={todayStatus.isMedicationDay}
+                  warningLevel={todayWarningLevel}
+                  onPress={handleMedicationPress}
+                />
+              );
+            }
+          })()}
         </View>
 
         <View className="mb-8">

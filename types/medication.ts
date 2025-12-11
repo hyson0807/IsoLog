@@ -39,10 +39,26 @@ export type DrinkingWarningLevel =
   | 'day3' // D±3 (40%)
   | 'day4'; // D±4 (20%)
 
+// 피부 상태 - 트러블 레벨
+export type TroubleLevel = 'calm' | 'few' | 'severe';
+
+// 피부 상태 - 건조함 레벨
+export type DrynessLevel = 'moist' | 'normal' | 'dry';
+
+// 피부 상태 기록
+export interface SkinRecord {
+  date: string; // ISO date string (YYYY-MM-DD)
+  trouble?: TroubleLevel;
+  dryness?: DrynessLevel;
+  memo?: string;
+  recordedAt: string; // ISO datetime string
+}
+
 // AsyncStorage에 저장할 데이터 구조
 export interface MedicationStorageData {
   schedule: MedicationSchedule;
   takenDates: string[]; // Set은 직렬화 안되므로 배열로 저장
   firstTakenDate: string | null;
   drinkingDates: string[]; // 술 약속 날짜들
+  skinRecords?: SkinRecord[]; // 피부 상태 기록
 }

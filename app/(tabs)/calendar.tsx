@@ -30,6 +30,8 @@ export default function CalendarScreen() {
     getDrinkingWarningLevel,
     hasDrinkingPlan,
     toggleDrinkingDate,
+    getSkinRecord,
+    saveSkinRecord,
   } = useMedicationContext();
 
   // 현재 월이 오늘이 포함된 월인지 확인
@@ -137,8 +139,10 @@ export default function CalendarScreen() {
         canEdit={selectedDate ? canEditDate(selectedDate) : false}
         isDrinkingDate={selectedDate ? hasDrinkingPlan(selectedDate) : false}
         warningLevel={selectedDate ? getDrinkingWarningLevel(selectedDate) : null}
+        skinRecord={selectedDate ? getSkinRecord(selectedDate) : undefined}
         onToggle={handleToggle}
         onToggleDrinking={handleToggleDrinking}
+        onSaveSkinRecord={saveSkinRecord}
         onClose={() => setSelectedDate(null)}
       />
     </SafeAreaView>

@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 핵심 기능
 - **복용 체크**: 매일 앱에서 복용 여부를 체크하고 기록
+- **피부 상태 기록**: 복용 체크 후 트러블/건조함 상태 기록, 데일리 케어 팁 제공
 - **복용 주기 설정**: 매일/격일/3일/주1회 등 다양한 복용 주기 지원
 - **캘린더**: 월별 복용 기록 조회, 과거 기록 수정, 미래 복용 예정일 표시
 - **술 약속 경고**: 음주 예정일 D±4일 경고 표시, 복용 시 확인 팝업
@@ -71,14 +72,16 @@ components/
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
+│   ├── SkinRecordCard.tsx       # 피부 상태 기록 카드
+│   ├── DailyTipCard.tsx         # 이소티논 케어 팁 카드
 │   ├── FrequencySettingButton.tsx
 │   └── FrequencyBottomSheet.tsx
 ├── calendar/            # Calendar components
 │   ├── CalendarHeader.tsx    # Month navigation
 │   ├── WeekdayRow.tsx        # Weekday labels
 │   ├── CalendarGrid.tsx      # Date grid (6x7)
-│   ├── DayCell.tsx           # Individual day cell + 경고 색상
-│   ├── DayDetailSheet.tsx    # 복용/술약속 토글 시트
+│   ├── DayCell.tsx           # Individual day cell + 경고 색상 + 메모 점 표시
+│   ├── DayDetailSheet.tsx    # 복용/술약속/피부기록 토글 시트
 │   └── MonthlySummary.tsx    # Monthly taken count
 └── community/           # Community components (TBD)
 
@@ -96,10 +99,11 @@ hooks/                   # Custom React hooks
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
-└── frequency.ts         # Medication frequency options
+├── frequency.ts         # Medication frequency options
+└── skin.ts              # 피부 상태 옵션 (트러블/건조함)
 
 types/                   # TypeScript type definitions
-└── medication.ts        # FrequencyType, DayCellStatus, etc.
+└── medication.ts        # FrequencyType, DayCellStatus, SkinRecord, etc.
 
 utils/                   # Utility functions
 └── dateUtils.ts         # Date formatting, calendar helpers
@@ -166,3 +170,39 @@ Google AdMob 배너 광고가 캘린더 탭 상단에 표시됩니다.
 **빌드 요구사항**:
 - 네이티브 코드 포함으로 **Expo Go 미지원**
 - Development Build 필요: `npx expo prebuild && npx expo run:ios`
+
+### Skin Record Feature
+
+복용 체크 후 피부 상태를 기록하는 기능입니다.
+
+**흐름**:
+1. 복용 체크 → `SkinRecordCard` 표시
+2. 트러블 + 건조함 둘 다 선택 → 자동 저장 후 `DailyTipCard` 표시
+3. 캘린더에서 과거 기록 확인/수정 가능
+
+**트러블 상태** (`TroubleLevel`):
+| 값 | 라벨 | 이모지 |
+|-----|------|--------|
+| `calm` | 잠잠해요 | ✨ |
+| `few` | 몇 개 났어요 | 🥲 |
+| `severe` | 심해졌어요 | 🚨 |
+
+**건조함 정도** (`DrynessLevel`):
+| 값 | 라벨 | 이모지 |
+|-----|------|--------|
+| `moist` | 촉촉해요 | 😌 |
+| `normal` | 보통이에요 | 🙂 |
+| `dry` | 건조해요 | 🌵 |
+
+**데이터 구조** (`SkinRecord`):
+```typescript
+interface SkinRecord {
+  date: string;           // YYYY-MM-DD
+  trouble?: TroubleLevel;
+  dryness?: DrynessLevel;
+  memo?: string;          // 캘린더에서만 수정 가능
+  recordedAt: string;     // ISO datetime
+}
+```
+
+**DailyTipCard**: 날짜 기반으로 매일 다른 2개의 이소티논 케어 팁 제공 (물 마시기, 보습, 자외선 차단 등 8가지 로테이션)

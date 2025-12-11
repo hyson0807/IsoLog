@@ -10,6 +10,7 @@ interface DayCellProps {
   isToday: boolean;
   isCurrentMonth: boolean;
   isDrinkingDay?: boolean;
+  hasMemo?: boolean;
   onPress: () => void;
 }
 
@@ -66,6 +67,7 @@ function DayCellComponent({
   status,
   isCurrentMonth,
   isDrinkingDay,
+  hasMemo,
   onPress,
 }: DayCellProps) {
   const effectiveStatus: DayCellStatus = !isCurrentMonth ? 'disabled' : status;
@@ -89,6 +91,9 @@ function DayCellComponent({
           <View className="absolute -right-1 -top-1">
             <Ionicons name="wine" size={14} color="#DC2626" />
           </View>
+        )}
+        {hasMemo && (
+          <View className="absolute -bottom-0.5 -left-0.5 h-2 w-2 rounded-full bg-blue-400" />
         )}
       </View>
     </TouchableOpacity>

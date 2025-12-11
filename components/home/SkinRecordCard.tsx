@@ -1,0 +1,136 @@
+import { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { SkinRecord, TroubleLevel, DrynessLevel } from '@/types/medication';
+import { troubleOptions, drynessOptions } from '@/constants/skin';
+
+interface SkinRecordCardProps {
+  date: string;
+  existingRecord?: SkinRecord;
+  onSave: (record: SkinRecord) => void;
+  onCancel: () => void;
+}
+
+export function SkinRecordCard({
+  date,
+  existingRecord,
+  onSave,
+  onCancel,
+}: SkinRecordCardProps) {
+  const [trouble, setTrouble] = useState<TroubleLevel | undefined>(
+    existingRecord?.trouble
+  );
+  const [dryness, setDryness] = useState<DrynessLevel | undefined>(
+    existingRecord?.dryness
+  );
+
+  const handleTroubleSelect = async (value: TroubleLevel) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newTrouble = trouble === value ? undefined : value;
+    setTrouble(newTrouble);
+
+    // 둘 다 선택되면 저장
+    if (newTrouble && dryness) {
+      onSave({
+        date,
+        trouble: newTrouble,
+        dryness,
+        recordedAt: new Date().toISOString(),
+      });
+    }
+  };
+
+  const handleDrynessSelect = async (value: DrynessLevel) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newDryness = dryness === value ? undefined : value;
+    setDryness(newDryness);
+
+    // 둘 다 선택되면 저장
+    if (trouble && newDryness) {
+      onSave({
+        date,
+        trouble,
+        dryness: newDryness,
+        recordedAt: new Date().toISOString(),
+      });
+    }
+  };
+
+  const handleCancel = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onCancel();
+  };
+
+  return (
+    <View className="w-full px-6">
+      {/* 헤더: 복용 완료 + 취소 버튼 */}
+      <View className="mb-6 flex-row items-center justify-between">
+        <View className="flex-row items-center">
+          <Ionicons name="checkmark-circle" size={32} color="#22C55E" />
+          <Text className="ml-3 text-2xl font-bold text-green-600">
+            복용 완료!
+          </Text>
+        </View>
+        <TouchableOpacity onPress={handleCancel} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <Text className="text-base text-gray-400">취소</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 섹션 타이틀 */}
+      <Text className="mb-5 text-lg font-semibold text-gray-800">
+        오늘 피부 컨디션은 어떤가요?
+      </Text>
+
+      {/* 트러블 상태 선택 */}
+      <Text className="mb-3 text-base font-medium text-gray-600">트러블</Text>
+      <View className="mb-6 flex-row gap-3">
+        {troubleOptions.map((option) => (
+          <TouchableOpacity
+            key={option.value}
+            onPress={() => handleTroubleSelect(option.value)}
+            className={`flex-1 items-center rounded-2xl py-4 ${
+              trouble === option.value
+                ? 'bg-green-500'
+                : 'border border-gray-200'
+            }`}
+          >
+            <Text className="text-3xl">{option.emoji}</Text>
+            <Text
+              className={`mt-2 text-sm font-medium ${
+                trouble === option.value ? 'text-white' : 'text-gray-600'
+              }`}
+            >
+              {option.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* 건조함 정도 선택 */}
+      <Text className="mb-3 text-base font-medium text-gray-600">건조함</Text>
+      <View className="flex-row gap-3">
+        {drynessOptions.map((option) => (
+          <TouchableOpacity
+            key={option.value}
+            onPress={() => handleDrynessSelect(option.value)}
+            className={`flex-1 items-center rounded-2xl py-4 ${
+              dryness === option.value
+                ? 'bg-blue-500'
+                : 'border border-gray-200'
+            }`}
+          >
+            <Text className="text-3xl">{option.emoji}</Text>
+            <Text
+              className={`mt-2 text-sm font-medium ${
+                dryness === option.value ? 'text-white' : 'text-gray-600'
+              }`}
+            >
+              {option.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+}

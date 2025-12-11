@@ -14,6 +14,7 @@ import {
   TodayStatus,
   MedicationStorageData,
   DrinkingWarningLevel,
+  SkinRecord,
 } from '@/types/medication';
 import { getDaysDifference } from '@/utils/dateUtils';
 import { frequencyOptions } from '@/constants/frequency';
@@ -27,6 +28,7 @@ interface MedicationContextValue {
   takenDates: Set<string>;
   firstTakenDate: string | null;
   drinkingDates: Set<string>;
+  skinRecords: Map<string, SkinRecord>;
   isLoading: boolean;
   todayStatus: TodayStatus;
 
@@ -34,6 +36,7 @@ interface MedicationContextValue {
   toggleMedication: (date: string) => void;
   updateFrequency: (frequency: FrequencyType) => void;
   toggleDrinkingDate: (date: string) => void;
+  saveSkinRecord: (record: SkinRecord) => void;
 
   // Computed helpers
   isMedicationDay: (date: string) => boolean;
@@ -41,6 +44,8 @@ interface MedicationContextValue {
   canEditDate: (date: string) => boolean;
   getDrinkingWarningLevel: (date: string) => DrinkingWarningLevel | null;
   hasDrinkingPlan: (date: string) => boolean;
+  getSkinRecord: (date: string) => SkinRecord | undefined;
+  hasMemo: (date: string) => boolean;
 }
 
 const MedicationContext = createContext<MedicationContextValue | undefined>(undefined);
@@ -53,6 +58,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   const [takenDates, setTakenDates] = useState<Set<string>>(new Set());
   const [firstTakenDate, setFirstTakenDate] = useState<string | null>(null);
   const [drinkingDates, setDrinkingDates] = useState<Set<string>>(new Set());
+  const [skinRecords, setSkinRecords] = useState<Map<string, SkinRecord>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   const today = getToday();
@@ -74,6 +80,14 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
           setTakenDates(new Set(data.takenDates));
           setFirstTakenDate(data.firstTakenDate);
           setDrinkingDates(new Set(data.drinkingDates || []));
+          // 피부 기록 로드
+          if (data.skinRecords) {
+            const recordsMap = new Map<string, SkinRecord>();
+            data.skinRecords.forEach((record) => {
+              recordsMap.set(record.date, record);
+            });
+            setSkinRecords(recordsMap);
+          }
         }
       } catch (error) {
         console.error('Failed to load medication data:', error);
@@ -95,6 +109,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
           takenDates: Array.from(takenDates),
           firstTakenDate,
           drinkingDates: Array.from(drinkingDates),
+          skinRecords: Array.from(skinRecords.values()),
         };
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (error) {
@@ -102,7 +117,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       }
     }
     saveData();
-  }, [schedule, takenDates, firstTakenDate, drinkingDates, isLoading]);
+  }, [schedule, takenDates, firstTakenDate, drinkingDates, skinRecords, isLoading]);
 
   // 특정 날짜의 복용 상태 토글
   const toggleMedication = useCallback((date: string) => {
@@ -145,6 +160,30 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       return newSet;
     });
   }, []);
+
+  // 피부 기록 저장
+  const saveSkinRecord = useCallback((record: SkinRecord) => {
+    setSkinRecords((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(record.date, record);
+      return newMap;
+    });
+  }, []);
+
+  // 특정 날짜의 피부 기록 조회
+  const getSkinRecord = useCallback(
+    (date: string) => skinRecords.get(date),
+    [skinRecords]
+  );
+
+  // 특정 날짜에 메모가 있는지 확인 (캘린더 점 표시용)
+  const hasMemo = useCallback(
+    (date: string) => {
+      const record = skinRecords.get(date);
+      return !!record?.memo && record.memo.trim().length > 0;
+    },
+    [skinRecords]
+  );
 
   // 특정 날짜의 술 경고 레벨 계산
   const getDrinkingWarningLevel = useCallback(
@@ -223,32 +262,40 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       takenDates,
       firstTakenDate,
       drinkingDates,
+      skinRecords,
       isLoading,
       todayStatus,
       toggleMedication,
       updateFrequency,
       toggleDrinkingDate,
+      saveSkinRecord,
       isMedicationDay,
       hasTaken,
       canEditDate,
       getDrinkingWarningLevel,
       hasDrinkingPlan,
+      getSkinRecord,
+      hasMemo,
     }),
     [
       schedule,
       takenDates,
       firstTakenDate,
       drinkingDates,
+      skinRecords,
       isLoading,
       todayStatus,
       toggleMedication,
       updateFrequency,
       toggleDrinkingDate,
+      saveSkinRecord,
       isMedicationDay,
       hasTaken,
       canEditDate,
       getDrinkingWarningLevel,
       hasDrinkingPlan,
+      getSkinRecord,
+      hasMemo,
     ]
   );
 
