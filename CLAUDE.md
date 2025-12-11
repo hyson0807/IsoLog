@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**isoCare**는 이소티논(Isotretinoin) 복용자를 위한 글로벌 복용 관리 앱입니다.
+**IsoCare**는 이소티논(Isotretinoin) 복용자를 위한 글로벌 복용 관리 앱입니다.
 
 ### 핵심 기능
 - **복용 체크**: 매일 앱에서 복용 여부를 체크하고 기록
