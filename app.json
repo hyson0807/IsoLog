@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.welkit.isoCare"
+      "bundleIdentifier": "com.hyson.isoCare"
     },
     "android": {
       "adaptiveIcon": {

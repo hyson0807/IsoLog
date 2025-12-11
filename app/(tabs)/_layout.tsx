@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { Pressable, View, GestureResponderEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 interface TabIconProps {
   name: keyof typeof Ionicons.glyphMap;
@@ -21,6 +22,30 @@ function TabIcon({ name, focused }: TabIconProps) {
         color={focused ? '#FFFFFF' : '#9E9E9E'}
       />
     </View>
+  );
+}
+
+interface TabBarButtonProps {
+  children: React.ReactNode;
+  onPress?: (e: GestureResponderEvent) => void;
+  accessibilityState?: { selected?: boolean };
+}
+
+function TabBarButton({ children, onPress, ...rest }: TabBarButtonProps) {
+  const handlePress = (e: GestureResponderEvent) => {
+    // 햅틱 피드백 실행
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress?.(e);
+  };
+
+  return (
+    <Pressable
+      onPress={handlePress}
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+      {...rest}
+    >
+      {children}
+    </Pressable>
   );
 }
 
@@ -46,6 +71,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <TabIcon name="calendar-outline" focused={focused} />
           ),
+          tabBarButton: (props) => <TabBarButton {...props} />,
         }}
       />
       <Tabs.Screen
@@ -54,6 +80,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <TabIcon name="home" focused={focused} />
           ),
+          tabBarButton: (props) => <TabBarButton {...props} />,
         }}
       />
       <Tabs.Screen
@@ -62,6 +89,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <TabIcon name="people-outline" focused={focused} />
           ),
+          tabBarButton: (props) => <TabBarButton {...props} />,
         }}
       />
     </Tabs>
