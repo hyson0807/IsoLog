@@ -9,6 +9,7 @@ import {
   FrequencyBottomSheet,
 } from '@/components/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
+import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { getToday } from '@/utils/dateUtils';
 
 export default function HomeScreen() {
@@ -25,13 +26,17 @@ export default function HomeScreen() {
     getDrinkingWarningLevel,
   } = useMedicationContext();
 
+  // 복용 알림 관리 (프리미엄 기능)
+  const { handleMedicationToggle } = useMedicationReminder();
+
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
 
-  const handleMedicationPress = () => {
+  const handleMedicationPress = async () => {
     // 이미 복용한 경우: 바로 토글 (취소)
     if (hasTakenToday) {
       toggleMedication(today);
+      await handleMedicationToggle(today, false); // 복용 취소 → 알림 다시 예약
       return;
     }
 
@@ -43,11 +48,13 @@ export default function HomeScreen() {
 
     // 일반 상태: 바로 복용 기록
     toggleMedication(today);
+    await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
   };
 
-  const handleWarningConfirm = () => {
+  const handleWarningConfirm = async () => {
     setIsWarningModalVisible(false);
     toggleMedication(today);
+    await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
   };
 
   return (

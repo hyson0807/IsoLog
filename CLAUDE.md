@@ -14,7 +14,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **데이터 영속성**: AsyncStorage로 앱 재시작 후에도 기록 유지
 - **글로벌 지원**: 기기의 locale에 따라 날짜 형식 자동 변환
 
+### 프리미엄 기능 (구현 완료)
+- **복용 알림**: 복용일 밤 10시 로컬 알림 (프리미엄 전용)
+- **광고 제거**: 프리미엄 유저는 AdMob 배너 미표시
+- **익명 ID 시스템**: 로그인 없이 기기 중심 결제 관리
+
 ### 예정 기능
+- **인앱 결제**: RevenueCat 연동 (일회성 결제)
+- **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
 - **다국어 지원 (i18n)**: 앱 내 텍스트 다국어 번역
 
@@ -34,8 +41,10 @@ npm run lint         # Run ESLint
 - **Framework**: Expo SDK 54 with React Native 0.81
 - **Routing**: File-based routing using `expo-router`
 - **Styling**: NativeWind (TailwindCSS for React Native)
-- **State Management**: React Context API (`MedicationContext`)
+- **State Management**: React Context API (`MedicationContext`, `PremiumContext`)
 - **Storage**: AsyncStorage for data persistence
+- **Notifications**: `expo-notifications` for local push notifications
+- **Crypto**: `expo-crypto` for UUID generation
 - **Localization**: `expo-localization` for global date formatting
 - **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
 - **Path Aliases**: `@/*` maps to project root
@@ -74,10 +83,16 @@ components/
 └── community/           # Community components (TBD)
 
 contexts/                # React Context providers
-└── MedicationContext.tsx    # Global state + AsyncStorage
+├── MedicationContext.tsx    # Global state + AsyncStorage
+└── PremiumContext.tsx       # Premium/알림 상태 관리
+
+services/                # Business logic services
+└── notificationService.ts   # 로컬 알림 예약/취소
 
 hooks/                   # Custom React hooks
-└── useMedicationSchedule.ts # (legacy, use MedicationContext)
+├── useMedicationSchedule.ts    # (legacy, use MedicationContext)
+├── useMedicationReminder.ts    # 복용 알림 관리
+└── useNotificationPermission.ts # 알림 권한 관리
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts

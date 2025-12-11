@@ -1,12 +1,14 @@
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MedicationProvider } from "@/contexts/MedicationContext";
+import { PremiumProvider } from "@/contexts/PremiumContext";
 import "./global.css";
 
 export default function RootLayout() {
   return (
-    <MedicationProvider>
-      <SafeAreaProvider>
+    <PremiumProvider>
+      <MedicationProvider>
+        <SafeAreaProvider>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -21,7 +23,8 @@ export default function RootLayout() {
             }}
           />
         </Stack>
-      </SafeAreaProvider>
-    </MedicationProvider>
+        </SafeAreaProvider>
+      </MedicationProvider>
+    </PremiumProvider>
   );
 }
