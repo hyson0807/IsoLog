@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Header, WarningConfirmModal } from '@/components/common';
+import { Header, WarningConfirmModal, DrawerMenu } from '@/components/common';
 import {
   StatusCard,
   MedicationButton,
@@ -14,6 +14,7 @@ import { getToday } from '@/utils/dateUtils';
 export default function HomeScreen() {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const today = getToday();
 
   const {
@@ -56,7 +57,7 @@ export default function HomeScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <Header />
+        <Header onMenuPress={() => setIsDrawerVisible(true)} />
 
         <View className="mt-4">
           <StatusCard
@@ -96,6 +97,12 @@ export default function HomeScreen() {
         visible={isWarningModalVisible}
         onConfirm={handleWarningConfirm}
         onCancel={() => setIsWarningModalVisible(false)}
+      />
+
+      {/* 사이드 드로어 메뉴 */}
+      <DrawerMenu
+        visible={isDrawerVisible}
+        onClose={() => setIsDrawerVisible(false)}
       />
     </SafeAreaView>
   );
