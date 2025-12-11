@@ -78,12 +78,11 @@ export function DailyTipCard() {
     <View className="w-full px-6">
       {/* 헤더 */}
       <View className="mb-4 flex-row items-center">
-        <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-green-500">
+        <View className="mr-3 h-8 w-8 items-center justify-center rounded-full bg-green-500">
           <Ionicons name="checkmark" size={24} color="#FFFFFF" />
         </View>
         <View>
-          <Text className="text-lg font-bold text-gray-800">오늘 복용 완료!</Text>
-          <Text className="text-sm text-gray-500">오늘의 이소티논 케어 팁</Text>
+          <Text className="text-lg font-bold text-gray-500">오늘의 이소티논 케어 팁</Text>
         </View>
       </View>
 

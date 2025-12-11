@@ -7,6 +7,9 @@ import {
   Pressable,
   TextInput,
   Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -116,14 +119,22 @@ export function DayDetailSheet({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable
-        className="flex-1 justify-end bg-black/50"
-        onPress={onClose}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
       >
         <Pressable
-          className="rounded-t-3xl bg-white px-5 pb-10 pt-6"
-          onPress={(e) => e.stopPropagation()}
+          className="flex-1 justify-end bg-black/50"
+          onPress={onClose}
         >
+          <Pressable
+            className="max-h-[90%] rounded-t-3xl bg-white px-5 pb-10 pt-6"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
           {/* 헤더 */}
           <View className="mb-6 flex-row items-center justify-between">
             <Text className="text-xl font-bold text-gray-900">
@@ -203,7 +214,7 @@ export function DayDetailSheet({
 
           {/* 피부 상태 기록 섹션 (복용 완료 날짜만) */}
           {hasTaken && canEdit && (
-            <View className="mt-5">
+            <View className="my-5 ">
               <Text className="mb-3 text-sm font-semibold text-gray-700">
                 피부 상태
               </Text>
@@ -231,7 +242,7 @@ export function DayDetailSheet({
 
               {/* 건조함 정도 */}
               <Text className="mb-2 text-xs text-gray-500">건조함</Text>
-              <View className="mb-3 flex-row gap-2">
+              <View className="mb-5 flex-row gap-2">
                 {drynessOptions.map((option) => (
                   <TouchableOpacity
                     key={option.value}
@@ -250,6 +261,10 @@ export function DayDetailSheet({
                 ))}
               </View>
 
+                <Text className="mb-3 text-sm font-semibold text-gray-700">
+                    오늘의 한줄평
+                </Text>
+
               {/* 메모 */}
               <TextInput
                 placeholder="한 줄 메모 (선택)"
@@ -263,7 +278,7 @@ export function DayDetailSheet({
                 }}
                 maxLength={100}
                 returnKeyType="done"
-                className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700"
+                className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-700"
               />
             </View>
           )}
@@ -301,8 +316,10 @@ export function DayDetailSheet({
               )}
             </View>
           )}
+            </ScrollView>
+          </Pressable>
         </Pressable>
-      </Pressable>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
