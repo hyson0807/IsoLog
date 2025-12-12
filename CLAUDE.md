@@ -59,16 +59,18 @@ app/
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
 │   └── community.tsx    # Community screen (TBD)
-├── _layout.tsx          # Root layout with MedicationProvider
-├── settings.tsx         # Settings screen (TBD)
+├── _layout.tsx          # Root layout with Provider 설정
+├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 계정)
+├── paywall.tsx          # 프리미엄 구매 페이지
 └── global.css           # Tailwind CSS imports
 
 components/
 ├── common/              # Shared components
-│   ├── Header.tsx              # 날짜 표시 + 메뉴 버튼
-│   ├── DrawerMenu.tsx          # 사이드 드로어 메뉴
-│   ├── WarningConfirmModal.tsx # 경고 확인 팝업
-│   └── AdBanner.tsx            # Google AdMob 배너 광고
+│   ├── Header.tsx                    # 날짜 표시 + 메뉴 버튼
+│   ├── DrawerMenu.tsx                # 사이드 드로어 메뉴
+│   ├── WarningConfirmModal.tsx       # 경고 확인 팝업
+│   ├── AdBanner.tsx                  # Google AdMob 배너 광고
+│   └── NotificationPromptSnackbar.tsx # 알림 유도 스낵바
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
@@ -83,6 +85,9 @@ components/
 │   ├── DayCell.tsx           # Individual day cell + 경고 색상 + 메모 점 표시
 │   ├── DayDetailSheet.tsx    # 복용/술약속/피부기록 토글 시트
 │   └── MonthlySummary.tsx    # Monthly taken count
+├── settings/            # Settings components
+│   ├── PremiumSection.tsx    # 프리미엄 배너 + 혜택 목록
+│   └── NotificationToggle.tsx # 알림 설정 토글
 └── community/           # Community components (TBD)
 
 contexts/                # React Context providers
@@ -106,7 +111,8 @@ types/                   # TypeScript type definitions
 └── medication.ts        # FrequencyType, DayCellStatus, SkinRecord, etc.
 
 utils/                   # Utility functions
-└── dateUtils.ts         # Date formatting, calendar helpers
+├── dateUtils.ts         # Date formatting, calendar helpers
+└── deviceId.ts          # 익명 기기 ID 생성/관리
 ```
 
 ### Key Configurations
