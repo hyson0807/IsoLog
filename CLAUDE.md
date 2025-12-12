@@ -31,7 +31,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 예정 기능
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
-- 리뷰 모달
+- 결제 플로우 점검 
 
 ## Development Commands
 
@@ -58,6 +58,7 @@ npm run lint         # Run ESLint
 - **i18n**: `i18next` + `react-i18next` for multi-language support
 - **Ads**: `react-native-google-mobile-ads` for AdMob (배너 + 전면 광고)
 - **IAP**: `react-native-purchases` for RevenueCat in-app purchases
+- **Store Review**: `expo-store-review` for native app store review prompts
 - **Path Aliases**: `@/*` maps to project root
 
 ### Project Structure
@@ -128,7 +129,8 @@ types/                   # TypeScript type definitions
 
 utils/                   # Utility functions
 ├── dateUtils.ts         # Date formatting, calendar helpers
-└── deviceId.ts          # 익명 기기 ID 생성/관리
+├── deviceId.ts          # 익명 기기 ID 생성/관리
+└── reviewService.ts     # 앱스토어 리뷰 요청
 
 locales/                 # i18n 번역 파일
 ├── ko.json              # 한국어 번역
@@ -242,6 +244,34 @@ interface SkinRecord {
 ```
 
 **DailyTipCard**: 날짜 기반으로 매일 다른 2개의 이소티논 케어 팁 제공 (물 마시기, 보습, 자외선 차단 등 8가지 로테이션)
+
+### Store Review (앱스토어 리뷰 요청)
+
+`expo-store-review`를 사용하여 복용 체크 완료 후 네이티브 리뷰 팝업을 표시합니다.
+
+**트리거 타이밍**: 복용 체크 완료 1초 후
+
+**트리거 조건** (특정 복용 횟수에만):
+- 3회, 10회, 30회, 60회, 100회
+
+**저장 키**: `@isoLog/medication_check_count`
+
+**주요 파일**:
+- `utils/reviewService.ts`: 리뷰 요청 로직 (`tryRequestReview`)
+- `app/(tabs)/index.tsx`: `handleMedicationPress`, `handleWarningConfirm`에서 호출
+
+**흐름**:
+```
+복용 버튼 클릭 → toggleMedication() → 1초 후 tryRequestReview()
+                                              ↓
+                              복용 횟수 확인 (3, 10, 30, 60, 100?)
+                                              ↓
+                              조건 충족 시 StoreReview.requestReview()
+```
+
+**주의사항**:
+- iOS/Android 모두 OS가 연간 표시 횟수를 제한함 (호출해도 무시될 수 있음)
+- 시뮬레이터에서 정확한 테스트 불가 (TestFlight/Internal Testing 필요)
 
 ### RevenueCat Integration
 

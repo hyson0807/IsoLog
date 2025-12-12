@@ -21,6 +21,7 @@ import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { getToday } from '@/utils/dateUtils';
+import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -81,6 +82,9 @@ export default function HomeScreen() {
     // 일반 상태: 바로 복용 기록
     toggleMedication(today);
     await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
+
+    // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
+    setTimeout(() => tryRequestReview(), 1000);
   };
 
   // 복용 취소 핸들러 (SkinRecordCard에서 호출)
@@ -93,6 +97,9 @@ export default function HomeScreen() {
     setIsWarningModalVisible(false);
     toggleMedication(today);
     await handleMedicationToggle(today, true); // 복용 체크 → 알림 취소
+
+    // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
+    setTimeout(() => tryRequestReview(), 1000);
   };
 
   // 알림 아이콘 클릭 핸들러
