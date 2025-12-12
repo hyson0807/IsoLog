@@ -19,12 +19,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **복용 알림**: 복용일 밤 10시 로컬 알림 (프리미엄 전용)
 - **광고 제거**: 프리미엄 유저는 AdMob 배너 미표시
 - **익명 ID 시스템**: 로그인 없이 기기 중심 결제 관리
+- **인앱 결제**: RevenueCat 연동 (평생 이용권 $9.99)
 
 ### 예정 기능
-- **인앱 결제**: RevenueCat 연동 (일회성 결제)
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
 - **다국어 지원 (i18n)**: 앱 내 텍스트 다국어 번역
+- 알림 시간대 설정 가능하게
+- 광고 메인페이지에 스킨기록카드 이후에 나오도록 추가 
 
 ## Development Commands
 
@@ -48,6 +50,7 @@ npm run lint         # Run ESLint
 - **Crypto**: `expo-crypto` for UUID generation
 - **Localization**: `expo-localization` for global date formatting
 - **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
+- **IAP**: `react-native-purchases` for RevenueCat in-app purchases
 - **Path Aliases**: `@/*` maps to project root
 
 ### Project Structure
@@ -105,7 +108,8 @@ hooks/                   # Custom React hooks
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
 ├── frequency.ts         # Medication frequency options
-└── skin.ts              # 피부 상태 옵션 (트러블/건조함)
+├── skin.ts              # 피부 상태 옵션 (트러블/건조함)
+└── revenuecat.ts        # RevenueCat API keys, entitlements
 
 types/                   # TypeScript type definitions
 └── medication.ts        # FrequencyType, DayCellStatus, SkinRecord, etc.
@@ -212,3 +216,36 @@ interface SkinRecord {
 ```
 
 **DailyTipCard**: 날짜 기반으로 매일 다른 2개의 이소티논 케어 팁 제공 (물 마시기, 보습, 자외선 차단 등 8가지 로테이션)
+
+### RevenueCat Integration
+
+RevenueCat을 통한 인앱 결제 (평생 이용권)가 구현되어 있습니다.
+
+**상품 정보**:
+- Product ID: `isolog1`
+- 가격: $9.99 (평생 이용권)
+- Entitlement: `IsoLog Pro`
+
+**환경별 API Key** (`eas.json`에서 관리):
+- Development/Preview: `test_xxx` (Sandbox 결제)
+- Production: `appl_xxx` (실제 결제)
+
+**주요 파일**:
+- `constants/revenuecat.ts`: API Key, Entitlement ID, Product ID
+- `contexts/PremiumContext.tsx`: RevenueCat 초기화, 구매 상태 관리
+- `app/paywall.tsx`: 구매 UI, 결제/복원 처리
+- `app/subscription.tsx`: 구독 관리 페이지
+
+**데이터 흐름**:
+```
+앱 시작 → Purchases.configure() → getCustomerInfo()
+                    ↓
+         entitlements.active['IsoLog Pro'] 확인
+                    ↓
+              isPremium 상태 업데이트
+                    ↓
+         광고 숨김 / 알림 기능 활성화
+```
+
+**환경변수**:
+- `EXPO_PUBLIC_REVENUECAT_API_KEY`: RevenueCat API Key (eas.json에서 빌드 프로필별 설정)

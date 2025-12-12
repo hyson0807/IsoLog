@@ -45,6 +45,7 @@ export default function SettingsScreen() {
           <PremiumSection
             onPurchase={() => router.push('/paywall')}
             onRestore={handleRestore}
+            onManageSubscription={() => router.push('/subscription')}
           />
         </View>
 

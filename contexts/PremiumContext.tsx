@@ -7,8 +7,15 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Purchases, {
+  type CustomerInfo,
+  type PurchasesOffering,
+  LOG_LEVEL,
+} from 'react-native-purchases';
 import { getOrCreateDeviceId } from '@/utils/deviceId';
+import { getRevenueCatApiKey, ENTITLEMENT_ID } from '@/constants/revenuecat';
 
 const PREMIUM_STORAGE_KEY = '@isoLog/premium_data';
 
@@ -25,11 +32,15 @@ interface PremiumContextValue {
   isLoading: boolean;
   notificationEnabled: boolean;
   purchaseDate: string | null;
+  customerInfo: CustomerInfo | null;
+  currentOffering: PurchasesOffering | null;
 
   // Actions
   setPremiumStatus: (isPremium: boolean) => void;
   setNotificationEnabled: (enabled: boolean) => void;
   restorePurchase: () => Promise<boolean>;
+  refreshCustomerInfo: () => Promise<void>;
+  getOfferings: () => Promise<PurchasesOffering | null>;
 }
 
 const PremiumContext = createContext<PremiumContextValue | undefined>(undefined);
@@ -40,16 +51,53 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationEnabled, setNotificationEnabledState] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState<string | null>(null);
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
+  const [currentOffering, setCurrentOffering] = useState<PurchasesOffering | null>(null);
 
-  // 앱 시작 시 Device ID 생성/로드 및 프리미엄 상태 확인
+  // Check if user has active premium entitlement
+  const checkPremiumStatus = useCallback((info: CustomerInfo): boolean => {
+    const entitlement = info.entitlements.active[ENTITLEMENT_ID];
+    return entitlement !== undefined;
+  }, []);
+
+  // Update premium status from CustomerInfo
+  const updatePremiumFromCustomerInfo = useCallback(
+    async (info: CustomerInfo) => {
+      const hasPremium = checkPremiumStatus(info);
+      const entitlement = info.entitlements.active[ENTITLEMENT_ID];
+      const originalPurchaseDate = entitlement?.originalPurchaseDate ?? null;
+
+      setIsPremium(hasPremium);
+      setPurchaseDate(originalPurchaseDate);
+      setCustomerInfo(info);
+
+      // Sync to AsyncStorage for offline access
+      const stored = await AsyncStorage.getItem(PREMIUM_STORAGE_KEY);
+      const existingData: PremiumStorageData = stored
+        ? JSON.parse(stored)
+        : { isPremium: false, purchaseDate: null, notificationEnabled: false };
+
+      await AsyncStorage.setItem(
+        PREMIUM_STORAGE_KEY,
+        JSON.stringify({
+          ...existingData,
+          isPremium: hasPremium,
+          purchaseDate: originalPurchaseDate,
+        })
+      );
+    },
+    [checkPremiumStatus]
+  );
+
+  // Initialize RevenueCat and load premium status
   useEffect(() => {
     async function initialize() {
       try {
-        // Device ID 가져오기 또는 생성
+        // Get or create device ID
         const id = await getOrCreateDeviceId();
         setDeviceId(id);
 
-        // 프리미엄 상태 로드
+        // Load cached premium status first (for offline support)
         const stored = await AsyncStorage.getItem(PREMIUM_STORAGE_KEY);
         if (stored) {
           const data: PremiumStorageData = JSON.parse(stored);
@@ -57,16 +105,56 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
           setPurchaseDate(data.purchaseDate);
           setNotificationEnabledState(data.notificationEnabled);
         }
-      } catch {
-        // Failed to initialize premium context
+
+        // Skip RevenueCat initialization on web
+        if (Platform.OS === 'web') {
+          setIsLoading(false);
+          return;
+        }
+
+        // Configure RevenueCat
+        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+
+        await Purchases.configure({
+          apiKey: getRevenueCatApiKey(),
+          appUserID: id,
+        });
+
+        // Get initial customer info
+        const info = await Purchases.getCustomerInfo();
+        await updatePremiumFromCustomerInfo(info);
+
+        // Load offerings
+        const offerings = await Purchases.getOfferings();
+        if (offerings.current) {
+          setCurrentOffering(offerings.current);
+        }
+      } catch (error) {
+        console.error('Failed to initialize RevenueCat:', error);
       } finally {
         setIsLoading(false);
       }
     }
-    initialize();
-  }, []);
 
-  // 데이터 저장 함수
+    initialize();
+  }, [updatePremiumFromCustomerInfo]);
+
+  // Listen for customer info updates (purchases from other devices, subscription changes, etc.)
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+
+    const customerInfoUpdateListener = async (info: CustomerInfo) => {
+      await updatePremiumFromCustomerInfo(info);
+    };
+
+    Purchases.addCustomerInfoUpdateListener(customerInfoUpdateListener);
+
+    return () => {
+      Purchases.removeCustomerInfoUpdateListener(customerInfoUpdateListener);
+    };
+  }, [updatePremiumFromCustomerInfo]);
+
+  // Save notification data to AsyncStorage
   const saveData = useCallback(async (data: PremiumStorageData) => {
     try {
       await AsyncStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(data));
@@ -75,7 +163,7 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // 프리미엄 상태 변경
+  // Manual premium status update (for testing or fallback)
   const setPremiumStatus = useCallback(
     (premium: boolean) => {
       const newPurchaseDate = premium ? new Date().toISOString() : null;
@@ -91,10 +179,9 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     [notificationEnabled, saveData]
   );
 
-  // 알림 활성화 상태 변경
+  // Toggle notification setting (premium only)
   const setNotificationEnabled = useCallback(
     (enabled: boolean) => {
-      // 프리미엄 유저만 알림 활성화 가능
       if (!isPremium && enabled) {
         return;
       }
@@ -109,22 +196,48 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     [isPremium, purchaseDate, saveData]
   );
 
-  // 구매 복원 (추후 RevenueCat 연동 시 실제 구현)
+  // Restore purchases from RevenueCat
   const restorePurchase = useCallback(async (): Promise<boolean> => {
-    // TODO: RevenueCat SDK를 사용하여 실제 구매 복원 구현
-    // 현재는 placeholder
-    try {
-      // 실제 구현 시:
-      // const customerInfo = await Purchases.restorePurchases();
-      // const isPremiumRestored = customerInfo.entitlements.active['premium'] !== undefined;
-      // setPremiumStatus(isPremiumRestored);
-      // return isPremiumRestored;
+    if (Platform.OS === 'web') {
+      return false;
+    }
 
-      // TODO: Will be implemented with RevenueCat
+    try {
+      const info = await Purchases.restorePurchases();
+      await updatePremiumFromCustomerInfo(info);
+      return checkPremiumStatus(info);
+    } catch (error) {
+      console.error('Failed to restore purchases:', error);
       return false;
-    } catch {
-      // Failed to restore purchase
-      return false;
+    }
+  }, [updatePremiumFromCustomerInfo, checkPremiumStatus]);
+
+  // Manually refresh customer info
+  const refreshCustomerInfo = useCallback(async () => {
+    if (Platform.OS === 'web') return;
+
+    try {
+      const info = await Purchases.getCustomerInfo();
+      await updatePremiumFromCustomerInfo(info);
+    } catch (error) {
+      console.error('Failed to refresh customer info:', error);
+    }
+  }, [updatePremiumFromCustomerInfo]);
+
+  // Get current offerings
+  const getOfferings = useCallback(async (): Promise<PurchasesOffering | null> => {
+    if (Platform.OS === 'web') return null;
+
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current) {
+        setCurrentOffering(offerings.current);
+        return offerings.current;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to get offerings:', error);
+      return null;
     }
   }, []);
 
@@ -135,9 +248,13 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isLoading,
       notificationEnabled,
       purchaseDate,
+      customerInfo,
+      currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
       restorePurchase,
+      refreshCustomerInfo,
+      getOfferings,
     }),
     [
       isPremium,
@@ -145,9 +262,13 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isLoading,
       notificationEnabled,
       purchaseDate,
+      customerInfo,
+      currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
       restorePurchase,
+      refreshCustomerInfo,
+      getOfferings,
     ]
   );
 

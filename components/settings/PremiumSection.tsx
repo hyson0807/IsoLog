@@ -5,29 +5,65 @@ import { usePremiumContext } from '@/contexts/PremiumContext';
 interface PremiumSectionProps {
   onPurchase: () => void;
   onRestore: () => void;
+  onManageSubscription?: () => void;
 }
 
-export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
+export function PremiumSection({ onPurchase, onRestore, onManageSubscription }: PremiumSectionProps) {
   const { isPremium, purchaseDate } = usePremiumContext();
 
   if (isPremium) {
     return (
-      <View className="rounded-xl bg-orange-50 p-4">
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-lg font-bold text-orange-600">Premium</Text>
-            <Text className="mt-1 text-sm text-orange-500">
-              광고 제거 + 알림 기능 이용 중
-            </Text>
-          </View>
-          <View className="h-8 w-8 items-center justify-center rounded-full bg-orange-500">
-            <Ionicons name="checkmark" size={18} color="white" />
+      <View className="overflow-hidden rounded-xl bg-white">
+        {/* Premium Status Banner */}
+        <View className="bg-gradient-to-r from-orange-500 to-orange-400 px-5 py-4">
+          <View className="flex-row items-center justify-between">
+            <View>
+              <View className="flex-row items-center">
+                <View className="mr-2 rounded-full bg-white/20 px-2 py-0.5">
+                  <Text className="text-xs font-bold text-white">PRO</Text>
+                </View>
+                <Text className="text-lg font-bold text-white">IsoLog Pro</Text>
+              </View>
+              <Text className="mt-1 text-sm text-white/80">
+                프리미엄 기능 이용 중
+              </Text>
+            </View>
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+              <Ionicons name="star" size={20} color="white" />
+            </View>
           </View>
         </View>
-        {purchaseDate && (
-          <Text className="mt-3 text-xs text-orange-400">
-            구매일: {new Date(purchaseDate).toLocaleDateString('ko-KR')}
-          </Text>
+
+        {/* Active Features */}
+        <View className="px-5 py-4">
+          <View className="flex-row items-center py-1.5">
+            <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
+            <Text className="ml-2 text-sm text-gray-700">광고 제거 활성화</Text>
+          </View>
+          <View className="flex-row items-center py-1.5">
+            <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
+            <Text className="ml-2 text-sm text-gray-700">복용 알림 기능 사용 가능</Text>
+          </View>
+          {purchaseDate && (
+            <Text className="mt-2 text-xs text-gray-400">
+              구매일: {new Date(purchaseDate).toLocaleDateString('ko-KR')}
+            </Text>
+          )}
+        </View>
+
+        {/* Manage Subscription Button */}
+        {onManageSubscription && (
+          <TouchableOpacity
+            onPress={onManageSubscription}
+            className="flex-row items-center justify-between border-t border-gray-100 px-5 py-3"
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center">
+              <Ionicons name="settings-outline" size={18} color="#6B7280" />
+              <Text className="ml-2 text-sm text-gray-600">구독 관리</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
+          </TouchableOpacity>
         )}
       </View>
     );
@@ -35,7 +71,7 @@ export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
 
   return (
     <View className="overflow-hidden rounded-xl bg-white">
-      {/* 프리미엄 배너 */}
+      {/* Premium Banner */}
       <TouchableOpacity
         onPress={onPurchase}
         activeOpacity={0.8}
@@ -44,14 +80,14 @@ export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
         <View className="flex-row items-center justify-between">
           <View className="flex-1">
             <Text className="mt-1 text-xl font-bold text-white">
-              IsoLog Premium
+              IsoLog Pro
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" />
         </View>
       </TouchableOpacity>
 
-      {/* 혜택 목록 */}
+      {/* Benefits List */}
       <View className="px-5 py-4">
         <View className="flex-row items-center py-2">
           <View className="mr-3 h-1.5 w-1.5 rounded-full bg-orange-500" />
@@ -63,11 +99,11 @@ export function PremiumSection({ onPurchase, onRestore }: PremiumSectionProps) {
         </View>
         <View className="flex-row items-center py-2">
           <View className="mr-3 h-1.5 w-1.5 rounded-full bg-orange-500" />
-          <Text className="text-sm text-gray-700">한 번 결제로 영구 사용</Text>
+          <Text className="text-sm text-gray-700">한 번 결제로 평생 사용</Text>
         </View>
       </View>
 
-      {/* 구매 복원 버튼 */}
+      {/* Restore Purchase Button */}
       <TouchableOpacity
         onPress={onRestore}
         className="border-t border-gray-100 py-3"
