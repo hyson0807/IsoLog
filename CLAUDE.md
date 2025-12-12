@@ -223,29 +223,54 @@ RevenueCat을 통한 인앱 결제 (평생 이용권)가 구현되어 있습니�
 
 **상품 정보**:
 - Product ID: `isolog1`
-- 가격: $9.99 (평생 이용권)
+- 가격: $9.99 (평생 이용권, Non-consumable)
 - Entitlement: `IsoLog Pro`
 
 **환경별 API Key** (`eas.json`에서 관리):
-- Development/Preview: `test_xxx` (Sandbox 결제)
-- Production: `appl_xxx` (실제 결제)
+
+| 환경 | iOS | Android |
+|------|-----|---------|
+| Development/Preview | `test_xxx` | `test_xxx` |
+| Production | `appl_xxx` | `goog_xxx` |
+
+**환경변수**:
+- `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`: iOS용 RevenueCat API Key
+- `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY`: Android용 RevenueCat API Key
 
 **주요 파일**:
-- `constants/revenuecat.ts`: API Key, Entitlement ID, Product ID
-- `contexts/PremiumContext.tsx`: RevenueCat 초기화, 구매 상태 관리
+- `constants/revenuecat.ts`: 플랫폼별 API Key 선택, Entitlement ID, Product ID
+- `contexts/PremiumContext.tsx`: RevenueCat 초기화, 구매 상태 관리, CustomerInfo 리스너
 - `app/paywall.tsx`: 구매 UI, 결제/복원 처리
 - `app/subscription.tsx`: 구독 관리 페이지
 
-**데이터 흐름**:
+**초기화 흐름**:
 ```
-앱 시작 → Purchases.configure() → getCustomerInfo()
+앱 시작 → Purchases.configure({ apiKey, appUserID: deviceId })
                     ↓
-         entitlements.active['IsoLog Pro'] 확인
+         addCustomerInfoUpdateListener() 등록
+                    ↓
+         getCustomerInfo() → entitlements.active['IsoLog Pro'] 확인
                     ↓
               isPremium 상태 업데이트
                     ↓
          광고 숨김 / 알림 기능 활성화
 ```
 
-**환경변수**:
-- `EXPO_PUBLIC_REVENUECAT_API_KEY`: RevenueCat API Key (eas.json에서 빌드 프로필별 설정)
+**구매 흐름** (Offering → Package → Product):
+```
+Purchases.getOfferings()
+         ↓
+  offerings.current (현재 Offering)
+         ↓
+  offering.availablePackages[0] (첫 번째 Package)
+         ↓
+  Purchases.purchasePackage(package)
+         ↓
+  customerInfo.entitlements.active['IsoLog Pro'] 확인
+         ↓
+  isPremium = true → 프리미엄 기능 활성화
+```
+
+**CustomerInfo 리스너**:
+- 다른 기기에서 구매/환불 시 실시간 상태 업데이트
+- 앱 포그라운드 복귀 시 자동 동기화
