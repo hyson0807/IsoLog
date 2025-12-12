@@ -13,10 +13,16 @@ import { getToday } from '@/utils/dateUtils';
  * - 앱 시작 시 오늘의 알림 예약 상태 체크
  * - 복용 체크/해제 시 알림 예약/취소
  * - 프리미엄/알림 설정 변경 시 알림 업데이트
+ * - 알림 시간 변경 시 알림 재예약
  */
 export function useMedicationReminder() {
   const { todayStatus, isMedicationDay, hasTaken } = useMedicationContext();
-  const { isPremium, notificationEnabled, isLoading: premiumLoading } = usePremiumContext();
+  const {
+    isPremium,
+    notificationEnabled,
+    notificationTime,
+    isLoading: premiumLoading,
+  } = usePremiumContext();
 
   const today = getToday();
 
@@ -29,9 +35,11 @@ export function useMedicationReminder() {
       todayStatus.isMedicationDay,
       todayStatus.hasTakenToday,
       isPremium,
-      notificationEnabled
+      notificationEnabled,
+      notificationTime.hour,
+      notificationTime.minute
     );
-  }, [today, todayStatus, isPremium, notificationEnabled, premiumLoading]);
+  }, [today, todayStatus, isPremium, notificationEnabled, notificationTime, premiumLoading]);
 
   // 특정 날짜 복용 토글 시 호출할 함수들
   const handleMedicationToggle = async (date: string, willTake: boolean) => {
@@ -46,7 +54,7 @@ export function useMedicationReminder() {
     } else {
       // 복용 해제 → 알림 다시 예약 (복용일인 경우만)
       if (isMedicationDay(date)) {
-        await scheduleReminder(date);
+        await scheduleReminder(date, notificationTime.hour, notificationTime.minute);
       }
     }
   };

@@ -60,8 +60,12 @@ export async function getNotificationPermissionStatus(): Promise<boolean> {
   return status === 'granted';
 }
 
-// 특정 날짜 밤 10시에 알림 예약
-export async function scheduleReminder(date: string): Promise<string | null> {
+// 특정 날짜 지정 시간에 알림 예약
+export async function scheduleReminder(
+  date: string,
+  hour: number = 22,
+  minute: number = 0
+): Promise<string | null> {
   if (Platform.OS === 'web') {
     return null;
   }
@@ -70,8 +74,8 @@ export async function scheduleReminder(date: string): Promise<string | null> {
     // 날짜 파싱 (YYYY-MM-DD)
     const [year, month, day] = date.split('-').map(Number);
 
-    // 해당 날짜 밤 10시로 설정
-    const triggerDate = new Date(year, month - 1, day, 22, 0, 0);
+    // 해당 날짜 지정 시간으로 설정
+    const triggerDate = new Date(year, month - 1, day, hour, minute, 0);
 
     // 이미 지난 시간이면 예약하지 않음
     if (triggerDate <= new Date()) {
@@ -144,7 +148,9 @@ export async function checkAndScheduleTodayReminder(
   isMedicationDay: boolean,
   hasTaken: boolean,
   isPremium: boolean,
-  notificationEnabled: boolean
+  notificationEnabled: boolean,
+  hour: number = 22,
+  minute: number = 0
 ): Promise<void> {
   if (Platform.OS === 'web') {
     return;
@@ -169,5 +175,5 @@ export async function checkAndScheduleTodayReminder(
   }
 
   // 알림 예약
-  await scheduleReminder(date);
+  await scheduleReminder(date, hour, minute);
 }

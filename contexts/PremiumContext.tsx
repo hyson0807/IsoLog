@@ -19,10 +19,16 @@ import { getRevenueCatApiKey, ENTITLEMENT_ID } from '@/constants/revenuecat';
 
 const PREMIUM_STORAGE_KEY = '@isoLog/premium_data';
 
+interface NotificationTime {
+  hour: number;
+  minute: number;
+}
+
 interface PremiumStorageData {
   isPremium: boolean;
   purchaseDate: string | null;
   notificationEnabled: boolean;
+  notificationTime?: NotificationTime;
 }
 
 interface PremiumContextValue {
@@ -31,6 +37,7 @@ interface PremiumContextValue {
   deviceId: string | null;
   isLoading: boolean;
   notificationEnabled: boolean;
+  notificationTime: NotificationTime;
   purchaseDate: string | null;
   customerInfo: CustomerInfo | null;
   currentOffering: PurchasesOffering | null;
@@ -38,6 +45,7 @@ interface PremiumContextValue {
   // Actions
   setPremiumStatus: (isPremium: boolean) => void;
   setNotificationEnabled: (enabled: boolean) => void;
+  setNotificationTime: (hour: number, minute: number) => void;
   restorePurchase: () => Promise<boolean>;
   refreshCustomerInfo: () => Promise<void>;
   getOfferings: () => Promise<PurchasesOffering | null>;
@@ -45,11 +53,14 @@ interface PremiumContextValue {
 
 const PremiumContext = createContext<PremiumContextValue | undefined>(undefined);
 
+const DEFAULT_NOTIFICATION_TIME: NotificationTime = { hour: 22, minute: 0 };
+
 export function PremiumProvider({ children }: { children: ReactNode }) {
   const [isPremium, setIsPremium] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notificationEnabled, setNotificationEnabledState] = useState(false);
+  const [notificationTime, setNotificationTimeState] = useState<NotificationTime>(DEFAULT_NOTIFICATION_TIME);
   const [purchaseDate, setPurchaseDate] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [currentOffering, setCurrentOffering] = useState<PurchasesOffering | null>(null);
@@ -104,6 +115,9 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
           setIsPremium(data.isPremium);
           setPurchaseDate(data.purchaseDate);
           setNotificationEnabledState(data.notificationEnabled);
+          if (data.notificationTime) {
+            setNotificationTimeState(data.notificationTime);
+          }
         }
 
         // Skip RevenueCat initialization on web
@@ -191,9 +205,29 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
         isPremium,
         purchaseDate,
         notificationEnabled: enabled,
+        notificationTime,
       });
     },
-    [isPremium, purchaseDate, saveData]
+    [isPremium, purchaseDate, notificationTime, saveData]
+  );
+
+  // Set notification time (premium only)
+  const setNotificationTime = useCallback(
+    (hour: number, minute: number) => {
+      if (!isPremium) {
+        return;
+      }
+
+      const newTime = { hour, minute };
+      setNotificationTimeState(newTime);
+      saveData({
+        isPremium,
+        purchaseDate,
+        notificationEnabled,
+        notificationTime: newTime,
+      });
+    },
+    [isPremium, purchaseDate, notificationEnabled, saveData]
   );
 
   // Restore purchases from RevenueCat
@@ -247,11 +281,13 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       deviceId,
       isLoading,
       notificationEnabled,
+      notificationTime,
       purchaseDate,
       customerInfo,
       currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
+      setNotificationTime,
       restorePurchase,
       refreshCustomerInfo,
       getOfferings,
@@ -261,11 +297,13 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       deviceId,
       isLoading,
       notificationEnabled,
+      notificationTime,
       purchaseDate,
       customerInfo,
       currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
+      setNotificationTime,
       restorePurchase,
       refreshCustomerInfo,
       getOfferings,
