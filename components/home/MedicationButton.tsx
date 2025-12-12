@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { DrinkingWarningLevel } from '@/types/medication';
@@ -33,17 +33,11 @@ export function MedicationButton({
     );
   }
 
-  // 경고 상태 + 아직 복용 안 함
+  // 경고 상태 (음주 전후 기간)
   const isWarning = warningLevel && !hasTaken;
 
-  // 버튼 색상 결정
+  // 버튼 스타일 결정
   const getButtonStyle = () => {
-    if (hasTaken) {
-      return {
-        bgClass: 'bg-green-500',
-        shadowColor: '#4CAF50',
-      };
-    }
     if (isWarning) {
       return {
         bgClass: 'bg-red-500',
@@ -51,7 +45,7 @@ export function MedicationButton({
       };
     }
     return {
-      bgClass: 'bg-orange-500',
+      bgClass: 'bg-white',
       shadowColor: '#FF6B35',
     };
   };
@@ -60,14 +54,12 @@ export function MedicationButton({
 
   // 텍스트 색상 결정
   const getTextColor = () => {
-    if (hasTaken) return 'text-green-600';
     if (isWarning) return 'text-red-600';
     return 'text-orange-600';
   };
 
   // 버튼 텍스트 결정
   const getButtonText = () => {
-    if (hasTaken) return '복용 완료!';
     if (isWarning) return '복용 주의!';
     return '복용 체크하기';
   };
@@ -86,28 +78,22 @@ export function MedicationButton({
           elevation: 8,
         }}
       >
-        {hasTaken ? (
-          <Ionicons name="checkmark-circle" size={64} color="#FFFFFF" />
-        ) : isWarning ? (
+        {isWarning ? (
           <View className="items-center">
             <Ionicons name="warning" size={48} color="#FFFFFF" />
-            <Ionicons
-              name="medical"
-              size={24}
-              color="#FFFFFF"
-              style={{ marginTop: 4 }}
-            />
+            <Text className="mt-1 text-sm font-medium text-white">주의</Text>
           </View>
         ) : (
-          <Ionicons name="medical" size={64} color="#FFFFFF" />
+          <Image
+            source={require('@/assets/images/IsoCareLogo.png')}
+            className="h-24 w-24"
+            resizeMode="contain"
+          />
         )}
       </TouchableOpacity>
       <Text className={`mt-4 text-lg font-semibold ${getTextColor()}`}>
         {getButtonText()}
       </Text>
-      {hasTaken && (
-        <Text className="mt-1 text-sm text-gray-400">다시 누르면 취소됩니다</Text>
-      )}
       {isWarning && (
         <Text className="mt-1 text-sm text-red-400">음주 전후 기간입니다</Text>
       )}
