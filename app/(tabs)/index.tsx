@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, ScrollView, Alert } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import {
   Header,
   WarningConfirmModal,
   DrawerMenu,
-  PaywallModal,
   NotificationPromptSnackbar,
 } from '@/components/common';
 import {
@@ -22,10 +22,10 @@ import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { getToday } from '@/utils/dateUtils';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [isPaywallVisible, setIsPaywallVisible] = useState(false);
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const today = getToday();
 
@@ -97,16 +97,9 @@ export default function HomeScreen() {
       // 프리미엄 유저: 알림 토글
       setNotificationEnabled(!notificationEnabled);
     } else {
-      // 무료 유저: Paywall 표시
-      setIsPaywallVisible(true);
+      // 무료 유저: Paywall 페이지로 이동
+      router.push('/paywall');
     }
-  };
-
-  // Paywall 구매 버튼 핸들러
-  const handlePurchase = () => {
-    setIsPaywallVisible(false);
-    // TODO: RevenueCat 결제 로직
-    Alert.alert('준비 중', '인앱 결제 기능을 준비 중입니다.');
   };
 
   return (
@@ -209,17 +202,10 @@ export default function HomeScreen() {
         onClose={() => setIsDrawerVisible(false)}
       />
 
-      {/* 프리미엄 결제 팝업 */}
-      <PaywallModal
-        visible={isPaywallVisible}
-        onClose={() => setIsPaywallVisible(false)}
-        onPurchase={handlePurchase}
-      />
-
       {/* 복용 완료 후 알림 유도 스낵바 (무료 유저만) */}
       <NotificationPromptSnackbar
         visible={isSnackbarVisible}
-        onPress={() => setIsPaywallVisible(true)}
+        onPress={() => router.push('/paywall')}
         onDismiss={() => setIsSnackbarVisible(false)}
       />
     </SafeAreaView>

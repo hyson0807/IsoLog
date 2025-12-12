@@ -1,27 +1,14 @@
-import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { NotificationToggle } from '@/components/settings/NotificationToggle';
 import { PremiumSection } from '@/components/settings/PremiumSection';
-import { PaywallModal } from '@/components/common/PaywallModal';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const { restorePurchase } = usePremiumContext();
-  const [showPaywall, setShowPaywall] = useState(false);
-
-  const handlePurchase = () => {
-    // TODO: RevenueCat 결제 로직 구현
-    setShowPaywall(false);
-    Alert.alert(
-      '준비 중',
-      '인앱 결제 기능을 준비 중입니다. 곧 출시 예정이에요!',
-      [{ text: '확인' }]
-    );
-  };
 
   const handleRestore = async () => {
     try {
@@ -56,7 +43,7 @@ export default function SettingsScreen() {
         {/* 프리미엄 섹션 */}
         <View className="px-5 pt-5">
           <PremiumSection
-            onPurchase={() => setShowPaywall(true)}
+            onPurchase={() => router.push('/paywall')}
             onRestore={handleRestore}
           />
         </View>
@@ -64,7 +51,7 @@ export default function SettingsScreen() {
         {/* 알림 설정 */}
         <View className="px-5 pt-6">
           <Text className="mb-3 text-sm font-medium text-gray-500">알림</Text>
-          <NotificationToggle onPremiumRequired={() => setShowPaywall(true)} />
+          <NotificationToggle onPremiumRequired={() => router.push('/paywall')} />
         </View>
 
         {/* 계정 섹션 (Coming Soon) */}
@@ -130,13 +117,6 @@ export default function SettingsScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {/* Paywall 모달 */}
-      <PaywallModal
-        visible={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        onPurchase={handlePurchase}
-      />
     </SafeAreaView>
   );
 }

@@ -22,6 +22,13 @@ export default function RootLayout() {
               animation: 'slide_from_right',
             }}
           />
+          <Stack.Screen
+            name="paywall"
+            options={{
+              presentation: 'modal',
+              animation: 'fade',
+            }}
+          />
         </Stack>
         </SafeAreaProvider>
       </MedicationProvider>
