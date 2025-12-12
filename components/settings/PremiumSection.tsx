@@ -19,23 +19,20 @@ export function PremiumSection({ onPurchase, onRestore, onManageSubscription }: 
           <View className="flex-row items-center justify-between">
             <View>
               <View className="flex-row items-center">
-                <View className="mr-2 rounded-full bg-white/20 px-2 py-0.5">
-                  <Text className="text-xs font-bold text-white">PRO</Text>
+                <View className="mr-2 rounded-full bg-black/10 px-2 py-0.5">
+                  <Text className="text-xs font-bold">PRO</Text>
                 </View>
-                <Text className="text-lg font-bold text-white">IsoLog Pro</Text>
+                <Text className="text-lg font-bold">IsoLog Pro</Text>
               </View>
-              <Text className="mt-1 text-sm text-white/80">
+              <Text className="mt-1 text-sm text-black/80">
                 프리미엄 기능 이용 중
               </Text>
-            </View>
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-              <Ionicons name="star" size={20} color="white" />
             </View>
           </View>
         </View>
 
         {/* Active Features */}
-        <View className="px-5 py-4">
+        <View className="px-5 pb-4">
           <View className="flex-row items-center py-1.5">
             <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
             <Text className="ml-2 text-sm text-gray-700">광고 제거 활성화</Text>

@@ -16,7 +16,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **글로벌 지원**: 기기의 locale에 따라 날짜 형식 자동 변환
 
 ### 프리미엄 기능 (구현 완료)
-- **복용 알림**: 복용일 밤 10시 로컬 알림 (프리미엄 전용)
+- **복용 알림**: 복용일 지정 시간에 로컬 알림 (프리미엄 전용)
+- **알림 시간 설정**: 바텀시트 타임피커로 원하는 시간 설정 (기본값 오후 10시)
 - **광고 제거**: 프리미엄 유저는 AdMob 배너 미표시
 - **익명 ID 시스템**: 로그인 없이 기기 중심 결제 관리
 - **인앱 결제**: RevenueCat 연동 (평생 이용권 $9.99)
@@ -25,8 +26,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
 - **다국어 지원 (i18n)**: 앱 내 텍스트 다국어 번역
-- 알림 시간대 설정 가능하게
-- 광고 메인페이지에 스킨기록카드 이후에 나오도록 추가 
+- 광고, 메인페이지에 스킨기록카드 이후에 나오도록 추가
+- 리뷰 모달 뜨는거 
 
 ## Development Commands
 
@@ -47,6 +48,7 @@ npm run lint         # Run ESLint
 - **State Management**: React Context API (`MedicationContext`, `PremiumContext`)
 - **Storage**: AsyncStorage for data persistence
 - **Notifications**: `expo-notifications` for local push notifications
+- **Time Picker**: `@react-native-community/datetimepicker` for notification time setting
 - **Crypto**: `expo-crypto` for UUID generation
 - **Localization**: `expo-localization` for global date formatting
 - **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
@@ -89,8 +91,9 @@ components/
 │   ├── DayDetailSheet.tsx    # 복용/술약속/피부기록 토글 시트
 │   └── MonthlySummary.tsx    # Monthly taken count
 ├── settings/            # Settings components
-│   ├── PremiumSection.tsx    # 프리미엄 배너 + 혜택 목록
-│   └── NotificationToggle.tsx # 알림 설정 토글
+│   ├── PremiumSection.tsx           # 프리미엄 배너 + 혜택 목록
+│   ├── NotificationToggle.tsx       # 알림 설정 토글 + 시간 표시
+│   └── NotificationTimeBottomSheet.tsx # 알림 시간 선택 바텀시트
 └── community/           # Community components (TBD)
 
 contexts/                # React Context providers
