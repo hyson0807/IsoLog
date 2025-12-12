@@ -31,7 +31,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 예정 기능
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
-- 결제 플로우 점검 
 
 ## Development Commands
 
