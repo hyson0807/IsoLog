@@ -20,7 +20,7 @@ import { getDaysDifference } from '@/utils/dateUtils';
 import { frequencyOptions } from '@/constants/frequency';
 import { getToday, isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
 
-const STORAGE_KEY = '@isoCare/medication_data';
+const STORAGE_KEY = '@isoLog/medication_data';
 
 interface MedicationContextValue {
   // State

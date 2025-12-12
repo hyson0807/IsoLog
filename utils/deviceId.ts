@@ -1,7 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const DEVICE_ID_KEY = '@isoCare/device_id';
+const DEVICE_ID_KEY = '@isoLog/device_id';
 
 export async function getOrCreateDeviceId(): Promise<string> {
   try {

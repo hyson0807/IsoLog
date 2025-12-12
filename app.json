@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "IsoCare",
-    "slug": "IsoCare",
+    "name": "IsoLog",
+    "slug": "IsoLog",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hyson.isoCare"
+      "bundleIdentifier": "com.hyson.isoLog"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.hyson.isoCare"
+      "package": "com.hyson.isoLog"
     },
     "web": {
       "output": "static",
@@ -71,8 +71,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a353f9a1-d07b-4ce6-b256-0a3d7b180b7d"
+        "projectId": "2d8d2553-b672-48e3-91d1-597c1307fbcc"
       }
-    }
+    },
+    "owner": "hyson"
   }
 }

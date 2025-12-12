@@ -10,7 +10,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getOrCreateDeviceId } from '@/utils/deviceId';
 
-const PREMIUM_STORAGE_KEY = '@isoCare/premium_data';
+const PREMIUM_STORAGE_KEY = '@isoLog/premium_data';
 
 interface PremiumStorageData {
   isPremium: boolean;
