@@ -227,5 +227,38 @@
     "startPremium": "Start Premium",
     "premiumInfo": "Thank you for purchasing IsoLog Pro Lifetime. You can use all features permanently without additional payment.",
     "freeInfo": "Upgrade to IsoLog Pro to use the app ad-free and receive daily medication reminders."
+  },
+  "legal": {
+    "termsTitle": "Terms of Service",
+    "privacyTitle": "Privacy Policy",
+    "lastUpdated": "Last Updated",
+    "terms": {
+      "section1Title": "1. About the Service",
+      "section1Content": "IsoLog is a medication tracking app for Isotretinoin users. The app provides features such as medication tracking, skin condition monitoring, and reminders. This service does not replace medical advice. Always follow your healthcare provider's instructions.",
+      "section2Title": "2. Terms of Use",
+      "section2Content": "By using this app, you agree to these terms. Users must comply with all applicable laws and regulations and must not misuse the app.",
+      "section3Title": "3. Data Storage",
+      "section3Content": "Your medication records and skin condition data are stored locally on your device. Uninstalling the app may permanently delete this data.",
+      "section4Title": "4. In-App Purchases",
+      "section4Content": "IsoLog Pro is offered as a lifetime license. Payments are processed through the Apple App Store or Google Play Store. Refunds are subject to each store's policies.",
+      "section5Title": "5. Disclaimer",
+      "section5Content": "This app is a tool to help manage medication and cannot replace medical diagnosis or treatment. Consult your doctor for all medication decisions. We are not responsible for any damages resulting from app usage.",
+      "section6Title": "6. Changes to Terms",
+      "section6Content": "These terms may be changed without prior notice. Updated terms will be communicated through in-app notices or updates."
+    },
+    "privacy": {
+      "section1Title": "1. Information We Collect",
+      "section1Content": "IsoLog only collects information you provide, such as medication records, skin conditions, and notification settings. We do not collect personal identifying information (name, email, etc.).",
+      "section2Title": "2. How Data is Stored",
+      "section2Content": "All data is stored locally on your device (AsyncStorage). Data is not transmitted to external servers or stored in the cloud.",
+      "section3Title": "3. How Data is Used",
+      "section3Content": "Collected information is used solely to provide app features (medication tracking, notifications, statistics, etc.).",
+      "section4Title": "4. Third-Party Sharing",
+      "section4Content": "User data is not shared with third parties. However, we use RevenueCat for payment processing, which only uses anonymized device identifiers.",
+      "section5Title": "5. Advertising",
+      "section5Content": "Free version users may see ads through Google AdMob. The advertising service may collect device information according to Google's Privacy Policy.",
+      "section6Title": "6. Data Deletion",
+      "section6Content": "Uninstalling the app will delete all data stored on your device. Data recovery is not possible, so please back up any necessary information before deletion."
+    }
   }
 }

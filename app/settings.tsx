@@ -123,7 +123,10 @@ export default function SettingsScreen() {
 
             <View className="mx-4 h-px bg-gray-100" />
 
-            <TouchableOpacity className="flex-row items-center justify-between px-4 py-4">
+            <TouchableOpacity
+              onPress={() => router.push('/legal/terms')}
+              className="flex-row items-center justify-between px-4 py-4"
+            >
               <View className="flex-row items-center">
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                   <Ionicons name="document-text-outline" size={20} color="#6B7280" />
@@ -135,7 +138,10 @@ export default function SettingsScreen() {
 
             <View className="mx-4 h-px bg-gray-100" />
 
-            <TouchableOpacity className="flex-row items-center justify-between px-4 py-4">
+            <TouchableOpacity
+              onPress={() => router.push('/legal/privacy')}
+              className="flex-row items-center justify-between px-4 py-4"
+            >
               <View className="flex-row items-center">
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                   <Ionicons name="shield-checkmark-outline" size={20} color="#6B7280" />

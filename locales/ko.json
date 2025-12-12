@@ -227,5 +227,38 @@
     "startPremium": "프리미엄 시작하기",
     "premiumInfo": "IsoLog Pro 평생 이용권을 구매해주셔서 감사합니다. 추가 결제 없이 모든 기능을 영구적으로 사용하실 수 있습니다.",
     "freeInfo": "IsoLog Pro로 업그레이드하면 광고 없이 앱을 사용하고, 매일 복용 알림을 받을 수 있습니다."
+  },
+  "legal": {
+    "termsTitle": "이용약관",
+    "privacyTitle": "개인정보처리방침",
+    "lastUpdated": "최종 수정일",
+    "terms": {
+      "section1Title": "1. 서비스 소개",
+      "section1Content": "IsoLog는 이소티논(Isotretinoin) 복용자를 위한 복용 관리 앱입니다. 본 앱은 복용 기록, 피부 상태 추적, 알림 등의 기능을 제공합니다. 본 서비스는 의료 조언을 대체하지 않으며, 반드시 전문 의료진의 지시에 따라 복용하시기 바랍니다.",
+      "section2Title": "2. 이용 조건",
+      "section2Content": "본 앱을 이용함으로써 사용자는 본 약관에 동의하는 것으로 간주됩니다. 사용자는 관련 법률 및 규정을 준수해야 하며, 앱을 부정하게 사용해서는 안 됩니다.",
+      "section3Title": "3. 데이터 저장",
+      "section3Content": "사용자의 복용 기록 및 피부 상태 데이터는 기기 내 로컬 저장소에 저장됩니다. 앱을 삭제하면 해당 데이터가 영구적으로 삭제될 수 있습니다.",
+      "section4Title": "4. 인앱 구매",
+      "section4Content": "IsoLog Pro는 평생 이용권으로 제공됩니다. 결제는 Apple App Store 또는 Google Play Store를 통해 처리되며, 환불은 각 스토어의 정책에 따릅니다.",
+      "section5Title": "5. 면책 조항",
+      "section5Content": "본 앱은 복용 관리를 돕기 위한 도구일 뿐, 의료 진단이나 치료를 대체할 수 없습니다. 복용에 관한 모든 결정은 담당 의사와 상의하시기 바랍니다. 앱 사용으로 인한 어떠한 손해에 대해서도 책임지지 않습니다.",
+      "section6Title": "6. 약관 변경",
+      "section6Content": "본 약관은 사전 통지 없이 변경될 수 있습니다. 변경된 약관은 앱 내 공지 또는 업데이트를 통해 안내됩니다."
+    },
+    "privacy": {
+      "section1Title": "1. 수집하는 정보",
+      "section1Content": "IsoLog는 복용 기록, 피부 상태, 알림 설정 등 사용자가 입력한 정보만을 수집합니다. 개인 식별 정보(이름, 이메일 등)는 수집하지 않습니다.",
+      "section2Title": "2. 정보 저장 방식",
+      "section2Content": "모든 데이터는 사용자 기기의 로컬 저장소(AsyncStorage)에 저장됩니다. 별도의 서버로 전송되거나 클라우드에 저장되지 않습니다.",
+      "section3Title": "3. 정보 이용 목적",
+      "section3Content": "수집된 정보는 오직 앱의 기능 제공(복용 추적, 알림, 통계 등)을 위해서만 사용됩니다.",
+      "section4Title": "4. 제3자 제공",
+      "section4Content": "사용자 데이터는 제3자와 공유되지 않습니다. 단, 결제 처리를 위해 RevenueCat 서비스를 이용하며, 이는 익명화된 기기 식별자만을 사용합니다.",
+      "section5Title": "5. 광고",
+      "section5Content": "무료 버전 사용자에게는 Google AdMob을 통한 광고가 표시됩니다. 광고 서비스는 기기 정보를 수집할 수 있으며, 이는 Google의 개인정보처리방침에 따릅니다.",
+      "section6Title": "6. 데이터 삭제",
+      "section6Content": "앱을 삭제하면 기기에 저장된 모든 데이터가 삭제됩니다. 데이터 복구는 불가능하므로 삭제 전 필요한 정보를 백업하시기 바랍니다."
+    }
   }
 }
