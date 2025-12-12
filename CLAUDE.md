@@ -31,8 +31,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 예정 기능
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
-- 광고, 메인페이지에 스킨기록카드 이후에 나오도록 추가
-- 리뷰 모달 뜨는거 
+- 리뷰 모달
 
 ## Development Commands
 
@@ -57,7 +56,7 @@ npm run lint         # Run ESLint
 - **Crypto**: `expo-crypto` for UUID generation
 - **Localization**: `expo-localization` for device locale detection
 - **i18n**: `i18next` + `react-i18next` for multi-language support
-- **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
+- **Ads**: `react-native-google-mobile-ads` for AdMob (배너 + 전면 광고)
 - **IAP**: `react-native-purchases` for RevenueCat in-app purchases
 - **Path Aliases**: `@/*` maps to project root
 
@@ -114,13 +113,15 @@ services/                # Business logic services
 hooks/                   # Custom React hooks
 ├── useMedicationSchedule.ts    # (legacy, use MedicationContext)
 ├── useMedicationReminder.ts    # 복용 알림 관리
-└── useNotificationPermission.ts # 알림 권한 관리
+├── useNotificationPermission.ts # 알림 권한 관리
+└── useInterstitialAd.ts        # 전면 광고 관리
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
 ├── frequency.ts         # Medication frequency options
 ├── skin.ts              # 피부 상태 옵션 (트러블/건조함)
-└── revenuecat.ts        # RevenueCat API keys, entitlements
+├── revenuecat.ts        # RevenueCat API keys, entitlements
+└── admob.ts             # AdMob 플랫폼별 Ad Unit ID
 
 types/                   # TypeScript type definitions
 └── medication.ts        # FrequencyType, DayCellStatus, SkinRecord, etc.
@@ -180,18 +181,27 @@ locales/                 # i18n 번역 파일
 
 ### AdMob Integration
 
-Google AdMob 배너 광고가 캘린더 탭 상단에 표시됩니다.
+Google AdMob 광고가 앱에 통합되어 있습니다.
 
-**설정**:
-- iOS App ID: `ca-app-pub-2320452683835335~1158955767`
-- Android App ID: `ca-app-pub-2320452683835335~1386186473`
-- Banner Unit ID: `ca-app-pub-2320452683835335/2836845429`
+**App ID** (app.json 설정):
+- iOS: `ca-app-pub-2320452683835335~1158955767`
+- Android: `ca-app-pub-2320452683835335~1386186473`
+
+**Ad Unit ID** (`constants/admob.ts`에서 관리):
+
+| 광고 타입 | iOS | Android |
+|----------|-----|---------|
+| 배너 | `ca-app-pub-2320452683835335/2836845429` | `ca-app-pub-2320452683835335/1979167126` |
+| 전면 | `ca-app-pub-2320452683835335/9737597014` | `ca-app-pub-2320452683835335/1240159899` |
+
+**광고 위치**:
+- **배너 광고**: 캘린더 탭 상단 (`AdBanner` 컴포넌트)
+- **전면 광고**: 피부 기록 완료 후 (`useInterstitialAd` 훅)
 
 **특징**:
-- 개발 환경에서는 테스트 광고 표시 (`TestIds.ADAPTIVE_BANNER`)
-- 프로덕션에서는 실제 광고 Unit ID 사용
-- 웹 플랫폼에서는 광고 미표시
-- `ANCHORED_ADAPTIVE_BANNER` 사이즈 사용 (화면 너비에 맞게 자동 조절)
+- 개발 환경: 테스트 광고 자동 사용 (`TestIds`)
+- 프리미엄 유저: 모든 광고 비표시
+- 웹 플랫폼: 광고 미지원
 
 **빌드 요구사항**:
 - 네이티브 코드 포함으로 **Expo Go 미지원**

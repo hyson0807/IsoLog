@@ -10,6 +10,7 @@ interface SkinRecordCardProps {
   date: string;
   existingRecord?: SkinRecord;
   onSave: (record: SkinRecord) => void;
+  onComplete?: () => void;
   onCancel?: () => void;
   isRestDay?: boolean;
 }
@@ -18,6 +19,7 @@ export function SkinRecordCard({
   date,
   existingRecord,
   onSave,
+  onComplete,
   onCancel,
   isRestDay = false,
 }: SkinRecordCardProps) {
@@ -42,6 +44,7 @@ export function SkinRecordCard({
         dryness,
         recordedAt: new Date().toISOString(),
       });
+      onComplete?.();
     }
   };
 
@@ -58,6 +61,7 @@ export function SkinRecordCard({
         dryness: newDryness,
         recordedAt: new Date().toISOString(),
       });
+      onComplete?.();
     }
   };
 

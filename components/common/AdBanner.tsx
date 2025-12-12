@@ -1,10 +1,7 @@
 import { View, Platform } from 'react-native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { usePremiumContext } from '@/contexts/PremiumContext';
-
-const BANNER_AD_UNIT_ID = __DEV__
-  ? TestIds.ADAPTIVE_BANNER
-  : 'ca-app-pub-2320452683835335/2836845429';
+import { BANNER_AD_UNIT_ID } from '@/constants/admob';
 
 export function AdBanner() {
   const { isPremium, isLoading } = usePremiumContext();

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -19,6 +19,7 @@ import {
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
+import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { getToday } from '@/utils/dateUtils';
 
 export default function HomeScreen() {
@@ -47,6 +48,9 @@ export default function HomeScreen() {
 
   // 복용 알림 관리 (프리미엄 기능)
   const { handleMedicationToggle } = useMedicationReminder();
+
+  // Interstitial 광고
+  const { showAd } = useInterstitialAd();
 
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
@@ -102,6 +106,11 @@ export default function HomeScreen() {
     }
   };
 
+  // 피부 기록 완료 후 전면 광고 표시
+  const handleSkinRecordComplete = useCallback(() => {
+    setTimeout(() => showAd(), 300);
+  }, [showAd]);
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ScrollView
@@ -139,6 +148,7 @@ export default function HomeScreen() {
                   date={today}
                   existingRecord={skinRecord}
                   onSave={saveSkinRecord}
+                  onComplete={handleSkinRecordComplete}
                   isRestDay
                 />
               );
@@ -155,6 +165,7 @@ export default function HomeScreen() {
                   date={today}
                   existingRecord={skinRecord}
                   onSave={saveSkinRecord}
+                  onComplete={handleSkinRecordComplete}
                   onCancel={handleCancelMedication}
                 />
               );
