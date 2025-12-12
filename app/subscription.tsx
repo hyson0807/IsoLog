@@ -3,9 +3,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 
 export default function SubscriptionScreen() {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { isPremium, purchaseDate } = usePremiumContext();
 
@@ -17,7 +19,8 @@ export default function SubscriptionScreen() {
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return '-';
     const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
+    const locale = i18n.language === 'ko' ? 'ko-KR' : 'en-US';
+    return date.toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -34,7 +37,7 @@ export default function SubscriptionScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#666666" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-gray-900">구독 관리</Text>
+        <Text className="text-xl font-bold text-gray-900">{t('subscription.title')}</Text>
       </View>
 
       <View className="flex-1 px-5 pt-5">
@@ -54,10 +57,10 @@ export default function SubscriptionScreen() {
             </View>
             <View className="ml-4">
               <Text className="text-lg font-bold text-gray-900">
-                {isPremium ? 'IsoLog Pro' : '무료 버전'}
+                {isPremium ? 'IsoLog Pro' : t('subscription.freeVersion')}
               </Text>
               <Text className="text-sm text-gray-500">
-                {isPremium ? '평생 이용권 활성화' : '기본 기능 사용 중'}
+                {isPremium ? t('subscription.lifetimeActive') : t('subscription.basicFeatures')}
               </Text>
             </View>
           </View>
@@ -68,18 +71,18 @@ export default function SubscriptionScreen() {
 
               <View className="mt-4">
                 <View className="flex-row justify-between py-2">
-                  <Text className="text-sm text-gray-500">구독 유형</Text>
-                  <Text className="text-sm font-medium text-gray-900">평생 이용권</Text>
+                  <Text className="text-sm text-gray-500">{t('subscription.subscriptionType')}</Text>
+                  <Text className="text-sm font-medium text-gray-900">{t('subscription.lifetimeLicense')}</Text>
                 </View>
 
                 <View className="flex-row justify-between py-2">
-                  <Text className="text-sm text-gray-500">구매일</Text>
+                  <Text className="text-sm text-gray-500">{t('subscription.purchaseDate')}</Text>
                   <Text className="text-sm font-medium text-gray-900">{formatDate(purchaseDate)}</Text>
                 </View>
 
                 <View className="flex-row justify-between py-2">
-                  <Text className="text-sm text-gray-500">만료일</Text>
-                  <Text className="text-sm font-medium text-green-600">평생 (만료 없음)</Text>
+                  <Text className="text-sm text-gray-500">{t('subscription.expirationDate')}</Text>
+                  <Text className="text-sm font-medium text-green-600">{t('subscription.neverExpires')}</Text>
                 </View>
               </View>
             </>
@@ -93,16 +96,14 @@ export default function SubscriptionScreen() {
             className="mt-6 items-center rounded-xl bg-orange-500 py-4"
             activeOpacity={0.8}
           >
-            <Text className="text-base font-bold text-white">프리미엄 시작하기</Text>
+            <Text className="text-base font-bold text-white">{t('subscription.startPremium')}</Text>
           </TouchableOpacity>
         )}
 
         {/* Info */}
         <View className="mt-6 rounded-xl bg-gray-100 p-4">
           <Text className="text-sm leading-relaxed text-gray-600">
-            {isPremium
-              ? 'IsoLog Pro 평생 이용권을 구매해주셔서 감사합니다. 추가 결제 없이 모든 기능을 영구적으로 사용하실 수 있습니다.'
-              : 'IsoLog Pro로 업그레이드하면 광고 없이 앱을 사용하고, 매일 복용 알림을 받을 수 있습니다.'}
+            {isPremium ? t('subscription.premiumInfo') : t('subscription.freeInfo')}
           </Text>
         </View>
       </View>

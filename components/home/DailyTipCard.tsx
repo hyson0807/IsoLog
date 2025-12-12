@@ -1,62 +1,22 @@
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface Tip {
   icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  description: string;
+  key: string;
   color: string;
 }
 
 const tips: Tip[] = [
-  {
-    icon: 'water',
-    title: '물 자주 마시기',
-    description: '하루 2L 이상 수분 섭취로 건조함을 예방하세요',
-    color: '#3B82F6',
-  },
-  {
-    icon: 'sparkles',
-    title: '보습 관리',
-    description: '세안 후 즉시 보습제를 발라주세요',
-    color: '#EC4899',
-  },
-  {
-    icon: 'sunny',
-    title: '자외선 차단',
-    description: '외출 시 SPF 30+ 자외선 차단제 필수!',
-    color: '#F59E0B',
-  },
-  {
-    icon: 'medical',
-    title: '입술 케어',
-    description: '립밤을 자주 발라 입술 갈라짐을 예방하세요',
-    color: '#EF4444',
-  },
-  {
-    icon: 'moon',
-    title: '충분한 수면',
-    description: '피부 재생을 위해 7시간 이상 수면을 권장해요',
-    color: '#8B5CF6',
-  },
-  {
-    icon: 'nutrition',
-    title: '비타민 A 주의',
-    description: '비타민 A 보충제는 복용을 피해주세요',
-    color: '#10B981',
-  },
-  {
-    icon: 'eye',
-    title: '눈 건조 관리',
-    description: '인공눈물로 눈 건조함을 관리하세요',
-    color: '#06B6D4',
-  },
-  {
-    icon: 'fitness',
-    title: '격한 운동 주의',
-    description: '관절과 근육에 무리가 갈 수 있어요',
-    color: '#F97316',
-  },
+  { icon: 'water', key: 'water', color: '#3B82F6' },
+  { icon: 'sparkles', key: 'moisturize', color: '#EC4899' },
+  { icon: 'sunny', key: 'sunscreen', color: '#F59E0B' },
+  { icon: 'medical', key: 'lipcare', color: '#EF4444' },
+  { icon: 'moon', key: 'sleep', color: '#8B5CF6' },
+  { icon: 'nutrition', key: 'vitaminA', color: '#10B981' },
+  { icon: 'eye', key: 'eyecare', color: '#06B6D4' },
+  { icon: 'fitness', key: 'exercise', color: '#F97316' },
 ];
 
 // 날짜 기반으로 오늘의 팁 2개 선택
@@ -72,6 +32,7 @@ function getTodayTips(): Tip[] {
 }
 
 export function DailyTipCard() {
+  const { t } = useTranslation();
   const todayTips = getTodayTips();
 
   return (
@@ -82,7 +43,7 @@ export function DailyTipCard() {
           <Ionicons name="checkmark" size={24} color="#FFFFFF" />
         </View>
         <View>
-          <Text className="text-lg font-bold text-gray-500">오늘의 이소티논 케어 팁</Text>
+          <Text className="text-lg font-bold text-gray-500">{t('tips.title')}</Text>
         </View>
       </View>
 
@@ -101,10 +62,10 @@ export function DailyTipCard() {
             </View>
             <View className="flex-1">
               <Text className="text-base font-semibold text-gray-800">
-                {tip.title}
+                {t(`tips.${tip.key}.title`)}
               </Text>
               <Text className="mt-0.5 text-sm text-gray-500">
-                {tip.description}
+                {t(`tips.${tip.key}.description`)}
               </Text>
             </View>
           </View>
@@ -113,7 +74,7 @@ export function DailyTipCard() {
 
       {/* 수정 안내 */}
       <Text className="mt-4 text-center text-xs text-gray-400">
-        피부 기록 수정은 캘린더에서 가능해요
+        {t('skin.editNote')}
       </Text>
     </View>
   );

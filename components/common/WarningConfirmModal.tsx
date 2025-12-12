@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 interface WarningConfirmModalProps {
   visible: boolean;
@@ -13,6 +14,8 @@ export function WarningConfirmModal({
   onConfirm,
   onCancel,
 }: WarningConfirmModalProps) {
+  const { t } = useTranslation();
+
   const handleConfirm = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onConfirm();
@@ -47,13 +50,12 @@ export function WarningConfirmModal({
 
           {/* 제목 */}
           <Text className="mb-2 text-center text-xl font-bold text-gray-900">
-            정말 복용하시겠습니까?
+            {t('modal.warningTitle')}
           </Text>
 
           {/* 설명 */}
           <Text className="mb-6 text-center text-base text-gray-600">
-            음주 전후 4일간은 간 건강을 위해{'\n'}
-            휴약을 권장합니다.
+            {t('modal.warningDesc')}
           </Text>
 
           {/* 버튼 */}
@@ -62,7 +64,7 @@ export function WarningConfirmModal({
               onPress={handleCancel}
               className="flex-1 items-center rounded-xl bg-gray-100 py-4"
             >
-              <Text className="text-base font-semibold text-gray-700">취소</Text>
+              <Text className="text-base font-semibold text-gray-700">{t('common.cancel')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -70,7 +72,7 @@ export function WarningConfirmModal({
               className="flex-1 items-center rounded-xl bg-red-500 py-4"
             >
               <Text className="text-base font-semibold text-white">
-                그래도 먹었어요
+                {t('modal.confirmTaken')}
               </Text>
             </TouchableOpacity>
           </View>

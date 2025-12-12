@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { SkinRecord, TroubleLevel, DrynessLevel } from '@/types/medication';
 import { troubleOptions, drynessOptions } from '@/constants/skin';
 
@@ -20,6 +21,7 @@ export function SkinRecordCard({
   onCancel,
   isRestDay = false,
 }: SkinRecordCardProps) {
+  const { t } = useTranslation();
   const [trouble, setTrouble] = useState<TroubleLevel | undefined>(
     existingRecord?.trouble
   );
@@ -77,23 +79,23 @@ export function SkinRecordCard({
           <Text
             className={`ml-3 text-2xl font-bold ${isRestDay ? 'text-amber-500' : 'text-green-600'}`}
           >
-            {isRestDay ? '오늘은 휴약일' : '복용 완료!'}
+            {isRestDay ? t('home.restDayTitle') : t('home.takenComplete')}
           </Text>
         </View>
         {!isRestDay && onCancel && (
           <TouchableOpacity onPress={handleCancel} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Text className="text-base text-gray-400">취소</Text>
+            <Text className="text-base text-gray-400">{t('common.cancel')}</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {/* 섹션 타이틀 */}
       <Text className="mb-5 text-lg font-semibold text-gray-800">
-        오늘 피부 컨디션은 어떤가요?
+        {t('skin.title')}
       </Text>
 
       {/* 트러블 상태 선택 */}
-      <Text className="mb-3 text-base font-medium text-gray-600">트러블</Text>
+      <Text className="mb-3 text-base font-medium text-gray-600">{t('skin.trouble.label')}</Text>
       <View className="mb-6 flex-row gap-3">
         {troubleOptions.map((option) => (
           <TouchableOpacity
@@ -111,14 +113,14 @@ export function SkinRecordCard({
                 trouble === option.value ? 'text-white' : 'text-gray-600'
               }`}
             >
-              {option.label}
+              {t(`skin.trouble.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
       {/* 건조함 정도 선택 */}
-      <Text className="mb-3 text-base font-medium text-gray-600">건조함</Text>
+      <Text className="mb-3 text-base font-medium text-gray-600">{t('skin.dryness.label')}</Text>
       <View className="flex-row gap-3">
         {drynessOptions.map((option) => (
           <TouchableOpacity
@@ -136,7 +138,7 @@ export function SkinRecordCard({
                 dryness === option.value ? 'text-white' : 'text-gray-600'
               }`}
             >
-              {option.label}
+              {t(`skin.dryness.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}

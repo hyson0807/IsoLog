@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '@/utils/dateUtils';
 import {
   DrinkingWarningLevel,
@@ -51,6 +52,7 @@ export function DayDetailSheet({
   onSaveSkinRecord,
   onClose,
 }: DayDetailSheetProps) {
+  const { t } = useTranslation();
   const [trouble, setTrouble] = useState<TroubleLevel | undefined>(undefined);
   const [dryness, setDryness] = useState<DrynessLevel | undefined>(undefined);
   const [memo, setMemo] = useState('');
@@ -169,14 +171,14 @@ export function DayDetailSheet({
                     hasTaken ? 'text-green-600' : 'text-gray-400'
                   }`}
                 >
-                  {hasTaken ? '복용 완료' : '복용 체크'}
+                  {hasTaken ? t('dayDetail.takenComplete') : t('dayDetail.takenCheck')}
                 </Text>
               </TouchableOpacity>
             ) : (
               <View className="flex-1 items-center rounded-xl border-2 border-gray-100 bg-gray-50 py-5">
                 <Ionicons name="lock-closed-outline" size={32} color="#D1D5DB" />
                 <Text className="mt-2 text-sm font-semibold text-gray-300">
-                  수정 불가
+                  {t('dayDetail.notEditable')}
                 </Text>
               </View>
             )}
@@ -200,7 +202,7 @@ export function DayDetailSheet({
                   isDrinkingDate ? 'text-red-600' : 'text-gray-400'
                 }`}
               >
-                {isDrinkingDate ? '술 약속 있음' : '술 약속 추가'}
+                {isDrinkingDate ? t('dayDetail.drinkingDate') : t('dayDetail.drinkingAdd')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -209,7 +211,7 @@ export function DayDetailSheet({
           {warningLevel && (
             <View className="mt-4 rounded-lg bg-red-50 p-3">
               <Text className="text-center text-sm text-red-600">
-                음주 전후 4일은 간 건강을 위해 휴약을 권장합니다
+                {t('dayDetail.drinkingWarning')}
               </Text>
             </View>
           )}
@@ -218,11 +220,11 @@ export function DayDetailSheet({
           {canEdit && (hasTaken || !isMedicationDay) && (
             <View className="my-5 ">
               <Text className="mb-3 text-sm font-semibold text-gray-700">
-                피부 상태
+                {t('skin.status')}
               </Text>
 
               {/* 트러블 상태 */}
-              <Text className="mb-2 text-xs text-gray-500">트러블</Text>
+              <Text className="mb-2 text-xs text-gray-500">{t('skin.trouble.label')}</Text>
               <View className="mb-3 flex-row gap-2">
                 {troubleOptions.map((option) => (
                   <TouchableOpacity
@@ -236,14 +238,14 @@ export function DayDetailSheet({
                   >
                     <Text>{option.emoji}</Text>
                     <Text className="mt-1 text-xs text-gray-600">
-                      {option.label}
+                      {t(`skin.trouble.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
               {/* 건조함 정도 */}
-              <Text className="mb-2 text-xs text-gray-500">건조함</Text>
+              <Text className="mb-2 text-xs text-gray-500">{t('skin.dryness.label')}</Text>
               <View className="mb-5 flex-row gap-2">
                 {drynessOptions.map((option) => (
                   <TouchableOpacity
@@ -257,19 +259,19 @@ export function DayDetailSheet({
                   >
                     <Text>{option.emoji}</Text>
                     <Text className="mt-1 text-xs text-gray-600">
-                      {option.label}
+                      {t(`skin.dryness.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
                 <Text className="mb-3 text-sm font-semibold text-gray-700">
-                    오늘의 한줄평
+                    {t('skin.dailyMemo')}
                 </Text>
 
               {/* 메모 */}
               <TextInput
-                placeholder="한 줄 메모 (선택)"
+                placeholder={t('skin.memoPlaceholder')}
                 placeholderTextColor="#9CA3AF"
                 value={memo}
                 onChangeText={setMemo}
@@ -289,25 +291,23 @@ export function DayDetailSheet({
           {!canEdit && skinRecord && (hasTaken || !isMedicationDay) && (
             <View className="mt-5 rounded-xl bg-gray-50 p-4">
               <Text className="mb-2 text-sm font-semibold text-gray-700">
-                피부 상태
+                {t('skin.status')}
               </Text>
               <View className="flex-row gap-4">
                 {skinRecord.trouble && (
                   <Text className="text-sm text-gray-600">
-                    트러블:{' '}
+                    {t('skin.trouble.label')}:{' '}
                     {troubleOptions.find((o) => o.value === skinRecord.trouble)
                       ?.emoji}{' '}
-                    {troubleOptions.find((o) => o.value === skinRecord.trouble)
-                      ?.label}
+                    {t(`skin.trouble.${skinRecord.trouble}`)}
                   </Text>
                 )}
                 {skinRecord.dryness && (
                   <Text className="text-sm text-gray-600">
-                    건조함:{' '}
+                    {t('skin.dryness.label')}:{' '}
                     {drynessOptions.find((o) => o.value === skinRecord.dryness)
                       ?.emoji}{' '}
-                    {drynessOptions.find((o) => o.value === skinRecord.dryness)
-                      ?.label}
+                    {t(`skin.dryness.${skinRecord.dryness}`)}
                   </Text>
                 )}
               </View>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface NotificationTimeBottomSheetProps {
@@ -18,6 +19,7 @@ export function NotificationTimeBottomSheet({
   onSave,
   onClose,
 }: NotificationTimeBottomSheetProps) {
+  const { t, i18n } = useTranslation();
   const [selectedTime, setSelectedTime] = useState(() => {
     const date = new Date();
     date.setHours(currentHour, currentMinute, 0, 0);
@@ -36,6 +38,7 @@ export function NotificationTimeBottomSheet({
 
   // Android에서는 inline 모드가 없으므로 spinner 사용
   const pickerMode = Platform.OS === 'ios' ? 'spinner' : 'spinner';
+  const locale = i18n.language === 'ko' ? 'ko-KR' : 'en-US';
 
   return (
     <Modal
@@ -55,7 +58,7 @@ export function NotificationTimeBottomSheet({
           {/* 헤더 */}
           <View className="mb-4 flex-row items-center justify-between">
             <Text className="text-xl font-bold text-gray-900">
-              알림 시간 설정
+              {t('notification.timeSettingTitle')}
             </Text>
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color="#666666" />
@@ -69,7 +72,7 @@ export function NotificationTimeBottomSheet({
               mode="time"
               display={pickerMode}
               onChange={handleTimeChange}
-              locale="ko-KR"
+              locale={locale}
               style={{ width: '100%', height: 180 }}
             />
           </View>
@@ -78,7 +81,7 @@ export function NotificationTimeBottomSheet({
           <View className="mb-6 flex-row items-center justify-center">
             <Ionicons name="information-circle-outline" size={16} color="#888888" />
             <Text className="ml-1 text-sm text-gray-500">
-              알림은 복용 주기에 맞춰 복용일에만 울립니다.
+              {t('notification.timeSettingDesc')}
             </Text>
           </View>
 
@@ -87,7 +90,7 @@ export function NotificationTimeBottomSheet({
             onPress={handleSave}
             className="items-center rounded-xl bg-orange-500 py-4"
           >
-            <Text className="text-base font-semibold text-white">설정 완료</Text>
+            <Text className="text-base font-semibold text-white">{t('common.done')}</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

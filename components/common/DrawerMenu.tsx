@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 const DRAWER_WIDTH = Dimensions.get('window').width * 0.75;
 const ANIMATION_DURATION = 300;
@@ -23,19 +24,20 @@ interface DrawerMenuProps {
 }
 
 interface MenuItem {
-  label: string;
+  labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
   route: '/' | '/calendar' | '/community' | '/settings';
 }
 
 const menuItems: MenuItem[] = [
-  { label: '홈', icon: 'home-outline', route: '/' },
-  { label: '캘린더', icon: 'calendar-outline', route: '/calendar' },
-  { label: '커뮤니티', icon: 'people-outline', route: '/community' },
-  { label: '설정', icon: 'settings-outline', route: '/settings' },
+  { labelKey: 'nav.home', icon: 'home-outline', route: '/' },
+  { labelKey: 'nav.calendar', icon: 'calendar-outline', route: '/calendar' },
+  { labelKey: 'nav.community', icon: 'people-outline', route: '/community' },
+  { labelKey: 'nav.settings', icon: 'settings-outline', route: '/settings' },
 ];
 
 export function DrawerMenu({ visible, onClose }: DrawerMenuProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
@@ -144,7 +146,7 @@ export function DrawerMenu({ visible, onClose }: DrawerMenuProps) {
             <Pressable onPress={(e) => e.stopPropagation()}>
               {/* 헤더 */}
               <View className="flex-row items-center justify-between border-b border-gray-100 px-5 pb-4 pt-6">
-                <Text className="text-xl font-bold text-gray-900">메뉴</Text>
+                <Text className="text-xl font-bold text-gray-900">{t('nav.menu')}</Text>
                 <TouchableOpacity
                   onPress={onClose}
                   className="h-10 w-10 items-center justify-center rounded-full bg-gray-100"
@@ -175,7 +177,7 @@ export function DrawerMenu({ visible, onClose }: DrawerMenuProps) {
                           active ? 'text-orange-600' : 'text-gray-700'
                         }`}
                       >
-                        {item.label}
+                        {t(item.labelKey)}
                       </Text>
                       {active && (
                         <View className="ml-auto">

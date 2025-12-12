@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationPromptSnackbarProps {
   visible: boolean;
@@ -13,6 +14,7 @@ export function NotificationPromptSnackbar({
   onPress,
   onDismiss,
 }: NotificationPromptSnackbarProps) {
+  const { t } = useTranslation();
   const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -74,21 +76,21 @@ export function NotificationPromptSnackbar({
       }}
     >
       <View className="flex-row items-center justify-between rounded-2xl bg-gray-800 px-4 py-4 shadow-lg">
-        <View className="flex-1">
-          <Text className="text-base font-semibold text-white">
-            오늘도 성공!
+        <View className="mr-3 flex-1 shrink">
+          <Text className="text-base font-semibold text-white" numberOfLines={1}>
+            {t('snackbar.notificationPrompt.title')}
           </Text>
-          <Text className="mt-0.5 text-sm text-gray-300">
-            내일도 잊지 않게 알려드릴까요?
+          <Text className="mt-0.5 text-sm text-gray-300" numberOfLines={2}>
+            {t('snackbar.notificationPrompt.message')}
           </Text>
         </View>
         <TouchableOpacity
           onPress={handlePress}
-          className="ml-3 flex-row items-center rounded-full bg-orange-500 px-4 py-2"
+          className="shrink-0 flex-row items-center rounded-full bg-orange-500 px-3 py-2"
           activeOpacity={0.8}
         >
-          <Text className="mr-1 font-semibold text-white">알림 받기</Text>
-          <Ionicons name="chevron-forward" size={16} color="white" />
+          <Text className="mr-1 text-sm font-semibold text-white">{t('snackbar.notificationPrompt.button')}</Text>
+          <Ionicons name="chevron-forward" size={14} color="white" />
         </TouchableOpacity>
       </View>
     </Animated.View>

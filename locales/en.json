@@ -1,0 +1,231 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "save": "Save",
+    "close": "Close",
+    "done": "Done",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "error": "Error",
+    "comingSoon": "Coming Soon"
+  },
+  "nav": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "community": "Community",
+    "settings": "Settings",
+    "menu": "Menu"
+  },
+  "home": {
+    "medicationDay": "Time to take your medication! 💊",
+    "restDay": "It's a rest day. Give your skin a break too 🌿",
+    "restDayLabel": "Rest Day",
+    "restDayTitle": "Rest Day",
+    "takenComplete": "Taken!",
+    "btnCheck": "Check In",
+    "btnWarning": "Warning!",
+    "warningLabel": "Warning",
+    "drinkingPeriod": "Near drinking date",
+    "restRecommend": "Skipping is recommended for liver health",
+    "warning": {
+      "dday": "You have a drinking plan today. Be careful!",
+      "day1": "1 day from drinking. Caution needed!",
+      "day2": "2 days from drinking. Caution needed!",
+      "day3": "3 days from drinking. Please be careful.",
+      "day4": "4 days from drinking."
+    }
+  },
+  "skin": {
+    "title": "How's your skin today?",
+    "status": "Skin Status",
+    "trouble": {
+      "label": "Breakouts",
+      "calm": "Clear",
+      "few": "A few spots",
+      "severe": "Getting worse"
+    },
+    "dryness": {
+      "label": "Dryness",
+      "moist": "Hydrated",
+      "normal": "Normal",
+      "dry": "Dry"
+    },
+    "dailyMemo": "Daily Note",
+    "memoPlaceholder": "Quick note (optional)",
+    "editNote": "Edit skin records in calendar"
+  },
+  "tips": {
+    "title": "Today's Isotretinoin Care Tips",
+    "water": {
+      "title": "Stay Hydrated",
+      "description": "Drink 2L+ of water daily to prevent dryness"
+    },
+    "moisturize": {
+      "title": "Moisturize",
+      "description": "Apply moisturizer right after washing your face"
+    },
+    "sunscreen": {
+      "title": "Sun Protection",
+      "description": "Use SPF 30+ sunscreen when going out!"
+    },
+    "lipcare": {
+      "title": "Lip Care",
+      "description": "Apply lip balm often to prevent cracking"
+    },
+    "sleep": {
+      "title": "Get Enough Sleep",
+      "description": "7+ hours of sleep is recommended for skin recovery"
+    },
+    "vitaminA": {
+      "title": "Avoid Vitamin A",
+      "description": "Do not take vitamin A supplements"
+    },
+    "eyecare": {
+      "title": "Eye Dryness Care",
+      "description": "Use artificial tears for dry eyes"
+    },
+    "exercise": {
+      "title": "Avoid Intense Exercise",
+      "description": "May strain your joints and muscles"
+    }
+  },
+  "frequency": {
+    "title": "Select your dosing schedule",
+    "current": "Current:",
+    "done": "Done",
+    "daily": {
+      "label": "Daily",
+      "description": "Take 1 pill every day"
+    },
+    "every2days": {
+      "label": "Every Other Day",
+      "description": "Take 1 pill every 2 days"
+    },
+    "every3days": {
+      "label": "Every 3 Days",
+      "description": "Take 1 pill every 3 days"
+    },
+    "weekly": {
+      "label": "Once a Week",
+      "description": "Take 1 pill every week"
+    }
+  },
+  "calendar": {
+    "today": "Today",
+    "summary": "{{count}} days taken",
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
+  "dayDetail": {
+    "takenComplete": "Taken",
+    "takenCheck": "Check In",
+    "notEditable": "Not Editable",
+    "drinkingDate": "Drinking Planned",
+    "drinkingAdd": "Add Drinking Plan",
+    "drinkingWarning": "Skipping 4 days around drinking is recommended for liver health"
+  },
+  "premium": {
+    "pro": "PRO",
+    "title": "IsoLog Pro",
+    "usingPremium": "Premium features active",
+    "benefits": {
+      "adFree": "Ad-free enabled",
+      "notification": "Reminders enabled",
+      "manage": "Manage subscription"
+    },
+    "upgrade": "Upgrade to Pro",
+    "upgradeDesc": "Ad-free + Reminders",
+    "restore": "Restore Purchase"
+  },
+  "notification": {
+    "title": "Medication Reminder",
+    "description": "Get notified on medication days",
+    "time": "Reminder Time",
+    "timeSettingTitle": "Set Reminder Time",
+    "timeSettingDesc": "Choose when to receive reminders on medication days",
+    "premiumRequired": "Premium only"
+  },
+  "settings": {
+    "title": "Settings",
+    "notification": "Notifications",
+    "account": "Account",
+    "info": "Info",
+    "loginSync": "Login / Sync",
+    "syncDesc": "Sync data across devices",
+    "version": "Version",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "language": "Language",
+    "languageSection": "Language",
+    "languageSelect": "Select Language"
+  },
+  "paywall": {
+    "title": "Start your perfect\nroutine with IsoLog Pro",
+    "subtitle": "One-time purchase, lifetime access.",
+    "benefit1Title": "Daily Reminders",
+    "benefit1Desc": "Never miss a dose with timely notifications",
+    "benefit2Title": "Ad-Free Experience",
+    "benefit2Desc": "Focus on tracking without distractions",
+    "benefit3Title": "Lifetime Access",
+    "benefit3Desc": "No additional fees, use forever",
+    "lifetimeLicense": "Lifetime",
+    "purchaseNow": "Purchase Now",
+    "alreadyPurchased": "Already purchased?",
+    "restorePurchase": "Restore Purchase",
+    "restoreQuestion": "Already purchased?",
+    "restoreLink": "Restore Purchase",
+    "billingInfo": "Payment charged to Apple/Google account"
+  },
+  "modal": {
+    "warningTitle": "Are you sure you took it?",
+    "warningDesc": "Skipping 4 days around drinking is\nrecommended for liver health.",
+    "confirmTaken": "Yes, I took it"
+  },
+  "alert": {
+    "notice": "Notice",
+    "error": "Error",
+    "restoreSuccess": "Restored",
+    "restoreSuccessMessage": "Your purchase has been restored!",
+    "restoreFail": "Restore Failed",
+    "restoreFailMessage": "No purchases to restore. Please check your App Store account if you've purchased before.",
+    "restoreFailShort": "No purchases to restore.",
+    "restoreError": "Error occurred while restoring purchase.",
+    "purchaseComplete": "Purchase Complete",
+    "purchaseCompleteMessage": "Thank you for purchasing IsoLog Pro!",
+    "purchaseError": "Error processing payment. Please try again.",
+    "productLoadError": "Unable to load product info. Please try again later.",
+    "webNotSupported": "Payments are not supported on web."
+  },
+  "snackbar": {
+    "notificationPrompt": {
+      "title": "Success today!",
+      "message": "Want a reminder for tomorrow too?",
+      "button": "Get Notified"
+    }
+  },
+  "community": {
+    "title": "Community"
+  },
+  "subscription": {
+    "title": "Manage Subscription",
+    "freeVersion": "Free Version",
+    "lifetimeActive": "Lifetime active",
+    "basicFeatures": "Using basic features",
+    "subscriptionType": "Subscription Type",
+    "lifetimeLicense": "Lifetime License",
+    "purchaseDate": "Purchase Date",
+    "expirationDate": "Expiration Date",
+    "neverExpires": "Lifetime (Never expires)",
+    "startPremium": "Start Premium",
+    "premiumInfo": "Thank you for purchasing IsoLog Pro Lifetime. You can use all features permanently without additional payment.",
+    "freeInfo": "Upgrade to IsoLog Pro to use the app ad-free and receive daily medication reminders."
+  }
+}

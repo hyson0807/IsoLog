@@ -1,28 +1,37 @@
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { NotificationToggle } from '@/components/settings/NotificationToggle';
 import { PremiumSection } from '@/components/settings/PremiumSection';
+import { LanguageBottomSheet } from '@/components/settings/LanguageBottomSheet';
 import { usePremiumContext } from '@/contexts/PremiumContext';
+import { supportedLanguages } from '@/locales';
 
 export default function SettingsScreen() {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { restorePurchase } = usePremiumContext();
+  const [showLanguageSheet, setShowLanguageSheet] = useState(false);
+
+  // 현재 언어 레이블 가져오기
+  const getCurrentLanguageLabel = () => {
+    const lang = supportedLanguages.find((l) => l.code === i18n.language);
+    return lang?.label ?? 'English';
+  };
 
   const handleRestore = async () => {
     try {
       const restored = await restorePurchase();
       if (restored) {
-        Alert.alert('복원 완료', '구매 내역이 복원되었습니다!');
+        Alert.alert(t('alert.restoreSuccess'), t('alert.restoreSuccessMessage'));
       } else {
-        Alert.alert(
-          '복원 실패',
-          '복원할 구매 내역이 없습니다. 이전에 구매하셨다면 앱스토어 계정을 확인해주세요.'
-        );
+        Alert.alert(t('alert.restoreFail'), t('alert.restoreFailMessage'));
       }
     } catch {
-      Alert.alert('오류', '구매 복원 중 오류가 발생했습니다.');
+      Alert.alert(t('alert.error'), t('alert.restoreError'));
     }
   };
 
@@ -36,7 +45,7 @@ export default function SettingsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#666666" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-gray-900">설정</Text>
+        <Text className="text-xl font-bold text-gray-900">{t('settings.title')}</Text>
       </View>
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -51,13 +60,33 @@ export default function SettingsScreen() {
 
         {/* 알림 설정 */}
         <View className="px-5 pt-6">
-          <Text className="mb-3 text-sm font-medium text-gray-500">알림</Text>
+          <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.notification')}</Text>
           <NotificationToggle onPremiumRequired={() => router.push('/paywall')} />
+        </View>
+
+        {/* 언어 설정 */}
+        <View className="px-5 pt-6">
+          <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.languageSection')}</Text>
+          <TouchableOpacity
+            onPress={() => setShowLanguageSheet(true)}
+            className="flex-row items-center justify-between rounded-xl bg-white px-4 py-4"
+          >
+            <View className="flex-row items-center">
+              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Ionicons name="language-outline" size={20} color="#6B7280" />
+              </View>
+              <Text className="text-base text-gray-700">{t('settings.language')}</Text>
+            </View>
+            <View className="flex-row items-center">
+              <Text className="mr-2 text-gray-400">{getCurrentLanguageLabel()}</Text>
+              <Ionicons name="chevron-forward" size={20} color="#D1D5DB" />
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* 계정 섹션 (Coming Soon) */}
         <View className="px-5 pt-6">
-          <Text className="mb-3 text-sm font-medium text-gray-500">계정</Text>
+          <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.account')}</Text>
           <View className="rounded-xl bg-white px-4 py-4">
             <View className="flex-row items-center">
               <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
@@ -65,13 +94,13 @@ export default function SettingsScreen() {
               </View>
               <View className="flex-1">
                 <View className="flex-row items-center">
-                  <Text className="text-base font-medium text-gray-400">로그인 / 동기화</Text>
+                  <Text className="text-base font-medium text-gray-400">{t('settings.loginSync')}</Text>
                   <View className="ml-2 rounded-full bg-gray-100 px-2 py-0.5">
-                    <Text className="text-xs font-medium text-gray-400">Coming Soon</Text>
+                    <Text className="text-xs font-medium text-gray-400">{t('common.comingSoon')}</Text>
                   </View>
                 </View>
                 <Text className="mt-0.5 text-sm text-gray-300">
-                  다른 기기와 데이터를 동기화해요
+                  {t('settings.syncDesc')}
                 </Text>
               </View>
             </View>
@@ -80,14 +109,14 @@ export default function SettingsScreen() {
 
         {/* 앱 정보 */}
         <View className="px-5 pb-10 pt-6">
-          <Text className="mb-3 text-sm font-medium text-gray-500">정보</Text>
+          <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.info')}</Text>
           <View className="rounded-xl bg-white">
             <TouchableOpacity className="flex-row items-center justify-between px-4 py-4">
               <View className="flex-row items-center">
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                   <Ionicons name="information-circle-outline" size={20} color="#6B7280" />
                 </View>
-                <Text className="text-base text-gray-700">버전</Text>
+                <Text className="text-base text-gray-700">{t('settings.version')}</Text>
               </View>
               <Text className="text-gray-400">1.0.0</Text>
             </TouchableOpacity>
@@ -99,7 +128,7 @@ export default function SettingsScreen() {
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                   <Ionicons name="document-text-outline" size={20} color="#6B7280" />
                 </View>
-                <Text className="text-base text-gray-700">이용약관</Text>
+                <Text className="text-base text-gray-700">{t('settings.terms')}</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="#D1D5DB" />
             </TouchableOpacity>
@@ -111,13 +140,19 @@ export default function SettingsScreen() {
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                   <Ionicons name="shield-checkmark-outline" size={20} color="#6B7280" />
                 </View>
-                <Text className="text-base text-gray-700">개인정보처리방침</Text>
+                <Text className="text-base text-gray-700">{t('settings.privacy')}</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="#D1D5DB" />
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+
+      {/* 언어 선택 바텀시트 */}
+      <LanguageBottomSheet
+        visible={showLanguageSheet}
+        onClose={() => setShowLanguageSheet(false)}
+      />
     </SafeAreaView>
   );
 }

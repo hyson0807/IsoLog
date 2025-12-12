@@ -1,7 +1,7 @@
 import { TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { FrequencyType } from '@/types/medication';
-import { frequencyOptions } from '@/constants/frequency';
 
 interface FrequencySettingButtonProps {
   currentFrequency: FrequencyType;
@@ -12,9 +12,7 @@ export function FrequencySettingButton({
   currentFrequency,
   onPress,
 }: FrequencySettingButtonProps) {
-  const currentOption = frequencyOptions.find(
-    (option) => option.type === currentFrequency
-  );
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -22,7 +20,7 @@ export function FrequencySettingButton({
       className="mx-5 flex-row items-center justify-center rounded-full bg-gray-100 px-5 py-3"
     >
       <Text className="text-base text-gray-700">
-        현재: {currentOption?.label || '매일 복용'}
+        {t('frequency.current')} {t(`frequency.${currentFrequency}.label`)}
       </Text>
       <Ionicons
         name="pencil"

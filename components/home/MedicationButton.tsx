@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { DrinkingWarningLevel } from '@/types/medication';
 
 interface MedicationButtonProps {
@@ -16,6 +17,8 @@ export function MedicationButton({
   warningLevel,
   onPress,
 }: MedicationButtonProps) {
+  const { t } = useTranslation();
+
   const handlePress = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onPress();
@@ -28,7 +31,7 @@ export function MedicationButton({
         <View className="h-40 w-40 items-center justify-center rounded-full bg-gray-100">
           <Ionicons name="bed-outline" size={64} color="#9E9E9E" />
         </View>
-        <Text className="mt-4 text-lg text-gray-500">휴약일</Text>
+        <Text className="mt-4 text-lg text-gray-500">{t('home.restDayLabel')}</Text>
       </View>
     );
   }
@@ -60,8 +63,8 @@ export function MedicationButton({
 
   // 버튼 텍스트 결정
   const getButtonText = () => {
-    if (isWarning) return '복용 주의!';
-    return '복용 체크하기';
+    if (isWarning) return t('home.btnWarning');
+    return t('home.btnCheck');
   };
 
   return (
@@ -81,7 +84,7 @@ export function MedicationButton({
         {isWarning ? (
           <View className="items-center">
             <Ionicons name="warning" size={48} color="#FFFFFF" />
-            <Text className="mt-1 text-sm font-medium text-white">주의</Text>
+            <Text className="mt-1 text-sm font-medium text-white">{t('home.warningLabel')}</Text>
           </View>
         ) : (
           <Image
@@ -95,7 +98,7 @@ export function MedicationButton({
         {getButtonText()}
       </Text>
       {isWarning && (
-        <Text className="mt-1 text-sm text-red-400">음주 전후 기간입니다</Text>
+        <Text className="mt-1 text-sm text-red-400">{t('home.drinkingPeriod')}</Text>
       )}
     </View>
   );

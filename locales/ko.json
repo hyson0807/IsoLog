@@ -1,0 +1,231 @@
+{
+  "common": {
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "close": "닫기",
+    "done": "완료",
+    "loading": "처리 중...",
+    "processing": "처리 중...",
+    "error": "오류",
+    "comingSoon": "Coming Soon"
+  },
+  "nav": {
+    "home": "홈",
+    "calendar": "캘린더",
+    "community": "커뮤니티",
+    "settings": "설정",
+    "menu": "메뉴"
+  },
+  "home": {
+    "medicationDay": "오늘은 약 먹는 날이에요! 💊",
+    "restDay": "오늘은 쉬는 날입니다. 피부도 쉬어가요 🌿",
+    "restDayLabel": "휴약일",
+    "restDayTitle": "오늘은 휴약일",
+    "takenComplete": "복용 완료!",
+    "btnCheck": "복용 체크하기",
+    "btnWarning": "복용 주의!",
+    "warningLabel": "주의",
+    "drinkingPeriod": "음주 전후 기간입니다",
+    "restRecommend": "간 건강을 위해 휴약을 권장합니다",
+    "warning": {
+      "dday": "오늘 술 약속이 있어요. 복용에 주의하세요!",
+      "day1": "술 약속 전후 1일입니다. 주의가 필요해요!",
+      "day2": "술 약속 전후 2일입니다. 주의가 필요해요!",
+      "day3": "술 약속 전후 3일입니다. 주의하세요.",
+      "day4": "술 약속 전후 4일입니다."
+    }
+  },
+  "skin": {
+    "title": "오늘 피부 컨디션은 어떤가요?",
+    "status": "피부 상태",
+    "trouble": {
+      "label": "트러블",
+      "calm": "잠잠해요",
+      "few": "몇 개 났어요",
+      "severe": "심해졌어요"
+    },
+    "dryness": {
+      "label": "건조함",
+      "moist": "촉촉해요",
+      "normal": "보통이에요",
+      "dry": "건조해요"
+    },
+    "dailyMemo": "오늘의 한줄평",
+    "memoPlaceholder": "한 줄 메모 (선택)",
+    "editNote": "피부 기록 수정은 캘린더에서 가능해요"
+  },
+  "tips": {
+    "title": "오늘의 이소티논 케어 팁",
+    "water": {
+      "title": "물 자주 마시기",
+      "description": "하루 2L 이상 수분 섭취로 건조함을 예방하세요"
+    },
+    "moisturize": {
+      "title": "보습 관리",
+      "description": "세안 후 즉시 보습제를 발라주세요"
+    },
+    "sunscreen": {
+      "title": "자외선 차단",
+      "description": "외출 시 SPF 30+ 자외선 차단제 필수!"
+    },
+    "lipcare": {
+      "title": "입술 케어",
+      "description": "립밤을 자주 발라 입술 갈라짐을 예방하세요"
+    },
+    "sleep": {
+      "title": "충분한 수면",
+      "description": "피부 재생을 위해 7시간 이상 수면을 권장해요"
+    },
+    "vitaminA": {
+      "title": "비타민 A 주의",
+      "description": "비타민 A 보충제는 복용을 피해주세요"
+    },
+    "eyecare": {
+      "title": "눈 건조 관리",
+      "description": "인공눈물로 눈 건조함을 관리하세요"
+    },
+    "exercise": {
+      "title": "격한 운동 주의",
+      "description": "관절과 근육에 무리가 갈 수 있어요"
+    }
+  },
+  "frequency": {
+    "title": "복용 주기를 선택해주세요",
+    "current": "현재:",
+    "done": "설정 완료",
+    "daily": {
+      "label": "매일 복용",
+      "description": "매일 1알씩 복용합니다"
+    },
+    "every2days": {
+      "label": "격일 복용",
+      "description": "2일에 1알씩 복용합니다"
+    },
+    "every3days": {
+      "label": "3일에 1알",
+      "description": "3일에 1알씩 복용합니다"
+    },
+    "weekly": {
+      "label": "주 1회",
+      "description": "일주일에 1알씩 복용합니다"
+    }
+  },
+  "calendar": {
+    "today": "Today",
+    "summary": "{{count}}일 복용",
+    "weekdays": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    }
+  },
+  "dayDetail": {
+    "takenComplete": "복용 완료",
+    "takenCheck": "복용 체크",
+    "notEditable": "수정 불가",
+    "drinkingDate": "술 약속 있음",
+    "drinkingAdd": "술 약속 추가",
+    "drinkingWarning": "음주 전후 4일은 간 건강을 위해 휴약을 권장합니다"
+  },
+  "premium": {
+    "pro": "PRO",
+    "title": "IsoLog Pro",
+    "usingPremium": "프리미엄 기능 이용 중",
+    "benefits": {
+      "adFree": "광고 제거 활성화",
+      "notification": "복용 알림 활성화",
+      "manage": "구독 관리"
+    },
+    "upgrade": "Pro로 업그레이드",
+    "upgradeDesc": "광고 제거 + 복용 알림",
+    "restore": "구매 복원"
+  },
+  "notification": {
+    "title": "복용 알림",
+    "description": "복용일에 알림을 보내드려요",
+    "time": "알림 시간",
+    "timeSettingTitle": "알림 시간 설정",
+    "timeSettingDesc": "복용일에 알림을 받을 시간을 선택해주세요",
+    "premiumRequired": "프리미엄 전용"
+  },
+  "settings": {
+    "title": "설정",
+    "notification": "알림",
+    "account": "계정",
+    "info": "정보",
+    "loginSync": "로그인 / 동기화",
+    "syncDesc": "다른 기기와 데이터를 동기화해요",
+    "version": "버전",
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침",
+    "language": "언어",
+    "languageSection": "언어",
+    "languageSelect": "언어 선택"
+  },
+  "paywall": {
+    "title": "IsoLog Pro로\n완벽한 관리를 시작하세요",
+    "subtitle": "한 번 결제로 평생 사용하세요.",
+    "benefit1Title": "매일 복용 알림",
+    "benefit1Desc": "원하는 시간에 잊지 않게 알려드려요",
+    "benefit2Title": "광고 없는 화면",
+    "benefit2Desc": "방해 요소 없이 기록에만 집중하세요",
+    "benefit3Title": "평생 소장",
+    "benefit3Desc": "추가 비용 없이 영원히 사용하세요",
+    "lifetimeLicense": "평생 이용권",
+    "purchaseNow": "지금 구매하기",
+    "alreadyPurchased": "이미 구매하셨나요?",
+    "restorePurchase": "구매 복원",
+    "restoreQuestion": "이미 구매하셨나요?",
+    "restoreLink": "구매 복원",
+    "billingInfo": "결제는 Apple/Google 계정으로 청구됩니다"
+  },
+  "modal": {
+    "warningTitle": "정말 복용하시겠습니까?",
+    "warningDesc": "음주 전후 4일간은 간 건강을 위해\n휴약을 권장합니다.",
+    "confirmTaken": "그래도 먹었어요"
+  },
+  "alert": {
+    "notice": "알림",
+    "error": "오류",
+    "restoreSuccess": "복원 완료",
+    "restoreSuccessMessage": "구매 내역이 복원되었습니다!",
+    "restoreFail": "복원 실패",
+    "restoreFailMessage": "복원할 구매 내역이 없습니다. 이전에 구매하셨다면 앱스토어 계정을 확인해주세요.",
+    "restoreFailShort": "복원할 구매 내역이 없습니다.",
+    "restoreError": "구매 복원 중 오류가 발생했습니다.",
+    "purchaseComplete": "구매 완료",
+    "purchaseCompleteMessage": "IsoLog Pro를 구매해주셔서 감사합니다!",
+    "purchaseError": "결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
+    "productLoadError": "상품 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
+    "webNotSupported": "웹에서는 결제가 지원되지 않습니다."
+  },
+  "snackbar": {
+    "notificationPrompt": {
+      "title": "오늘도 성공!",
+      "message": "내일도 잊지 않게 알려드릴까요?",
+      "button": "알림 받기"
+    }
+  },
+  "community": {
+    "title": "커뮤니티"
+  },
+  "subscription": {
+    "title": "구독 관리",
+    "freeVersion": "무료 버전",
+    "lifetimeActive": "평생 이용권 활성화",
+    "basicFeatures": "기본 기능 사용 중",
+    "subscriptionType": "구독 유형",
+    "lifetimeLicense": "평생 이용권",
+    "purchaseDate": "구매일",
+    "expirationDate": "만료일",
+    "neverExpires": "평생 (만료 없음)",
+    "startPremium": "프리미엄 시작하기",
+    "premiumInfo": "IsoLog Pro 평생 이용권을 구매해주셔서 감사합니다. 추가 결제 없이 모든 기능을 영구적으로 사용하실 수 있습니다.",
+    "freeInfo": "IsoLog Pro로 업그레이드하면 광고 없이 앱을 사용하고, 매일 복용 알림을 받을 수 있습니다."
+  }
+}

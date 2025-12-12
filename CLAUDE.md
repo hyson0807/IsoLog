@@ -22,10 +22,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **익명 ID 시스템**: 로그인 없이 기기 중심 결제 관리
 - **인앱 결제**: RevenueCat 연동 (평생 이용권 $9.99)
 
+### 다국어 지원 (구현 완료)
+- **지원 언어**: 한국어 (ko), 영어 (en)
+- **기본 언어**: 영어 (fallback)
+- **언어 감지**: 기기 설정 언어 자동 감지 → AsyncStorage 저장
+- **설정에서 변경**: 설정 > 언어에서 수동 변경 가능
+
 ### 예정 기능
 - **로그인/동기화**: 소셜 로그인 + 클라우드 데이터 동기화
 - **커뮤니티**: 사용자 간 정보 공유
-- **다국어 지원 (i18n)**: 앱 내 텍스트 다국어 번역
 - 광고, 메인페이지에 스킨기록카드 이후에 나오도록 추가
 - 리뷰 모달 뜨는거 
 
@@ -50,7 +55,8 @@ npm run lint         # Run ESLint
 - **Notifications**: `expo-notifications` for local push notifications
 - **Time Picker**: `@react-native-community/datetimepicker` for notification time setting
 - **Crypto**: `expo-crypto` for UUID generation
-- **Localization**: `expo-localization` for global date formatting
+- **Localization**: `expo-localization` for device locale detection
+- **i18n**: `i18next` + `react-i18next` for multi-language support
 - **Ads**: `react-native-google-mobile-ads` for AdMob banner ads
 - **IAP**: `react-native-purchases` for RevenueCat in-app purchases
 - **Path Aliases**: `@/*` maps to project root
@@ -64,9 +70,10 @@ app/
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
 │   └── community.tsx    # Community screen (TBD)
-├── _layout.tsx          # Root layout with Provider 설정
-├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 계정)
+├── _layout.tsx          # Root layout with Provider 설정 + i18n import
+├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 언어, 계정)
 ├── paywall.tsx          # 프리미엄 구매 페이지
+├── subscription.tsx     # 구독 관리 페이지
 └── global.css           # Tailwind CSS imports
 
 components/
@@ -93,7 +100,8 @@ components/
 ├── settings/            # Settings components
 │   ├── PremiumSection.tsx           # 프리미엄 배너 + 혜택 목록
 │   ├── NotificationToggle.tsx       # 알림 설정 토글 + 시간 표시
-│   └── NotificationTimeBottomSheet.tsx # 알림 시간 선택 바텀시트
+│   ├── NotificationTimeBottomSheet.tsx # 알림 시간 선택 바텀시트
+│   └── LanguageBottomSheet.tsx      # 언어 선택 바텀시트
 └── community/           # Community components (TBD)
 
 contexts/                # React Context providers
@@ -120,6 +128,11 @@ types/                   # TypeScript type definitions
 utils/                   # Utility functions
 ├── dateUtils.ts         # Date formatting, calendar helpers
 └── deviceId.ts          # 익명 기기 ID 생성/관리
+
+locales/                 # i18n 번역 파일
+├── ko.json              # 한국어 번역
+├── en.json              # 영어 번역
+└── index.ts             # i18n 설정 (언어 감지, AsyncStorage 저장)
 ```
 
 ### Key Configurations
@@ -277,3 +290,59 @@ Purchases.getOfferings()
 **CustomerInfo 리스너**:
 - 다른 기기에서 구매/환불 시 실시간 상태 업데이트
 - 앱 포그라운드 복귀 시 자동 동기화
+
+### i18n (다국어 지원)
+
+`i18next` + `react-i18next`를 사용하여 한국어/영어 다국어 지원을 구현했습니다.
+
+**언어 감지 우선순위**:
+1. AsyncStorage에 저장된 사용자 선택 언어
+2. 기기 설정 언어 (`expo-localization`)
+3. 영어 (fallback)
+
+**저장 키**: `@isoLog/language_preference`
+
+**번역 키 구조**:
+| prefix | 용도 |
+|--------|------|
+| `common` | 공통 버튼/텍스트 (취소, 확인, 저장 등) |
+| `nav` | 네비게이션 라벨 |
+| `home` | 홈 화면 상태 메시지 |
+| `skin` | 피부 상태 옵션 |
+| `tips` | 데일리 케어 팁 |
+| `frequency` | 복용 주기 옵션 |
+| `calendar` | 캘린더 UI |
+| `dayDetail` | 날짜 상세 시트 |
+| `premium` | 프리미엄 섹션 |
+| `notification` | 알림 설정 |
+| `settings` | 설정 페이지 |
+| `paywall` | 결제 페이지 |
+| `subscription` | 구독 관리 |
+| `modal` | 모달/팝업 |
+| `alert` | Alert 메시지 |
+| `snackbar` | 스낵바 메시지 |
+| `community` | 커뮤니티 |
+
+**사용 방법**:
+```typescript
+import { useTranslation } from 'react-i18next';
+
+function MyComponent() {
+  const { t } = useTranslation();
+  return <Text>{t('home.medicationDay')}</Text>;
+}
+```
+
+**언어 변경**:
+```typescript
+import { useTranslation } from 'react-i18next';
+
+const { i18n } = useTranslation();
+await i18n.changeLanguage('en'); // 자동으로 AsyncStorage에 저장됨
+```
+
+**주요 파일**:
+- `locales/index.ts`: i18n 초기화 + 언어 감지 로직
+- `locales/ko.json`: 한국어 번역
+- `locales/en.json`: 영어 번역
+- `components/settings/LanguageBottomSheet.tsx`: 언어 선택 UI

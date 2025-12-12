@@ -1,23 +1,22 @@
 import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { FrequencyType } from '@/types/medication';
-import { frequencyOptions } from '@/constants/frequency';
+import * as Haptics from 'expo-haptics';
+import { supportedLanguages } from '@/locales';
 
-interface FrequencyBottomSheetProps {
+interface LanguageBottomSheetProps {
   visible: boolean;
-  currentFrequency: FrequencyType;
-  onSelect: (frequency: FrequencyType) => void;
   onClose: () => void;
 }
 
-export function FrequencyBottomSheet({
-  visible,
-  currentFrequency,
-  onSelect,
-  onClose,
-}: FrequencyBottomSheetProps) {
-  const { t } = useTranslation();
+export function LanguageBottomSheet({ visible, onClose }: LanguageBottomSheetProps) {
+  const { t, i18n } = useTranslation();
+
+  const handleLanguageSelect = async (langCode: string) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await i18n.changeLanguage(langCode);
+    onClose();
+  };
 
   return (
     <Modal
@@ -34,40 +33,37 @@ export function FrequencyBottomSheet({
           className="rounded-t-3xl bg-white px-5 pb-10 pt-6"
           onPress={(e) => e.stopPropagation()}
         >
+          {/* 헤더 */}
           <View className="mb-6 flex-row items-center justify-between">
             <Text className="text-xl font-bold text-gray-900">
-              {t('frequency.title')}
+              {t('settings.languageSelect')}
             </Text>
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color="#666666" />
             </TouchableOpacity>
           </View>
 
+          {/* 언어 목록 */}
           <View className="gap-3">
-            {frequencyOptions.map((option) => {
-              const isSelected = option.type === currentFrequency;
+            {supportedLanguages.map((lang) => {
+              const isSelected = i18n.language === lang.code;
               return (
                 <TouchableOpacity
-                  key={option.type}
-                  onPress={() => onSelect(option.type)}
+                  key={lang.code}
+                  onPress={() => handleLanguageSelect(lang.code)}
                   className={`flex-row items-center justify-between rounded-xl border-2 p-4 ${
                     isSelected
                       ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-200 bg-white'
                   }`}
                 >
-                  <View>
-                    <Text
-                      className={`text-base font-semibold ${
-                        isSelected ? 'text-orange-600' : 'text-gray-800'
-                      }`}
-                    >
-                      {t(`frequency.${option.type}.label`)}
-                    </Text>
-                    <Text className="mt-1 text-sm text-gray-500">
-                      {t(`frequency.${option.type}.description`)}
-                    </Text>
-                  </View>
+                  <Text
+                    className={`text-base font-semibold ${
+                      isSelected ? 'text-orange-600' : 'text-gray-800'
+                    }`}
+                  >
+                    {lang.label}
+                  </Text>
                   {isSelected && (
                     <Ionicons name="checkmark-circle" size={24} color="#FF6B35" />
                   )}
@@ -75,13 +71,6 @@ export function FrequencyBottomSheet({
               );
             })}
           </View>
-
-          <TouchableOpacity
-            onPress={onClose}
-            className="mt-6 items-center rounded-xl bg-orange-500 py-4"
-          >
-            <Text className="text-base font-semibold text-white">{t('frequency.done')}</Text>
-          </TouchableOpacity>
         </Pressable>
       </Pressable>
     </Modal>

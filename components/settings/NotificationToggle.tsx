@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { NotificationTimeBottomSheet } from './NotificationTimeBottomSheet';
@@ -9,15 +10,23 @@ interface NotificationToggleProps {
   onPremiumRequired: () => void;
 }
 
-// 시간을 "오전/오후 HH:MM" 형식으로 변환
-function formatTime(hour: number, minute: number): string {
-  const period = hour < 12 ? '오전' : '오후';
-  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  const displayMinute = minute.toString().padStart(2, '0');
-  return `${period} ${displayHour}:${displayMinute}`;
+// 시간 포맷 함수
+function formatTime(hour: number, minute: number, isKorean: boolean): string {
+  if (isKorean) {
+    const period = hour < 12 ? '오전' : '오후';
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const displayMinute = minute.toString().padStart(2, '0');
+    return `${period} ${displayHour}:${displayMinute}`;
+  } else {
+    const period = hour < 12 ? 'AM' : 'PM';
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const displayMinute = minute.toString().padStart(2, '0');
+    return `${displayHour}:${displayMinute} ${period}`;
+  }
 }
 
 export function NotificationToggle({ onPremiumRequired }: NotificationToggleProps) {
+  const { t, i18n } = useTranslation();
   const {
     isPremium,
     notificationEnabled,
@@ -27,6 +36,7 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
   } = usePremiumContext();
   const { hasPermission, requestPermission } = useNotificationPermission();
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const isKorean = i18n.language === 'ko';
 
   const handleToggle = async () => {
     if (!isPremium) {
@@ -57,8 +67,8 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
     setNotificationTime(hour, minute);
     setShowTimePicker(false);
     Alert.alert(
-      '설정 완료',
-      `알림 시간이 ${formatTime(hour, minute)}로 변경되었어요.`
+      t('common.done'),
+      `${t('notification.time')}: ${formatTime(hour, minute, isKorean)}`
     );
   };
 
@@ -90,16 +100,16 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
                 <Text
                   className={`text-base font-medium ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}
                 >
-                  복용 알림
+                  {t('notification.title')}
                 </Text>
                 {isLocked && (
                   <View className="ml-2 rounded-full bg-orange-100 px-2 py-0.5">
-                    <Text className="text-xs font-medium text-orange-600">PRO</Text>
+                    <Text className="text-xs font-medium text-orange-600">{t('premium.pro')}</Text>
                   </View>
                 )}
               </View>
               <Text className={`mt-0.5 text-sm ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
-                복용일에 알림을 받아요
+                {t('notification.description')}
               </Text>
             </View>
           </TouchableOpacity>
@@ -120,13 +130,13 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
           className="mt-3 flex-row items-center justify-between border-t border-gray-100 pt-3"
         >
           <Text className={`text-sm ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
-            알림 시간
+            {t('notification.time')}
           </Text>
           <View className="flex-row items-center">
             <Text
               className={`mr-1 text-base font-medium ${isLocked ? 'text-gray-300' : 'text-orange-500'}`}
             >
-              {formatTime(notificationTime.hour, notificationTime.minute)}
+              {formatTime(notificationTime.hour, notificationTime.minute, isKorean)}
             </Text>
             <Ionicons
               name="chevron-forward"
