@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +34,11 @@ export default function SettingsScreen() {
     } catch {
       Alert.alert(t('alert.error'), t('alert.restoreError'));
     }
+  };
+
+  const handleCopyEmail = async () => {
+    await Clipboard.setStringAsync('simsgood0807@gmail.com');
+    Alert.alert(t('alert.notice'), t('settings.emailCopied'));
   };
 
   return (
@@ -119,6 +125,24 @@ export default function SettingsScreen() {
                 <Text className="text-base text-gray-700">{t('settings.version')}</Text>
               </View>
               <Text className="text-gray-400">1.0.0</Text>
+            </TouchableOpacity>
+
+            <View className="mx-4 h-px bg-gray-100" />
+
+            <TouchableOpacity
+              onPress={handleCopyEmail}
+              className="flex-row items-center justify-between px-4 py-4"
+            >
+              <View className="flex-row items-center">
+                <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                  <Ionicons name="mail-outline" size={20} color="#6B7280" />
+                </View>
+                <View>
+                  <Text className="text-base text-gray-700">{t('settings.feedback')}</Text>
+                  <Text className="text-xs text-gray-400">simsgood0807@gmail.com</Text>
+                </View>
+              </View>
+              <Ionicons name="copy-outline" size={20} color="#D1D5DB" />
             </TouchableOpacity>
 
             <View className="mx-4 h-px bg-gray-100" />

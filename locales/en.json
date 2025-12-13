@@ -165,7 +165,9 @@
     "privacy": "Privacy Policy",
     "language": "Language",
     "languageSection": "Language",
-    "languageSelect": "Select Language"
+    "languageSelect": "Select Language",
+    "feedback": "Feedback & Support",
+    "emailCopied": "Email address copied"
   },
   "paywall": {
     "title": "Start your perfect\nroutine with IsoLog Pro",

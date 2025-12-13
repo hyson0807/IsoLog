@@ -165,7 +165,9 @@
     "privacy": "개인정보처리방침",
     "language": "언어",
     "languageSection": "언어",
-    "languageSelect": "언어 선택"
+    "languageSelect": "언어 선택",
+    "feedback": "문의 및 피드백",
+    "emailCopied": "이메일 주소가 복사되었습니다"
   },
   "paywall": {
     "title": "IsoLog Pro로\n완벽한 관리를 시작하세요",
