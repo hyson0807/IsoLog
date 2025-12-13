@@ -216,9 +216,9 @@ export function DayDetailSheet({
             </View>
           )}
 
-          {/* 피부 상태 기록 섹션 (복용일: 복용 완료 시, 휴약일: 항상) */}
-          {canEdit && (hasTaken || !isMedicationDay) && (
-            <View className="my-5 ">
+          {/* 피부 상태 기록 섹션 */}
+          {canEdit && (
+            <View className="mt-5 ">
               <Text className="mb-3 text-sm font-semibold text-gray-700">
                 {t('skin.status')}
               </Text>
@@ -246,7 +246,7 @@ export function DayDetailSheet({
 
               {/* 건조함 정도 */}
               <Text className="mb-2 text-xs text-gray-500">{t('skin.dryness.label')}</Text>
-              <View className="mb-5 flex-row gap-2">
+              <View className="mb-3 flex-row gap-2">
                 {drynessOptions.map((option) => (
                   <TouchableOpacity
                     key={option.value}
@@ -264,60 +264,29 @@ export function DayDetailSheet({
                   </TouchableOpacity>
                 ))}
               </View>
-
-                <Text className="mb-3 text-sm font-semibold text-gray-700">
-                    {t('skin.dailyMemo')}
-                </Text>
-
-              {/* 메모 */}
-              <TextInput
-                placeholder={t('skin.memoPlaceholder')}
-                placeholderTextColor="#9CA3AF"
-                value={memo}
-                onChangeText={setMemo}
-                onBlur={handleMemoBlur}
-                onSubmitEditing={() => {
-                  Keyboard.dismiss();
-                  handleMemoBlur();
-                }}
-                maxLength={100}
-                returnKeyType="done"
-                className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-700"
-              />
             </View>
           )}
 
-          {/* 피부 기록 읽기 전용 표시 (수정 불가한 과거 날짜) */}
-          {!canEdit && skinRecord && (hasTaken || !isMedicationDay) && (
-            <View className="mt-5 rounded-xl bg-gray-50 p-4">
-              <Text className="mb-2 text-sm font-semibold text-gray-700">
-                {t('skin.status')}
-              </Text>
-              <View className="flex-row gap-4">
-                {skinRecord.trouble && (
-                  <Text className="text-sm text-gray-600">
-                    {t('skin.trouble.label')}:{' '}
-                    {troubleOptions.find((o) => o.value === skinRecord.trouble)
-                      ?.emoji}{' '}
-                    {t(`skin.trouble.${skinRecord.trouble}`)}
-                  </Text>
-                )}
-                {skinRecord.dryness && (
-                  <Text className="text-sm text-gray-600">
-                    {t('skin.dryness.label')}:{' '}
-                    {drynessOptions.find((o) => o.value === skinRecord.dryness)
-                      ?.emoji}{' '}
-                    {t(`skin.dryness.${skinRecord.dryness}`)}
-                  </Text>
-                )}
-              </View>
-              {skinRecord.memo && (
-                <Text className="mt-2 text-sm text-gray-500">
-                  {skinRecord.memo}
-                </Text>
-              )}
-            </View>
-          )}
+          {/* 메모 섹션 (모든 날짜에서 작성 가능) */}
+          <View className="mt-5">
+            <Text className="mb-3 text-sm font-semibold text-gray-700">
+              {t('skin.dailyMemo')}
+            </Text>
+            <TextInput
+              placeholder={t('skin.memoPlaceholder')}
+              placeholderTextColor="#9CA3AF"
+              value={memo}
+              onChangeText={setMemo}
+              onBlur={handleMemoBlur}
+              onSubmitEditing={() => {
+                Keyboard.dismiss();
+                handleMemoBlur();
+              }}
+              maxLength={100}
+              returnKeyType="done"
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-700"
+            />
+          </View>
             </ScrollView>
           </Pressable>
         </Pressable>
