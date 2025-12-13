@@ -122,6 +122,13 @@
       "thu": "Thu",
       "fri": "Fri",
       "sat": "Sat"
+    },
+    "legend": {
+      "title": "Calendar Guide",
+      "today": "Today",
+      "taken": "Taken",
+      "drinking": "Near drinking date",
+      "scheduled": "Scheduled"
     }
   },
   "dayDetail": {

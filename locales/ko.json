@@ -122,6 +122,13 @@
       "thu": "목",
       "fri": "금",
       "sat": "토"
+    },
+    "legend": {
+      "title": "캘린더 안내",
+      "today": "오늘",
+      "taken": "복용 완료",
+      "drinking": "술 약속 주변",
+      "scheduled": "섭취 예정일"
     }
   },
   "dayDetail": {

@@ -59,6 +59,7 @@ npm run lint         # Run ESLint
 - **IAP**: `react-native-purchases` for RevenueCat in-app purchases
 - **Store Review**: `expo-store-review` for native app store review prompts
 - **OTA Updates**: `expo-updates` for over-the-air updates via EAS Update
+- **Clipboard**: `expo-clipboard` for copy to clipboard functionality
 - **Path Aliases**: `@/*` maps to project root
 
 ### Project Structure
@@ -71,7 +72,7 @@ app/
 │   ├── calendar.tsx     # Calendar screen (monthly view)
 │   └── community.tsx    # Community screen (TBD)
 ├── _layout.tsx          # Root layout with Provider 설정 + i18n import
-├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 언어, 계정)
+├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 언어, 계정, 문의)
 ├── paywall.tsx          # 프리미엄 구매 페이지
 ├── subscription.tsx     # 구독 관리 페이지
 └── global.css           # Tailwind CSS imports
@@ -92,10 +93,10 @@ components/
 │   ├── FrequencySettingButton.tsx
 │   └── FrequencyBottomSheet.tsx
 ├── calendar/            # Calendar components
-│   ├── CalendarHeader.tsx    # Month navigation
+│   ├── CalendarHeader.tsx    # Month navigation + 범례 팝오버
 │   ├── WeekdayRow.tsx        # Weekday labels
 │   ├── CalendarGrid.tsx      # Date grid (6x7)
-│   ├── DayCell.tsx           # Individual day cell + 경고 색상 + 메모 점 표시
+│   ├── DayCell.tsx           # Individual day cell + 체크/밑줄/메모 표시
 │   ├── DayDetailSheet.tsx    # 복용/술약속/피부기록 토글 시트
 │   └── MonthlySummary.tsx    # Monthly taken count
 ├── settings/            # Settings components
@@ -149,16 +150,19 @@ locales/                 # i18n 번역 파일
 
 ### Calendar Feature
 
-캘린더는 4가지 날짜 상태를 시각화합니다:
+캘린더는 날짜 상태를 시각화합니다:
 
 | 상태 | 시점 | 스타일 |
 |------|------|--------|
-| `taken` | 과거/오늘 | 초록색 원형 배경 |
+| `taken` | 과거/오늘 | 우측상단 초록색 체크 아이콘 ✓ |
 | `missed` | 과거 | 회색 텍스트 |
 | `scheduled` | 미래 | 연한 주황색 배경 |
 | `rest` | 미래 | 빈 배경 |
 | `today` | 오늘(미복용) | 주황색 테두리 |
 | `disabled` | 첫 복용일 이전 | 회색 비활성 |
+| `drinking_*` | 술 약속 D±4일 | 날짜 아래 빨간색 밑줄 (그라데이션) |
+
+**범례 팝오버**: 헤더 우측 ⓘ 버튼 클릭 시 캘린더 안내 표시
 
 **데이터 흐름**: `MedicationContext` → 홈/캘린더 양방향 동기화
 **영속성**: AsyncStorage (`@isoLog/medication_data`)
@@ -167,19 +171,20 @@ locales/                 # i18n 번역 파일
 
 술 약속 경고 시스템은 음주 전후 간 건강을 위해 휴약을 권장합니다.
 
-**경고 레벨 (D±4일)**:
+**경고 레벨 (D±4일)** - 날짜 아래 밑줄로 표시:
 
-| 레벨 | 거리 | 색상 |
-|------|------|------|
-| `dday` | 당일 | `bg-red-600` |
+| 레벨 | 거리 | 밑줄 색상 |
+|------|------|----------|
+| `dday` | 당일 | `bg-red-600` (진한 빨강) |
 | `day1` | D±1 | `bg-red-500` |
 | `day2` | D±2 | `bg-red-400` |
 | `day3` | D±3 | `bg-red-300` |
-| `day4` | D±4 | `bg-red-100` |
+| `day4` | D±4 | `bg-red-200` (연한 빨강) |
 
 **기능**:
 - 캘린더에서 미래 날짜 클릭 → 술 약속 추가/삭제
-- 경고 기간 날짜는 빨간색 그라데이션으로 표시
+- 경고 기간 날짜는 숫자 아래 빨간색 밑줄로 표시 (그라데이션)
+- 술 약속 당일은 우측상단 🍷 아이콘 표시
 - 홈 화면 버튼/상태카드도 경고 색상 동기화
 - 경고 기간 복용 시 확인 팝업 (Double Check)
 

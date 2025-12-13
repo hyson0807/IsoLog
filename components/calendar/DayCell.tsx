@@ -16,8 +16,8 @@ interface DayCellProps {
 
 const statusStyles: Record<DayCellStatus, { container: string; text: string }> = {
   taken: {
-    container: 'bg-green-500',
-    text: 'text-white font-semibold',
+    container: '',
+    text: 'text-gray-900 font-semibold',
   },
   missed: {
     container: '',
@@ -39,27 +39,36 @@ const statusStyles: Record<DayCellStatus, { container: string; text: string }> =
     container: '',
     text: 'text-gray-200',
   },
-  // 술 경고 스타일
+  // 술 경고 스타일 (밑줄로 표시, 배경색 없음)
   drinking_dday: {
-    container: 'bg-red-600',
-    text: 'text-white font-bold',
+    container: '',
+    text: 'text-gray-900 font-bold',
   },
   drinking_warning1: {
-    container: 'bg-red-500',
-    text: 'text-white font-semibold',
+    container: '',
+    text: 'text-gray-900 font-semibold',
   },
   drinking_warning2: {
-    container: 'bg-red-400',
-    text: 'text-white font-medium',
+    container: '',
+    text: 'text-gray-900 font-medium',
   },
   drinking_warning3: {
-    container: 'bg-red-300',
-    text: 'text-red-800 font-medium',
+    container: '',
+    text: 'text-gray-700 font-medium',
   },
   drinking_warning4: {
-    container: 'bg-red-100',
-    text: 'text-red-600',
+    container: '',
+    text: 'text-gray-600',
   },
+};
+
+// 술 경고 밑줄 색상
+const drinkingUnderlineColors: Record<string, string> = {
+  drinking_dday: 'bg-red-600',
+  drinking_warning1: 'bg-red-500',
+  drinking_warning2: 'bg-red-400',
+  drinking_warning3: 'bg-red-300',
+  drinking_warning4: 'bg-red-200',
 };
 
 function DayCellComponent({
@@ -87,6 +96,16 @@ function DayCellComponent({
         className={`relative h-10 w-10 items-center justify-center rounded-full ${styles.container}`}
       >
         <Text className={`text-base ${styles.text}`}>{day}</Text>
+        {/* 술 경고 밑줄 */}
+        {drinkingUnderlineColors[effectiveStatus] && (
+          <View className={`absolute bottom-1.5 h-0.5 w-5 rounded-full ${drinkingUnderlineColors[effectiveStatus]}`} />
+        )}
+        {/* 복용 완료 체크 */}
+        {effectiveStatus === 'taken' && (
+          <View className="absolute -right-0.5 -top-0.5">
+            <Ionicons name="checkmark-circle" size={14} color="#22C55E" />
+          </View>
+        )}
         {isDrinkingDay && (
           <View className="absolute -right-1 -top-1">
             <Ionicons name="wine" size={14} color="#DC2626" />
