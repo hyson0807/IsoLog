@@ -4,6 +4,15 @@
     "slug": "IsoLog",
     "version": "1.0.2",
     "orientation": "portrait",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/2d8d2553-b672-48e3-91d1-597c1307fbcc"
+    },
     "icon": "./assets/images/icon.png",
     "scheme": "isocare",
     "userInterfaceStyle": "automatic",
@@ -65,7 +74,8 @@
           "androidAppId": "ca-app-pub-2320452683835335~1386186473",
           "iosAppId": "ca-app-pub-2320452683835335~1158955767"
         }
-      ]
+      ],
+      "expo-updates"
     ],
     "experiments": {
       "typedRoutes": true,

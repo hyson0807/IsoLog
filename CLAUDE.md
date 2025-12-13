@@ -58,6 +58,7 @@ npm run lint         # Run ESLint
 - **Ads**: `react-native-google-mobile-ads` for AdMob (배너 + 전면 광고)
 - **IAP**: `react-native-purchases` for RevenueCat in-app purchases
 - **Store Review**: `expo-store-review` for native app store review prompts
+- **OTA Updates**: `expo-updates` for over-the-air updates via EAS Update
 - **Path Aliases**: `@/*` maps to project root
 
 ### Project Structure
@@ -81,7 +82,8 @@ components/
 │   ├── DrawerMenu.tsx                # 사이드 드로어 메뉴
 │   ├── WarningConfirmModal.tsx       # 경고 확인 팝업
 │   ├── AdBanner.tsx                  # Google AdMob 배너 광고
-│   └── NotificationPromptSnackbar.tsx # 알림 유도 스낵바
+│   ├── NotificationPromptSnackbar.tsx # 알림 유도 스낵바
+│   └── UpdateLoadingScreen.tsx       # OTA 업데이트 로딩 화면
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
@@ -114,7 +116,8 @@ hooks/                   # Custom React hooks
 ├── useMedicationSchedule.ts    # (legacy, use MedicationContext)
 ├── useMedicationReminder.ts    # 복용 알림 관리
 ├── useNotificationPermission.ts # 알림 권한 관리
-└── useInterstitialAd.ts        # 전면 광고 관리
+├── useInterstitialAd.ts        # 전면 광고 관리
+└── useAppUpdates.ts            # OTA 업데이트 확인/적용
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
@@ -361,6 +364,7 @@ Purchases.getOfferings()
 | `alert` | Alert 메시지 |
 | `snackbar` | 스낵바 메시지 |
 | `community` | 커뮤니티 |
+| `update` | OTA 업데이트 메시지 |
 
 **사용 방법**:
 ```typescript
@@ -385,3 +389,51 @@ await i18n.changeLanguage('en'); // 자동으로 AsyncStorage에 저장됨
 - `locales/ko.json`: 한국어 번역
 - `locales/en.json`: 영어 번역
 - `components/settings/LanguageBottomSheet.tsx`: 언어 선택 UI
+
+### OTA Updates (EAS Update)
+
+`expo-updates`를 사용하여 앱스토어 재배포 없이 JS 코드를 업데이트합니다.
+
+**설정** (`app.json`):
+```json
+{
+  "runtimeVersion": { "policy": "appVersion" },
+  "updates": {
+    "enabled": true,
+    "checkAutomatically": "ON_LOAD",
+    "fallbackToCacheTimeout": 0,
+    "url": "https://u.expo.dev/2d8d2553-b672-48e3-91d1-597c1307fbcc"
+  }
+}
+```
+
+**채널 설정** (`eas.json`):
+| 환경 | 채널 |
+|------|------|
+| development | `development` |
+| preview | `preview` |
+| production | `production` |
+
+**동작 방식**:
+1. 앱 시작 시 업데이트 확인
+2. 업데이트가 있으면 로딩 화면 표시 + 다운로드
+3. 다운로드 완료 즉시 앱 자동 재시작
+
+**주요 파일**:
+- `hooks/useAppUpdates.ts`: 업데이트 확인/다운로드/적용 로직
+- `components/common/UpdateLoadingScreen.tsx`: 업데이트 중 로딩 UI
+- `app/_layout.tsx`: `AppContent` 컴포넌트에서 업데이트 상태 관리
+
+**배포 명령어**:
+```bash
+# JS 코드만 변경 시 (네이티브 코드 변경 없을 때)
+eas update --channel production --message "v1.0.3 버그 수정"
+
+# 배포된 업데이트 목록 확인
+eas update:list --channel production
+```
+
+**주의사항**:
+- 개발 환경(`__DEV__`)에서는 업데이트 기능 비활성화
+- 네이티브 코드 변경 시 반드시 새 빌드 + 스토어 재배포 필요
+- OTA로 배포 가능: JS/TS 코드, 에셋, 스타일만

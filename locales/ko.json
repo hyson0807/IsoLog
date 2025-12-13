@@ -214,6 +214,10 @@
   "community": {
     "title": "커뮤니티"
   },
+  "update": {
+    "updating": "더 나은 IsoLog를 준비하고 있어요",
+    "pleaseWait": "잠시만 기다려주시면 곧 시작합니다"
+  },
   "subscription": {
     "title": "구독 관리",
     "freeVersion": "무료 버전",

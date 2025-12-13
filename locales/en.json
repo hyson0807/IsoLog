@@ -214,6 +214,10 @@
   "community": {
     "title": "Community"
   },
+  "update": {
+    "updating": "Preparing a better IsoLog for you",
+    "pleaseWait": "Just a moment, we'll be ready soon"
+  },
   "subscription": {
     "title": "Manage Subscription",
     "freeVersion": "Free Version",
