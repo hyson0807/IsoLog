@@ -8,6 +8,13 @@ export function getToday(): string {
   return `${year}-${month}-${day}`;
 }
 
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function formatDate(date: Date): string {
   const locale = getLocales()[0]?.languageTag ?? 'en-US';
 
@@ -66,19 +73,19 @@ export function getCalendarDates(year: number, month: number, startDay: 0 | 1 = 
   // 이전 달 날짜 추가
   for (let i = dayOfWeek - 1; i >= 0; i--) {
     const d = new Date(year, month, -i);
-    dates.push(d.toISOString().split('T')[0]);
+    dates.push(formatLocalDate(d));
   }
 
   // 현재 달 날짜 추가
   for (let d = 1; d <= lastDayOfMonth.getDate(); d++) {
-    dates.push(new Date(year, month, d).toISOString().split('T')[0]);
+    dates.push(formatLocalDate(new Date(year, month, d)));
   }
 
   // 다음 달 날짜로 42개까지 채우기
   let nextDayCount = 1;
   while (dates.length < 42) {
     const d = new Date(year, month + 1, nextDayCount);
-    dates.push(d.toISOString().split('T')[0]);
+    dates.push(formatLocalDate(d));
     nextDayCount++;
   }
 
@@ -97,7 +104,7 @@ export function getScheduledDatesInMonth(
   const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
 
   for (let d = 1; d <= lastDayOfMonth; d++) {
-    const dateStr = new Date(year, month, d).toISOString().split('T')[0];
+    const dateStr = formatLocalDate(new Date(year, month, d));
     // 미래 날짜이면서 복용일인 경우
     if (dateStr > today && isMedicationDay(referenceDate, frequencyDays, dateStr)) {
       scheduled.add(dateStr);
