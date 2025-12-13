@@ -2,7 +2,7 @@
   "expo": {
     "name": "IsoLog",
     "slug": "IsoLog",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "runtimeVersion": {
       "policy": "appVersion"
