@@ -73,6 +73,7 @@ export function NotificationTimeBottomSheet({
               display={pickerMode}
               onChange={handleTimeChange}
               locale={locale}
+              themeVariant="light"
               style={{ width: '100%', height: 180 }}
             />
           </View>
