@@ -74,6 +74,7 @@ const drinkingUnderlineColors: Record<string, string> = {
 function DayCellComponent({
   day,
   status,
+  isToday,
   isCurrentMonth,
   isDrinkingDay,
   hasMemo,
@@ -85,6 +86,10 @@ function DayCellComponent({
   // 모든 날짜 클릭 가능 (disabled만 제외) - 미래 날짜도 술 약속 추가 가능
   const isInteractive = isCurrentMonth && effectiveStatus !== 'disabled';
 
+  // 오늘이면서 아직 복용하지 않은 경우 주황색 테두리 표시 (음주 경고와 별개로)
+  const showTodayBorder = isToday && isCurrentMonth && effectiveStatus !== 'taken';
+  const todayBorderStyle = showTodayBorder ? 'border-2 border-orange-500' : '';
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -93,7 +98,7 @@ function DayCellComponent({
       activeOpacity={isInteractive ? 0.6 : 1}
     >
       <View
-        className={`relative h-10 w-10 items-center justify-center rounded-full ${styles.container}`}
+        className={`relative h-10 w-10 items-center justify-center rounded-full ${styles.container} ${todayBorderStyle}`}
       >
         <Text className={`text-base ${styles.text}`}>{day}</Text>
         {/* 술 경고 밑줄 */}
