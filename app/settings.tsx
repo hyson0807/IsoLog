@@ -124,7 +124,7 @@ export default function SettingsScreen() {
                 </View>
                 <Text className="text-base text-gray-700">{t('settings.version')}</Text>
               </View>
-              <Text className="text-gray-400">1.0.0</Text>
+              <Text className="text-gray-400">1.0.4</Text>
             </TouchableOpacity>
 
             <View className="mx-4 h-px bg-gray-100" />

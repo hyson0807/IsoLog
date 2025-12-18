@@ -20,7 +20,6 @@ import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
-import { getToday } from '@/utils/dateUtils';
 import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
@@ -29,7 +28,6 @@ export default function HomeScreen() {
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
-  const today = getToday();
 
   // 이전 복용 상태 추적 (스낵바 표시용)
   const prevHasTakenRef = useRef<boolean | null>(null);
@@ -37,6 +35,7 @@ export default function HomeScreen() {
   const {
     schedule,
     todayStatus,
+    today,
     toggleMedication,
     updateFrequency,
     getDrinkingWarningLevel,
@@ -126,6 +125,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Header
+          today={today}
           onMenuPress={() => setIsDrawerVisible(true)}
           isPremium={isPremium}
           notificationEnabled={notificationEnabled}

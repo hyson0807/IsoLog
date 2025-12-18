@@ -16,9 +16,10 @@ import {
   DrinkingWarningLevel,
   SkinRecord,
 } from '@/types/medication';
-import { getDaysDifference } from '@/utils/dateUtils';
+import { getDaysDifference, getToday } from '@/utils/dateUtils';
 import { frequencyOptions } from '@/constants/frequency';
-import { getToday, isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
+import { isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
+import { useTodayDate } from '@/hooks/useTodayDate';
 
 const STORAGE_KEY = '@isoLog/medication_data';
 
@@ -31,6 +32,7 @@ interface MedicationContextValue {
   skinRecords: Map<string, SkinRecord>;
   isLoading: boolean;
   todayStatus: TodayStatus;
+  today: string;
 
   // Actions
   toggleMedication: (date: string) => void;
@@ -61,7 +63,8 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   const [skinRecords, setSkinRecords] = useState<Map<string, SkinRecord>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
-  const today = getToday();
+  // 자정 변경 시 자동 업데이트되는 오늘 날짜
+  const today = useTodayDate();
 
   // 주기 일수 계산
   const frequencyDays = useMemo(() => {
@@ -265,6 +268,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       skinRecords,
       isLoading,
       todayStatus,
+      today,
       toggleMedication,
       updateFrequency,
       toggleDrinkingDate,
@@ -285,6 +289,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       skinRecords,
       isLoading,
       todayStatus,
+      today,
       toggleMedication,
       updateFrequency,
       toggleDrinkingDate,

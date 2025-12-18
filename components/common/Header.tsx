@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '@/utils/dateUtils';
 
 interface HeaderProps {
+  today?: string; // YYYY-MM-DD 형식
   showMenu?: boolean;
   onMenuPress?: () => void;
   isPremium?: boolean;
@@ -11,14 +12,15 @@ interface HeaderProps {
 }
 
 export function Header({
+  today,
   showMenu = true,
   onMenuPress,
   isPremium = false,
   notificationEnabled = false,
   onNotificationPress,
 }: HeaderProps) {
-  const today = new Date();
-  const formattedDate = formatDate(today);
+  const todayDate = today ? new Date(today + 'T00:00:00') : new Date();
+  const formattedDate = formatDate(todayDate);
 
   return (
     <View className="flex-row items-center justify-between px-5 py-4">

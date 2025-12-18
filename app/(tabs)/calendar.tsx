@@ -10,18 +10,11 @@ import {
 } from '@/components/calendar';
 import { AdBanner } from '@/components/common';
 import { useMedicationContext } from '@/contexts/MedicationContext';
-import { getToday, isDateInMonth } from '@/utils/dateUtils';
+import { isDateInMonth } from '@/utils/dateUtils';
 
 export default function CalendarScreen() {
-  const today = getToday();
-  const todayDate = new Date(today + 'T00:00:00');
-
-  const [currentMonth, setCurrentMonth] = useState(
-    new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
-  );
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
   const {
+    today,
     takenDates,
     toggleMedication,
     hasTaken,
@@ -34,6 +27,13 @@ export default function CalendarScreen() {
     getSkinRecord,
     saveSkinRecord,
   } = useMedicationContext();
+
+  const todayDate = useMemo(() => new Date(today + 'T00:00:00'), [today]);
+
+  const [currentMonth, setCurrentMonth] = useState(
+    () => new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // 현재 월이 오늘이 포함된 월인지 확인
   const isCurrentMonth =
