@@ -34,11 +34,6 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.hyson.isoLog"
     },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "bundler": "metro"
-    },
     "plugins": [
       "expo-router",
       [
