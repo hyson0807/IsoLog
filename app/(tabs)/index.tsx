@@ -20,6 +20,7 @@ import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
+import { useIsAfter21 } from '@/hooks/useIsAfter21';
 import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
@@ -51,6 +52,9 @@ export default function HomeScreen() {
 
   // Interstitial 광고
   const { showAd } = useInterstitialAd();
+
+  // 21시 이후 여부 (실시간 업데이트)
+  const isAfter21 = useIsAfter21();
 
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
@@ -145,8 +149,41 @@ export default function HomeScreen() {
             const isSkinRecordComplete = skinRecord?.trouble && skinRecord?.dryness;
             const isMedicationDay = todayStatus.isMedicationDay;
 
-            // 휴약일: 복용 버튼 없이 바로 피부 기록/데일리 팁 표시
-            if (!isMedicationDay) {
+            // 21시 전: 무조건 DailyTipCard
+            if (!isAfter21) {
+              return <DailyTipCard />;
+            }
+
+            // 21시 이후
+            if (isMedicationDay) {
+              // 복용일
+              if (hasTakenToday && isSkinRecordComplete) {
+                // 복용 완료 + 피부 기록 완료 → 데일리 팁 표시
+                return <DailyTipCard />;
+              } else if (hasTakenToday) {
+                // 복용 완료 + 피부 기록 미완료 → 기록 카드 표시
+                return (
+                  <SkinRecordCard
+                    date={today}
+                    existingRecord={skinRecord}
+                    onSave={saveSkinRecord}
+                    onComplete={handleSkinRecordComplete}
+                    onCancel={handleCancelMedication}
+                  />
+                );
+              } else {
+                // 미복용 → 복용 버튼 표시
+                return (
+                  <MedicationButton
+                    hasTaken={hasTakenToday}
+                    isMedicationDay={todayStatus.isMedicationDay}
+                    warningLevel={todayWarningLevel}
+                    onPress={handleMedicationPress}
+                  />
+                );
+              }
+            } else {
+              // 휴약일
               if (isSkinRecordComplete) {
                 return <DailyTipCard />;
               }
@@ -157,33 +194,6 @@ export default function HomeScreen() {
                   onSave={saveSkinRecord}
                   onComplete={handleSkinRecordComplete}
                   isRestDay
-                />
-              );
-            }
-
-            // 복용일
-            if (hasTakenToday && isSkinRecordComplete) {
-              // 복용 완료 + 피부 기록 완료 → 데일리 팁 표시
-              return <DailyTipCard />;
-            } else if (hasTakenToday) {
-              // 복용 완료 + 피부 기록 미완료 → 기록 카드 표시
-              return (
-                <SkinRecordCard
-                  date={today}
-                  existingRecord={skinRecord}
-                  onSave={saveSkinRecord}
-                  onComplete={handleSkinRecordComplete}
-                  onCancel={handleCancelMedication}
-                />
-              );
-            } else {
-              // 미복용 → 복용 버튼 표시
-              return (
-                <MedicationButton
-                  hasTaken={hasTakenToday}
-                  isMedicationDay={todayStatus.isMedicationDay}
-                  warningLevel={todayWarningLevel}
-                  onPress={handleMedicationPress}
                 />
               );
             }

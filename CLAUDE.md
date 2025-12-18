@@ -107,7 +107,7 @@ components/
 └── community/           # Community components (TBD)
 
 contexts/                # React Context providers
-├── MedicationContext.tsx    # Global state + AsyncStorage
+├── MedicationContext.tsx    # Global state + AsyncStorage + today 자동 갱신
 └── PremiumContext.tsx       # Premium/알림 상태 관리
 
 services/                # Business logic services
@@ -118,7 +118,9 @@ hooks/                   # Custom React hooks
 ├── useMedicationReminder.ts    # 복용 알림 관리
 ├── useNotificationPermission.ts # 알림 권한 관리
 ├── useInterstitialAd.ts        # 전면 광고 관리
-└── useAppUpdates.ts            # OTA 업데이트 확인/적용
+├── useAppUpdates.ts            # OTA 업데이트 확인/적용
+├── useTodayDate.ts             # 자정 날짜 변경 시 자동 갱신
+└── useIsAfter21.ts             # 21시 이후 여부 실시간 체크
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
@@ -162,10 +164,26 @@ locales/                 # i18n 번역 파일
 | `disabled` | 첫 복용일 이전 | 회색 비활성 |
 | `drinking_*` | 술 약속 D±4일 | 날짜 아래 빨간색 밑줄 (그라데이션) |
 
+**오늘 + 음주경고 동시 표시**: 오늘이 음주 예정일 D±4일 범위에 있으면 주황색 테두리와 빨간색 밑줄이 동시에 표시됨
+
 **범례 팝오버**: 헤더 우측 ⓘ 버튼 클릭 시 캘린더 안내 표시
 
 **데이터 흐름**: `MedicationContext` → 홈/캘린더 양방향 동기화
 **영속성**: AsyncStorage (`@isoLog/medication_data`)
+
+### 자정 날짜 변경 자동 갱신
+
+`useTodayDate` 훅을 통해 자정(00:00)에 날짜가 바뀌면 UI가 실시간으로 갱신됩니다.
+
+**동작 방식**:
+- 자정까지 남은 시간 계산 후 `setTimeout` 설정
+- `AppState` 리스너로 백그라운드 → 포그라운드 전환 시 날짜 확인
+- `MedicationContext`에서 `today`를 state로 관리하여 전체 UI 자동 갱신
+
+**영향 범위**:
+- 홈 화면: 오늘 복용 상태, 피부 기록
+- 캘린더: 오늘 날짜 하이라이트
+- 헤더: 날짜 표시
 
 ### Drinking Warning Feature
 
@@ -216,12 +234,33 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 - 네이티브 코드 포함으로 **Expo Go 미지원**
 - Development Build 필요: `npx expo prebuild && npx expo run:ios`
 
+### Home Screen 21시 기준 UI 로직
+
+홈 화면은 21시를 기준으로 다른 UI를 표시합니다. `useIsAfter21` 훅으로 실시간 갱신됩니다.
+
+**복용일**:
+| 시간 | 상태 | 표시 컴포넌트 |
+|------|------|---------------|
+| 21시 전 | - | `DailyTipCard` |
+| 21시 이후 | 미복용 | `MedicationButton` |
+| 21시 이후 | 복용완료 + 피부기록 미완료 | `SkinRecordCard` |
+| 21시 이후 | 복용완료 + 피부기록 완료 | `DailyTipCard` |
+
+**휴약일**:
+| 시간 | 상태 | 표시 컴포넌트 |
+|------|------|---------------|
+| 21시 전 | - | `DailyTipCard` |
+| 21시 이후 | 피부기록 미완료 | `SkinRecordCard` |
+| 21시 이후 | 피부기록 완료 | `DailyTipCard` |
+
+**실시간 갱신**: 21시가 되면 앱을 껐다 키지 않아도 UI가 자동으로 변경됨 (`useIsAfter21` 훅의 타이머 + AppState 리스너)
+
 ### Skin Record Feature
 
 피부 상태를 기록하는 기능입니다.
 
 **흐름**:
-1. 홈: 복용 체크 → `SkinRecordCard` 표시 → 트러블 + 건조함 선택 → `DailyTipCard` 표시
+1. 홈: 21시 이후 복용 체크 → `SkinRecordCard` 표시 → 트러블 + 건조함 선택 → `DailyTipCard` 표시
 2. 캘린더: 날짜 선택 → 피부 상태(과거/오늘만) + 메모(미래 포함) 기록 가능
 
 **캘린더 DayDetailSheet 구조**:
