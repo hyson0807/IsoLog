@@ -26,12 +26,23 @@ export function useOnboarding(): UseOnboardingReturn {
           return;
         }
 
-        // 2. 기존 사용자인지 확인 (medication 데이터 존재 여부)
+        // 2. 기존 사용자인지 확인 (실제 사용 기록이 있는지)
         const existingData = await AsyncStorage.getItem(MEDICATION_DATA_KEY);
         if (existingData) {
-          // 기존 사용자 -> 온보딩 표시 안 함 + 플래그 설정
-          await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-          setShouldShowOnboarding(false);
+          const data = JSON.parse(existingData);
+          // 실제 사용 기록이 있는지 확인 (복용 기록 또는 주기 설정)
+          const hasUsageHistory =
+            (data.takenDates && data.takenDates.length > 0) ||
+            (data.schedule && data.schedule.frequency !== 'none');
+
+          if (hasUsageHistory) {
+            // 기존 사용자 -> 온보딩 표시 안 함 + 플래그 설정
+            await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+            setShouldShowOnboarding(false);
+          } else {
+            // 데이터는 있지만 사용 기록 없음 -> 새 사용자
+            setShouldShowOnboarding(true);
+          }
         } else {
           // 새 사용자 -> 온보딩 표시
           setShouldShowOnboarding(true);
