@@ -84,20 +84,37 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const data: MedicationStorageData = JSON.parse(stored);
-          setSchedule(data.schedule);
-          setTakenDates(new Set(data.takenDates));
-          setFirstTakenDate(data.firstTakenDate);
-          setDrinkingDates(new Set(data.drinkingDates || []));
-          // 피부 기록 로드
-          if (data.skinRecords) {
-            const recordsMap = new Map<string, SkinRecord>();
-            data.skinRecords.forEach((record) => {
-              recordsMap.set(record.date, record);
-            });
-            setSkinRecords(recordsMap);
+
+          // 구버전이 저장한 기본 데이터인지 확인 (OTA race condition 대응)
+          // 구버전 기본값: frequency='every2days', 나머지 모두 비어있음
+          const isLegacyDefaultData =
+            data.schedule.frequency === 'every2days' &&
+            data.takenDates.length === 0 &&
+            data.firstTakenDate === null &&
+            (!data.drinkingDates || data.drinkingDates.length === 0) &&
+            (!data.skinRecords || data.skinRecords.length === 0);
+
+          if (isLegacyDefaultData) {
+            // 구버전 기본 데이터 삭제 → 신규 사용자로 처리
+            await AsyncStorage.removeItem(STORAGE_KEY);
+            // state 업데이트 안 함 (기본값 유지: frequency: 'none')
+          } else {
+            // 실제 사용 데이터 → 정상 로드
+            setSchedule(data.schedule);
+            setTakenDates(new Set(data.takenDates));
+            setFirstTakenDate(data.firstTakenDate);
+            setDrinkingDates(new Set(data.drinkingDates || []));
+            // 피부 기록 로드
+            if (data.skinRecords) {
+              const recordsMap = new Map<string, SkinRecord>();
+              data.skinRecords.forEach((record) => {
+                recordsMap.set(record.date, record);
+              });
+              setSkinRecords(recordsMap);
+            }
+            // 기존 데이터 존재 표시 (OTA race condition 방지)
+            setDataExists(true);
           }
-          // 기존 데이터 존재 표시 (OTA race condition 방지)
-          setDataExists(true);
         }
       } catch {
         // Failed to load medication data
