@@ -153,6 +153,7 @@ locales/                 # i18n 번역 파일
 - **React Compiler**: Enabled
 - **Typed Routes**: Enabled
 - **TypeScript**: Strict mode
+- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 트래킹)
 
 ### Calendar Feature
 
@@ -227,7 +228,7 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 
 **광고 위치**:
 - **배너 광고**: 캘린더 탭 상단 (`AdBanner` 컴포넌트)
-- **전면 광고**: 복용 체크 완료 후 + 피부 기록 완료 후 (`useInterstitialAd` 훅)
+- **전면 광고**: 피부 기록 완료 후에만 (`useInterstitialAd` 훅)
 
 **특징**:
 - 개발 환경: 테스트 광고 자동 사용 (`TestIds`)
@@ -247,7 +248,8 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 |------|------|---------------|
 | 21시 전 | 미복용 | `MedicationCheckCard` + `DailyTipCard` |
 | 21시 전 | 복용완료 | `DailyTipCard` |
-| 21시 이후 | 미복용 | `MedicationCheckCard` + `SkinRecordCard` |
+| 21시 이후 | 미복용 + 피부기록 미완료 | `MedicationCheckCard` + `SkinRecordCard` |
+| 21시 이후 | 미복용 + 피부기록 완료 | `MedicationCheckCard` + `DailyTipCard` |
 | 21시 이후 | 복용완료 + 피부기록 미완료 | `SkinRecordCard` |
 | 21시 이후 | 복용완료 + 피부기록 완료 | `DailyTipCard` |
 

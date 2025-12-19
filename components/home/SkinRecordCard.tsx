@@ -72,26 +72,14 @@ export function SkinRecordCard({
 
   return (
     <View className="w-full px-6">
-      {/* 헤더: 복용 완료 + 취소 버튼 (복용일) / 휴약일 안내 */}
-      <View className="mb-6 flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <Ionicons
-            name={isRestDay ? 'moon' : 'checkmark-circle'}
-            size={32}
-            color={isRestDay ? '#F59E0B' : '#22C55E'}
-          />
-          <Text
-            className={`ml-3 text-2xl font-bold ${isRestDay ? 'text-amber-500' : 'text-green-600'}`}
-          >
-            {isRestDay ? t('home.restDayTitle') : t('home.takenComplete')}
-          </Text>
-        </View>
-        {!isRestDay && onCancel && (
+      {/* 취소 버튼 (복용일만) */}
+      {!isRestDay && onCancel && (
+        <View className="mb-4 flex-row justify-end">
           <TouchableOpacity onPress={handleCancel} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text className="text-base text-gray-400">{t('common.cancel')}</Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
 
       {/* 섹션 타이틀 */}
       <Text className="mb-5 text-lg font-semibold text-gray-800">

@@ -52,6 +52,7 @@ function TabBarButton({ children, onPress, ...rest }: TabBarButtonProps) {
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
@@ -65,15 +66,17 @@ export default function TabLayout() {
         },
       }}
     >
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon name="calendar-outline" focused={focused} />
-          ),
-          tabBarButton: (props) => <TabBarButton {...props} />,
-        }}
-      />
+
+        <Tabs.Screen
+            name="calendar"
+            options={{
+                tabBarIcon: ({ focused }) => (
+                    <TabIcon name="calendar-outline" focused={focused} />
+                ),
+                tabBarButton: (props) => <TabBarButton {...props} />,
+            }}
+        />
+
       <Tabs.Screen
         name="index"
         options={{
@@ -83,6 +86,7 @@ export default function TabLayout() {
           tabBarButton: (props) => <TabBarButton {...props} />,
         }}
       />
+
       <Tabs.Screen
         name="tracking"
         options={{

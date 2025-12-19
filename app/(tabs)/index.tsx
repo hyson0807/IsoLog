@@ -90,9 +90,6 @@ export default function HomeScreen() {
 
     // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
     setTimeout(() => tryRequestReview(), 1000);
-
-    // 복용 체크 완료 후 전면 광고 표시
-    setTimeout(() => showAd(), 300);
   };
 
   // 복용 취소 핸들러 (SkinRecordCard에서 호출)
@@ -108,9 +105,6 @@ export default function HomeScreen() {
 
     // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
     setTimeout(() => tryRequestReview(), 1000);
-
-    // 복용 체크 완료 후 전면 광고 표시
-    setTimeout(() => showAd(), 300);
   };
 
   // 알림 아이콘 클릭 핸들러
@@ -171,7 +165,7 @@ export default function HomeScreen() {
               if (!hasTakenToday) {
                 // 미복용
                 if (isAfter21) {
-                  // 21시 이후: 복용 카드 + 피부기록 카드
+                  // 21시 이후: 복용 카드 + (피부기록 카드 or 팁 카드)
                   return (
                     <View className="w-full">
                       <View className="mb-4 px-6">
@@ -180,12 +174,16 @@ export default function HomeScreen() {
                           onPress={handleMedicationPress}
                         />
                       </View>
-                      <SkinRecordCard
-                        date={today}
-                        existingRecord={skinRecord}
-                        onSave={saveSkinRecord}
-                        onComplete={handleSkinRecordComplete}
-                      />
+                      {isSkinRecordComplete ? (
+                        <DailyTipCard />
+                      ) : (
+                        <SkinRecordCard
+                          date={today}
+                          existingRecord={skinRecord}
+                          onSave={saveSkinRecord}
+                          onComplete={handleSkinRecordComplete}
+                        />
+                      )}
                     </View>
                   );
                 } else {
