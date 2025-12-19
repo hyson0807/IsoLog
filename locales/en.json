@@ -283,5 +283,13 @@
       "section6Title": "6. Data Deletion",
       "section6Content": "Uninstalling the app will delete all data stored on your device. Data recovery is not possible, so please back up any necessary information before deletion."
     }
+  },
+  "onboarding": {
+    "welcome": "Welcome to IsoLog!",
+    "subtitle": "Let's set up your medication schedule",
+    "selectFrequency": "Select your dosing schedule",
+    "startButton": "Get Started",
+    "skipButton": "Set up later",
+    "hint": "You can change this anytime in the Calendar tab"
   }
 }

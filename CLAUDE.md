@@ -105,6 +105,8 @@ components/
 │   ├── NotificationToggle.tsx       # 알림 설정 토글 + 시간 표시
 │   ├── NotificationTimeBottomSheet.tsx # 알림 시간 선택 바텀시트
 │   └── LanguageBottomSheet.tsx      # 언어 선택 바텀시트
+├── onboarding/          # Onboarding components
+│   └── OnboardingBottomSheet.tsx    # 첫 실행 시 복용 주기 설정 유도
 └── tracking/            # Tracking screen components (TBD)
 
 contexts/                # React Context providers
@@ -121,7 +123,8 @@ hooks/                   # Custom React hooks
 ├── useInterstitialAd.ts        # 전면 광고 관리
 ├── useAppUpdates.ts            # OTA 업데이트 확인/적용
 ├── useTodayDate.ts             # 자정 날짜 변경 시 자동 갱신
-└── useIsAfter21.ts             # 21시 이후 여부 실시간 체크
+├── useIsAfter21.ts             # 21시 이후 여부 실시간 체크
+└── useOnboarding.ts            # 첫 실행 온보딩 상태 관리
 
 constants/               # App constants
 ├── theme.ts             # Colors, spacing, fonts
@@ -331,6 +334,47 @@ interface SkinRecord {
 - 시작일 변경 → 완료 버튼 클릭 시 반영
 - `frequencyDays = 0` (none) → 모든 날이 복용일 아님, 캘린더 scheduled 표시 없음
 
+### Onboarding Feature
+
+앱 첫 실행 시 복용 주기 설정을 유도하는 온보딩 바텀시트입니다.
+
+**트리거 조건**:
+- 새 사용자: `@isoLog/onboarding_completed` 없음 + `@isoLog/medication_data` 없음
+- 기존 사용자 (업데이트): medication_data가 있으면 자동으로 온보딩 완료 처리
+
+**기본값**:
+- 첫 설치 시 `frequency: 'none'` (복용 주기 미설정 상태)
+- 모든 날이 휴약일로 표시됨
+
+**UI 구성** (`OnboardingBottomSheet`):
+- 환영 메시지 + 앱 소개
+- 복용 주기 선택 (가로 스크롤 카드)
+- 시작일 선택 (격일/3일/주1회 선택 시)
+- "시작하기" / "나중에 설정" 버튼
+
+**동작 흐름**:
+```
+앱 시작 → useOnboarding 훅 실행
+              ↓
+   @isoLog/onboarding_completed 확인
+              ↓
+   'true' → 온보딩 표시 안 함
+              ↓
+   @isoLog/medication_data 확인
+   ├─ 데이터 있음 → 기존 사용자 → 자동 완료 처리
+   └─ 데이터 없음 → 새 사용자 → 온보딩 표시
+              ↓
+   주기 선택 + "시작하기" → updateFrequency() + completeOnboarding()
+   "나중에 설정" → skipOnboarding() (frequency: 'none' 유지)
+```
+
+**저장 키**: `@isoLog/onboarding_completed`
+
+**주요 파일**:
+- `hooks/useOnboarding.ts`: 온보딩 상태 관리 훅
+- `components/onboarding/OnboardingBottomSheet.tsx`: 온보딩 UI 컴포넌트
+- `app/(tabs)/index.tsx`: 온보딩 바텀시트 통합
+
 ### Store Review (앱스토어 리뷰 요청)
 
 `expo-store-review`를 사용하여 복용 체크 완료 후 네이티브 리뷰 팝업을 표시합니다.
@@ -449,6 +493,7 @@ Purchases.getOfferings()
 | `snackbar` | 스낵바 메시지 |
 | `tracking` | 트래킹 화면 |
 | `update` | OTA 업데이트 메시지 |
+| `onboarding` | 온보딩 화면 |
 
 **사용 방법**:
 ```typescript

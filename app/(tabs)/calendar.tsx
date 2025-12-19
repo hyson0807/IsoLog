@@ -5,19 +5,16 @@ import {
   CalendarHeader,
   WeekdayRow,
   CalendarGrid,
-  MonthlySummary,
   DayDetailSheet,
   FrequencySettingButton,
   FrequencyBottomSheet,
 } from '@/components/calendar';
 import { AdBanner } from '@/components/common';
 import { useMedicationContext } from '@/contexts/MedicationContext';
-import { isDateInMonth } from '@/utils/dateUtils';
 
 export default function CalendarScreen() {
   const {
     today,
-    takenDates,
     schedule,
     toggleMedication,
     updateFrequency,
@@ -44,17 +41,6 @@ export default function CalendarScreen() {
   const isCurrentMonth =
     currentMonth.getFullYear() === todayDate.getFullYear() &&
     currentMonth.getMonth() === todayDate.getMonth();
-
-  // 이번 달 복용 횟수 계산
-  const takenCountThisMonth = useMemo(() => {
-    let count = 0;
-    takenDates.forEach((date) => {
-      if (isDateInMonth(date, currentMonth.getFullYear(), currentMonth.getMonth())) {
-        count++;
-      }
-    });
-    return count;
-  }, [takenDates, currentMonth]);
 
   // 월 이동
   const handlePrevMonth = () => {
@@ -129,9 +115,6 @@ export default function CalendarScreen() {
           startDay={0}
           onDayPress={handleDayPress}
         />
-
-        {/* 월간 요약 */}
-        <MonthlySummary takenCount={takenCountThisMonth} />
 
         {/* 복용 주기 설정 */}
         <View className="mt-4">

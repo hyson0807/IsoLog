@@ -54,7 +54,7 @@ const MedicationContext = createContext<MedicationContextValue | undefined>(unde
 
 export function MedicationProvider({ children }: { children: ReactNode }) {
   const [schedule, setSchedule] = useState<MedicationSchedule>({
-    frequency: 'every2days',
+    frequency: 'none',
     referenceDate: getToday(),
   });
   const [takenDates, setTakenDates] = useState<Set<string>>(new Set());
