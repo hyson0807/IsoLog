@@ -16,9 +16,8 @@ import {
   DrinkingWarningLevel,
   SkinRecord,
 } from '@/types/medication';
-import { getDaysDifference, getToday } from '@/utils/dateUtils';
+import { getDaysDifference, getToday , isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
 import { frequencyOptions } from '@/constants/frequency';
-import { isMedicationDay as checkIsMedicationDay } from '@/utils/dateUtils';
 import { useTodayDate } from '@/hooks/useTodayDate';
 
 const STORAGE_KEY = '@isoLog/medication_data';
@@ -63,6 +62,11 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   const [skinRecords, setSkinRecords] = useState<Map<string, SkinRecord>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
+  // 기존 데이터 존재 여부 (OTA race condition 방지)
+  const [dataExists, setDataExists] = useState(false);
+  // 사용자 액션 발생 여부
+  const [hasUserAction, setHasUserAction] = useState(false);
+
   // 자정 변경 시 자동 업데이트되는 오늘 날짜
   const today = useTodayDate();
 
@@ -92,6 +96,8 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
             });
             setSkinRecords(recordsMap);
           }
+          // 기존 데이터 존재 표시 (OTA race condition 방지)
+          setDataExists(true);
         }
       } catch {
         // Failed to load medication data
@@ -105,6 +111,8 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   // 데이터 변경 시 AsyncStorage에 저장
   useEffect(() => {
     if (isLoading) return; // 초기 로딩 중에는 저장하지 않음
+    // 새 사용자가 아무 액션도 안 했으면 저장 안 함 (OTA race condition 방지)
+    if (!dataExists && !hasUserAction) return;
 
     async function saveData() {
       try {
@@ -121,10 +129,11 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
       }
     }
     saveData();
-  }, [schedule, takenDates, firstTakenDate, drinkingDates, skinRecords, isLoading]);
+  }, [schedule, takenDates, firstTakenDate, drinkingDates, skinRecords, isLoading, dataExists, hasUserAction]);
 
   // 특정 날짜의 복용 상태 토글
   const toggleMedication = useCallback((date: string) => {
+    setHasUserAction(true);
     setTakenDates((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(date)) {
@@ -145,6 +154,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
 
   // 복용 주기 변경
   const updateFrequency = useCallback((frequency: FrequencyType, startDate?: string) => {
+    setHasUserAction(true);
     setSchedule((prev) => ({
       ...prev,
       frequency,
@@ -154,6 +164,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
 
   // 술 약속 토글
   const toggleDrinkingDate = useCallback((date: string) => {
+    setHasUserAction(true);
     setDrinkingDates((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(date)) {
@@ -167,6 +178,7 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
 
   // 피부 기록 저장
   const saveSkinRecord = useCallback((record: SkinRecord) => {
+    setHasUserAction(true);
     setSkinRecords((prev) => {
       const newMap = new Map(prev);
       newMap.set(record.date, record);
