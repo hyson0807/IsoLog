@@ -38,10 +38,7 @@ export function DailyTipCard() {
   return (
     <View className="w-full px-6">
       {/* 헤더 */}
-      <View className="mb-4 flex-row items-center">
-        <View className="mr-3 h-8 w-8 items-center justify-center rounded-full bg-green-500">
-          <Ionicons name="checkmark" size={24} color="#FFFFFF" />
-        </View>
+      <View className="mb-4  flex-row items-center">
         <View>
           <Text className="text-lg font-bold text-gray-500">{t('tips.title')}</Text>
         </View>

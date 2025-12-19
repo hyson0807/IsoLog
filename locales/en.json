@@ -27,6 +27,8 @@
     "btnWarning": "Warning!",
     "warningLabel": "Warning",
     "drinkingPeriod": "Near drinking date",
+    "checkCardTitle": "Check if you took it today",
+    "checkCardDesc": "Tap to record your dose",
     "restRecommend": "Skipping is recommended for liver health",
     "warning": {
       "dday": "You have a drinking plan today. Be careful!",

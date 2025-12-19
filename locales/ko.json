@@ -27,6 +27,8 @@
     "btnWarning": "복용 주의!",
     "warningLabel": "주의",
     "drinkingPeriod": "음주 전후 기간입니다",
+    "checkCardTitle": "오늘 복용하셨으면 체크",
+    "checkCardDesc": "탭하여 복용을 기록하세요",
     "restRecommend": "간 건강을 위해 휴약을 권장합니다",
     "warning": {
       "dday": "오늘 술 약속이 있어요. 복용에 주의하세요!",

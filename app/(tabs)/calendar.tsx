@@ -98,7 +98,7 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* 상단 배너 광고 */}
-      {/*<AdBanner />*/}
+      <AdBanner />
 
       <ScrollView
         className="flex-1"

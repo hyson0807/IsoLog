@@ -87,7 +87,8 @@ components/
 │   └── UpdateLoadingScreen.tsx       # OTA 업데이트 로딩 화면
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
-│   ├── MedicationButton.tsx     # 복용 버튼 + 경고 스타일
+│   ├── MedicationCheckCard.tsx  # 복용 체크 카드 (직사각형)
+│   ├── MedicationButton.tsx     # 복용 버튼 (원형, legacy)
 │   ├── SkinRecordCard.tsx       # 피부 상태 기록 카드
 │   ├── DailyTipCard.tsx         # 이소티논 케어 팁 카드
 │   ├── FrequencySettingButton.tsx
@@ -234,15 +235,16 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 - 네이티브 코드 포함으로 **Expo Go 미지원**
 - Development Build 필요: `npx expo prebuild && npx expo run:ios`
 
-### Home Screen 21시 기준 UI 로직
+### Home Screen UI 로직
 
-홈 화면은 21시를 기준으로 다른 UI를 표시합니다. `useIsAfter21` 훅으로 실시간 갱신됩니다.
+홈 화면은 복용일 여부와 21시 기준으로 다른 UI를 표시합니다. `useIsAfter21` 훅으로 실시간 갱신됩니다.
 
 **복용일**:
 | 시간 | 상태 | 표시 컴포넌트 |
 |------|------|---------------|
-| 21시 전 | - | `DailyTipCard` |
-| 21시 이후 | 미복용 | `MedicationButton` |
+| 21시 전 | 미복용 | `MedicationCheckCard` + `DailyTipCard` |
+| 21시 전 | 복용완료 | `DailyTipCard` |
+| 21시 이후 | 미복용 | `MedicationCheckCard` + `SkinRecordCard` |
 | 21시 이후 | 복용완료 + 피부기록 미완료 | `SkinRecordCard` |
 | 21시 이후 | 복용완료 + 피부기록 완료 | `DailyTipCard` |
 
@@ -253,15 +255,20 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 | 21시 이후 | 피부기록 미완료 | `SkinRecordCard` |
 | 21시 이후 | 피부기록 완료 | `DailyTipCard` |
 
-**실시간 갱신**: 21시가 되면 앱을 껐다 키지 않아도 UI가 자동으로 변경됨 (`useIsAfter21` 훅의 타이머 + AppState 리스너)
+**MedicationCheckCard**: 직사각형 카드 스타일의 복용 체크 UI. 체크하면 사라짐. 경고 기간(D±4일)에는 빨간색 테두리/배경 표시.
+
+**실시간 갱신**:
+- 자정(00:00): 날짜 변경 시 UI 자동 갱신 (`useTodayDate` 훅)
+- 21시: 시간 도달 시 UI 자동 변경 (`useIsAfter21` 훅의 타이머 + AppState 리스너)
 
 ### Skin Record Feature
 
 피부 상태를 기록하는 기능입니다.
 
 **흐름**:
-1. 홈: 21시 이후 복용 체크 → `SkinRecordCard` 표시 → 트러블 + 건조함 선택 → `DailyTipCard` 표시
-2. 캘린더: 날짜 선택 → 피부 상태(과거/오늘만) + 메모(미래 포함) 기록 가능
+1. 홈 (21시 전): `MedicationCheckCard` 체크 → `DailyTipCard` 표시
+2. 홈 (21시 이후): `MedicationCheckCard` 체크 → `SkinRecordCard` 표시 → 트러블 + 건조함 선택 → `DailyTipCard` 표시
+3. 캘린더: 날짜 선택 → 피부 상태(과거/오늘만) + 메모(미래 포함) 기록 가능
 
 **캘린더 DayDetailSheet 구조**:
 - 피부 상태 (트러블/건조함): `canEdit`일 때만 편집 (과거/오늘)
