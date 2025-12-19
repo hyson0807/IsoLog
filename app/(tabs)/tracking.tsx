@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-export default function CommunityScreen() {
+export default function TrackingScreen() {
   const { t } = useTranslation();
 
   return (

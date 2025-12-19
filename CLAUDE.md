@@ -70,7 +70,7 @@ app/
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
-│   └── community.tsx    # Community screen (TBD)
+│   └── tracking.tsx     # Tracking screen (피부상태, 복용통계)
 ├── _layout.tsx          # Root layout with Provider 설정 + i18n import
 ├── settings.tsx         # 설정 페이지 (프리미엄, 알림, 언어, 계정, 문의)
 ├── paywall.tsx          # 프리미엄 구매 페이지
@@ -90,22 +90,22 @@ components/
 │   ├── MedicationCheckCard.tsx  # 복용 체크 카드 (직사각형)
 │   ├── MedicationButton.tsx     # 복용 버튼 (원형, legacy)
 │   ├── SkinRecordCard.tsx       # 피부 상태 기록 카드
-│   ├── DailyTipCard.tsx         # 이소티논 케어 팁 카드
-│   ├── FrequencySettingButton.tsx  # 복용 주기 설정 버튼 (캘린더 탭에서 사용)
-│   └── FrequencyBottomSheet.tsx    # 복용 주기 + 시작일 설정 바텀시트
+│   └── DailyTipCard.tsx         # 이소티논 케어 팁 카드
 ├── calendar/            # Calendar components
 │   ├── CalendarHeader.tsx    # Month navigation + 범례 팝오버
 │   ├── WeekdayRow.tsx        # Weekday labels
 │   ├── CalendarGrid.tsx      # Date grid (6x7)
 │   ├── DayCell.tsx           # Individual day cell + 체크/밑줄/메모 표시
 │   ├── DayDetailSheet.tsx    # 복용/술약속/피부기록 토글 시트
-│   └── MonthlySummary.tsx    # Monthly taken count
+│   ├── MonthlySummary.tsx    # Monthly taken count
+│   ├── FrequencySettingButton.tsx  # 복용 주기 설정 버튼
+│   └── FrequencyBottomSheet.tsx    # 복용 주기 + 시작일 설정 바텀시트
 ├── settings/            # Settings components
 │   ├── PremiumSection.tsx           # 프리미엄 배너 + 혜택 목록
 │   ├── NotificationToggle.tsx       # 알림 설정 토글 + 시간 표시
 │   ├── NotificationTimeBottomSheet.tsx # 알림 시간 선택 바텀시트
 │   └── LanguageBottomSheet.tsx      # 언어 선택 바텀시트
-└── community/           # Community components (TBD)
+└── tracking/            # Tracking screen components (TBD)
 
 contexts/                # React Context providers
 ├── MedicationContext.tsx    # Global state + AsyncStorage + today 자동 갱신
@@ -447,7 +447,7 @@ Purchases.getOfferings()
 | `modal` | 모달/팝업 |
 | `alert` | Alert 메시지 |
 | `snackbar` | 스낵바 메시지 |
-| `community` | 커뮤니티 |
+| `tracking` | 트래킹 화면 |
 | `update` | OTA 업데이트 메시지 |
 
 **사용 방법**:

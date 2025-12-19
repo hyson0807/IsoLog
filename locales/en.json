@@ -13,7 +13,7 @@
   "nav": {
     "home": "Home",
     "calendar": "Calendar",
-    "community": "Community",
+    "tracking": "Tracking",
     "settings": "Settings",
     "menu": "Menu"
   },
@@ -230,8 +230,8 @@
       "button": "Get Notified"
     }
   },
-  "community": {
-    "title": "Community"
+  "tracking": {
+    "title": "Tracking"
   },
   "update": {
     "updating": "Preparing a better IsoLog for you",

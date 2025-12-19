@@ -13,7 +13,7 @@
   "nav": {
     "home": "홈",
     "calendar": "캘린더",
-    "community": "커뮤니티",
+    "tracking": "트래킹",
     "settings": "설정",
     "menu": "메뉴"
   },
@@ -230,8 +230,8 @@
       "button": "알림 받기"
     }
   },
-  "community": {
-    "title": "커뮤니티"
+  "tracking": {
+    "title": "트래킹"
   },
   "update": {
     "updating": "더 나은 IsoLog를 준비하고 있어요",

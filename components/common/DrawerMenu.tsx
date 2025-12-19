@@ -26,13 +26,13 @@ interface DrawerMenuProps {
 interface MenuItem {
   labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
-  route: '/' | '/calendar' | '/community' | '/settings';
+  route: '/' | '/calendar' | '/tracking' | '/settings';
 }
 
 const menuItems: MenuItem[] = [
   { labelKey: 'nav.home', icon: 'home-outline', route: '/' },
   { labelKey: 'nav.calendar', icon: 'calendar-outline', route: '/calendar' },
-  { labelKey: 'nav.community', icon: 'people-outline', route: '/community' },
+  { labelKey: 'nav.tracking', icon: 'stats-chart-outline', route: '/tracking' },
   { labelKey: 'nav.settings', icon: 'settings-outline', route: '/settings' },
 ];
 
