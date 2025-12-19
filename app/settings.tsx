@@ -37,7 +37,7 @@ export default function SettingsScreen() {
   };
 
   const handleCopyEmail = async () => {
-    await Clipboard.setStringAsync('simsgood0807@gmail.com');
+    await Clipboard.setStringAsync('contact@hyson.kr');
     Alert.alert(t('alert.notice'), t('settings.emailCopied'));
   };
 
@@ -139,7 +139,7 @@ export default function SettingsScreen() {
                 </View>
                 <View>
                   <Text className="text-base text-gray-700">{t('settings.feedback')}</Text>
-                  <Text className="text-xs text-gray-400">simsgood0807@gmail.com</Text>
+                  <Text className="text-xs text-gray-400">contact@hyson.kr</Text>
                 </View>
               </View>
               <Ionicons name="copy-outline" size={20} color="#D1D5DB" />

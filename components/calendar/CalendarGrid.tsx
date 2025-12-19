@@ -7,6 +7,7 @@ import {
   getDayFromDate,
   isDateInMonth,
   getScheduledDatesInMonth,
+  isMedicationDay,
 } from '@/utils/dateUtils';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { frequencyOptions } from '@/constants/frequency';
@@ -93,6 +94,10 @@ export function CalendarGrid({
         const isToday = date === today;
         const status = getDayCellStatus(date);
         const isDrinkingDay = hasDrinkingPlan(date);
+        // 오늘은 scheduledDates에 포함되지 않으므로 별도로 확인
+        const isScheduled = isToday
+          ? isMedicationDay(schedule.referenceDate, frequencyDays, date)
+          : scheduledDates.has(date);
 
         return (
           <DayCell
@@ -102,6 +107,7 @@ export function CalendarGrid({
             status={status}
             isToday={isToday}
             isCurrentMonth={isCurrentMonth}
+            isScheduled={isScheduled}
             isDrinkingDay={isDrinkingDay}
             hasMemo={hasMemo(date)}
             onPress={() => onDayPress(date)}
