@@ -90,10 +90,10 @@ function DayCellComponent({
 
   // 오늘이면 항상 주황색 테두리 표시 (복용 여부와 관계없이)
   const showTodayBorder = isToday && isCurrentMonth;
-  const todayBorderStyle = showTodayBorder ? 'border-2 border-orange-500' : '';
 
-  // 오늘이 복용 예정일이면 연한 주황색 배경 추가
-  const todayScheduledBgStyle = isToday && isCurrentMonth && isScheduled ? 'bg-orange-100' : '';
+  // 배경색 결정 (scheduled 상태이거나 오늘+복용예정일일 때 주황색 배경)
+  const showOrangeBg =
+    effectiveStatus === 'scheduled' || (isToday && isCurrentMonth && isScheduled);
 
   return (
     <TouchableOpacity
@@ -102,9 +102,23 @@ function DayCellComponent({
       className="w-[14.28%] items-center py-1"
       activeOpacity={isInteractive ? 0.6 : 1}
     >
-      <View
-        className={`relative h-10 w-10 items-center justify-center rounded-full ${styles.container} ${todayBorderStyle} ${todayScheduledBgStyle}`}
-      >
+      <View className="relative h-10 w-10 items-center justify-center">
+        {/* 배경 레이어 - inline style로 안드로이드 동적 스타일 문제 해결 */}
+        <View
+          key={`bg-${effectiveStatus}-${isScheduled}`}
+          className="absolute inset-0"
+          style={{
+            borderRadius: 20,
+            backgroundColor: showOrangeBg ? '#FFEDD5' : 'transparent',
+          }}
+        />
+        {/* 테두리 레이어 */}
+        {showTodayBorder && (
+          <View
+            className="absolute inset-0 rounded-full border-2 border-orange-500"
+            style={{ borderRadius: 20 }}
+          />
+        )}
         <Text className={`text-base ${styles.text}`}>{day}</Text>
         {/* 술 경고 밑줄 */}
         {drinkingUnderlineColors[effectiveStatus] && (

@@ -7,12 +7,10 @@ import {
   CalendarGrid,
   MonthlySummary,
   DayDetailSheet,
-} from '@/components/calendar';
-import { AdBanner } from '@/components/common';
-import {
   FrequencySettingButton,
   FrequencyBottomSheet,
-} from '@/components/home';
+} from '@/components/calendar';
+import { AdBanner } from '@/components/common';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { isDateInMonth } from '@/utils/dateUtils';
 
