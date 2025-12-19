@@ -88,6 +88,9 @@ export default function HomeScreen() {
 
     // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
     setTimeout(() => tryRequestReview(), 1000);
+
+    // 복용 체크 완료 후 전면 광고 표시
+    setTimeout(() => showAd(), 300);
   };
 
   // 복용 취소 핸들러 (SkinRecordCard에서 호출)
@@ -103,6 +106,9 @@ export default function HomeScreen() {
 
     // 복용 체크 완료 후 리뷰 요청 (1초 뒤, 조건 충족 시)
     setTimeout(() => tryRequestReview(), 1000);
+
+    // 복용 체크 완료 후 전면 광고 표시
+    setTimeout(() => showAd(), 300);
   };
 
   // 알림 아이콘 클릭 핸들러
