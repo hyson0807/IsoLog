@@ -88,7 +88,6 @@ components/
 ├── home/                # Home screen components
 │   ├── StatusCard.tsx           # 상태 + 경고 메시지
 │   ├── MedicationCheckCard.tsx  # 복용 체크 카드 (직사각형)
-│   ├── MedicationButton.tsx     # 복용 버튼 (원형, legacy)
 │   ├── SkinRecordCard.tsx       # 피부 상태 기록 카드
 │   └── DailyTipCard.tsx         # 이소티논 케어 팁 카드
 ├── calendar/            # Calendar components
