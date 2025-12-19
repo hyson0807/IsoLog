@@ -117,7 +117,6 @@ services/                # Business logic services
 └── notificationService.ts   # 로컬 알림 예약/취소
 
 hooks/                   # Custom React hooks
-├── useMedicationSchedule.ts    # (legacy, use MedicationContext)
 ├── useMedicationReminder.ts    # 복용 알림 관리
 ├── useNotificationPermission.ts # 알림 권한 관리
 ├── useInterstitialAd.ts        # 전면 광고 관리
