@@ -33,6 +33,9 @@ export function getDaysDifference(date1: string, date2: string): number {
 }
 
 export function isMedicationDay(referenceDate: string, frequencyDays: number, targetDate?: string): boolean {
+  // frequencyDays가 0이면 복용일 없음 (none)
+  if (frequencyDays === 0) return false;
+
   const today = targetDate || getToday();
   const daysDiff = getDaysDifference(referenceDate, today);
   return daysDiff % frequencyDays === 0;
@@ -100,6 +103,10 @@ export function getScheduledDatesInMonth(
   month: number
 ): Set<string> {
   const scheduled = new Set<string>();
+
+  // frequencyDays가 0이면 복용일 없음 (none)
+  if (frequencyDays === 0) return scheduled;
+
   const today = getToday();
   const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
 

@@ -9,6 +9,10 @@ import {
   DayDetailSheet,
 } from '@/components/calendar';
 import { AdBanner } from '@/components/common';
+import {
+  FrequencySettingButton,
+  FrequencyBottomSheet,
+} from '@/components/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { isDateInMonth } from '@/utils/dateUtils';
 
@@ -16,7 +20,9 @@ export default function CalendarScreen() {
   const {
     today,
     takenDates,
+    schedule,
     toggleMedication,
+    updateFrequency,
     hasTaken,
     canEditDate,
     isMedicationDay,
@@ -34,6 +40,7 @@ export default function CalendarScreen() {
     () => new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isFrequencySheetVisible, setIsFrequencySheetVisible] = useState(false);
 
   // 현재 월이 오늘이 포함된 월인지 확인
   const isCurrentMonth =
@@ -128,6 +135,14 @@ export default function CalendarScreen() {
         {/* 월간 요약 */}
         <MonthlySummary takenCount={takenCountThisMonth} />
 
+        {/* 복용 주기 설정 */}
+        <View className="mt-4">
+          <FrequencySettingButton
+            currentFrequency={schedule.frequency}
+            onPress={() => setIsFrequencySheetVisible(true)}
+          />
+        </View>
+
         {/* 여백 */}
         <View className="h-8" />
       </ScrollView>
@@ -146,6 +161,17 @@ export default function CalendarScreen() {
         onToggleDrinking={handleToggleDrinking}
         onSaveSkinRecord={saveSkinRecord}
         onClose={() => setSelectedDate(null)}
+      />
+
+      {/* 복용 주기 설정 바텀시트 */}
+      <FrequencyBottomSheet
+        visible={isFrequencySheetVisible}
+        currentFrequency={schedule.frequency}
+        currentStartDate={schedule.referenceDate}
+        onSelect={(frequency, startDate) => {
+          updateFrequency(frequency, startDate);
+        }}
+        onClose={() => setIsFrequencySheetVisible(false)}
       />
     </SafeAreaView>
   );

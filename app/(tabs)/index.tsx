@@ -11,8 +11,6 @@ import {
 import {
   StatusCard,
   MedicationCheckCard,
-  FrequencySettingButton,
-  FrequencyBottomSheet,
   SkinRecordCard,
   DailyTipCard,
 } from '@/components/home';
@@ -25,7 +23,6 @@ import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -34,11 +31,9 @@ export default function HomeScreen() {
   const prevHasTakenRef = useRef<boolean | null>(null);
 
   const {
-    schedule,
     todayStatus,
     today,
     toggleMedication,
-    updateFrequency,
     getDrinkingWarningLevel,
     getSkinRecord,
     saveSkinRecord,
@@ -226,23 +221,7 @@ export default function HomeScreen() {
             }
           })()}
         </View>
-
-        <View className="mb-8">
-          <FrequencySettingButton
-            currentFrequency={schedule.frequency}
-            onPress={() => setIsBottomSheetVisible(true)}
-          />
-        </View>
       </ScrollView>
-
-      <FrequencyBottomSheet
-        visible={isBottomSheetVisible}
-        currentFrequency={schedule.frequency}
-        onSelect={(frequency) => {
-          updateFrequency(frequency);
-        }}
-        onClose={() => setIsBottomSheetVisible(false)}
-      />
 
       {/* 경고 확인 팝업 */}
       <WarningConfirmModal

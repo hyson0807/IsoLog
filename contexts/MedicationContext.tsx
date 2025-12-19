@@ -36,7 +36,7 @@ interface MedicationContextValue {
 
   // Actions
   toggleMedication: (date: string) => void;
-  updateFrequency: (frequency: FrequencyType) => void;
+  updateFrequency: (frequency: FrequencyType, startDate?: string) => void;
   toggleDrinkingDate: (date: string) => void;
   saveSkinRecord: (record: SkinRecord) => void;
 
@@ -66,8 +66,9 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   // 자정 변경 시 자동 업데이트되는 오늘 날짜
   const today = useTodayDate();
 
-  // 주기 일수 계산
+  // 주기 일수 계산 (none이면 0 = 복용일 없음)
   const frequencyDays = useMemo(() => {
+    if (schedule.frequency === 'none') return 0;
     const option = frequencyOptions.find((opt) => opt.type === schedule.frequency);
     return option?.days || 1;
   }, [schedule.frequency]);
@@ -143,11 +144,11 @@ export function MedicationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // 복용 주기 변경
-  const updateFrequency = useCallback((frequency: FrequencyType) => {
+  const updateFrequency = useCallback((frequency: FrequencyType, startDate?: string) => {
     setSchedule((prev) => ({
       ...prev,
       frequency,
-      referenceDate: getToday(),
+      referenceDate: startDate ?? getToday(),
     }));
   }, []);
 

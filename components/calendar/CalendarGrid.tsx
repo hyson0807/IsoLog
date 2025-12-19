@@ -35,9 +35,11 @@ export function CalendarGrid({
   } = useMedicationContext();
   const today = getToday();
 
-  // 주기 일수 계산
+  // 주기 일수 계산 (none이면 0 = 복용일 없음)
   const frequencyDays =
-    frequencyOptions.find((opt) => opt.type === schedule.frequency)?.days || 1;
+    schedule.frequency === 'none'
+      ? 0
+      : frequencyOptions.find((opt) => opt.type === schedule.frequency)?.days || 1;
 
   // 미래 복용 예정일 계산
   const scheduledDates = getScheduledDatesInMonth(

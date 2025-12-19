@@ -1,4 +1,4 @@
-export type FrequencyType = 'daily' | 'every2days' | 'every3days' | 'weekly' | 'custom';
+export type FrequencyType = 'none' | 'daily' | 'every2days' | 'every3days' | 'weekly' | 'custom';
 
 export interface MedicationSchedule {
   frequency: FrequencyType;

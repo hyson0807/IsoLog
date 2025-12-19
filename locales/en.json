@@ -96,6 +96,14 @@
     "title": "Select your dosing schedule",
     "current": "Current:",
     "done": "Done",
+    "startDateQuestion": "When do you start taking?",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "none": {
+      "label": "No Schedule",
+      "description": "No medication schedule set"
+    },
     "daily": {
       "label": "Daily",
       "description": "Take 1 pill every day"

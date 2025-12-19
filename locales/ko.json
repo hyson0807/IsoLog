@@ -96,6 +96,14 @@
     "title": "복용 주기를 선택해주세요",
     "current": "현재:",
     "done": "설정 완료",
+    "startDateQuestion": "언제부터 복용을 시작하나요?",
+    "today": "오늘",
+    "tomorrow": "내일",
+    "yesterday": "어제",
+    "none": {
+      "label": "복용 안함",
+      "description": "복용 주기를 설정하지 않습니다"
+    },
     "daily": {
       "label": "매일 복용",
       "description": "매일 1알씩 복용합니다"

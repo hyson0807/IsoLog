@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 핵심 기능
 - **복용 체크**: 매일 앱에서 복용 여부를 체크하고 기록
 - **피부 상태 기록**: 트러블/건조함 상태 기록 (복용 여부 무관), 메모는 미래 날짜도 작성 가능
-- **복용 주기 설정**: 매일/격일/3일/주1회 등 다양한 복용 주기 지원
+- **복용 주기 설정**: 복용 안함/매일/격일/3일/주1회 등 다양한 복용 주기 + 시작일 설정 지원 (캘린더 탭에서 설정)
 - **캘린더**: 월별 복용 기록 조회, 과거 기록 수정, 미래 복용 예정일 표시
 - **술 약속 경고**: 음주 예정일 D±4일 경고 표시, 복용 시 확인 팝업
 - **데이터 영속성**: AsyncStorage로 앱 재시작 후에도 기록 유지
@@ -91,8 +91,8 @@ components/
 │   ├── MedicationButton.tsx     # 복용 버튼 (원형, legacy)
 │   ├── SkinRecordCard.tsx       # 피부 상태 기록 카드
 │   ├── DailyTipCard.tsx         # 이소티논 케어 팁 카드
-│   ├── FrequencySettingButton.tsx
-│   └── FrequencyBottomSheet.tsx
+│   ├── FrequencySettingButton.tsx  # 복용 주기 설정 버튼 (캘린더 탭에서 사용)
+│   └── FrequencyBottomSheet.tsx    # 복용 주기 + 시작일 설정 바텀시트
 ├── calendar/            # Calendar components
 │   ├── CalendarHeader.tsx    # Month navigation + 범례 팝오버
 │   ├── WeekdayRow.tsx        # Weekday labels
@@ -224,7 +224,7 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 
 **광고 위치**:
 - **배너 광고**: 캘린더 탭 상단 (`AdBanner` 컴포넌트)
-- **전면 광고**: 피부 기록 완료 후 (`useInterstitialAd` 훅)
+- **전면 광고**: 복용 체크 완료 후 + 피부 기록 완료 후 (`useInterstitialAd` 훅)
 
 **특징**:
 - 개발 환경: 테스트 광고 자동 사용 (`TestIds`)
@@ -300,6 +300,36 @@ interface SkinRecord {
 ```
 
 **DailyTipCard**: 날짜 기반으로 매일 다른 2개의 이소티논 케어 팁 제공 (물 마시기, 보습, 자외선 차단 등 8가지 로테이션)
+
+### Frequency Setting Feature
+
+복용 주기를 설정하는 기능입니다. **캘린더 탭 하단**에서 설정합니다.
+
+**FrequencyType**:
+| 타입 | 라벨 | 설명 |
+|------|------|------|
+| `none` | 복용 안함 | 복용 주기 미설정 (모든 날이 휴약일) |
+| `daily` | 매일 복용 | 매일 1알 |
+| `every2days` | 격일 복용 | 2일에 1알 |
+| `every3days` | 3일에 1알 | 3일에 1알 |
+| `weekly` | 주 1회 | 7일에 1알 |
+
+**UI 구성** (`FrequencyBottomSheet`):
+- 가로 스크롤 카드 형태로 주기 선택
+- 선택된 카드 다시 클릭 시 → `none`(복용 안함)으로 해제
+- `daily`/`none` 외 선택 시 → 시작일 설정 섹션 표시
+- 시작일 변경 시 완료 버튼으로 확정
+
+**시작일(referenceDate)**:
+- 격일/3일/주1회 등 주기성 복용에서 기준점 역할
+- 기본값: 오늘
+- 과거/미래 날짜 모두 선택 가능
+- 상대 텍스트 표시: (오늘), (내일), (어제)
+
+**동작 방식**:
+- 주기 선택 → 즉시 반영
+- 시작일 변경 → 완료 버튼 클릭 시 반영
+- `frequencyDays = 0` (none) → 모든 날이 복용일 아님, 캘린더 scheduled 표시 없음
 
 ### Store Review (앱스토어 리뷰 요청)
 

@@ -1,23 +1,106 @@
-import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, Pressable, Platform, ScrollView } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { FrequencyType } from '@/types/medication';
 import { frequencyOptions } from '@/constants/frequency';
+import { getToday } from '@/utils/dateUtils';
+import { getLocales } from 'expo-localization';
 
 interface FrequencyBottomSheetProps {
   visible: boolean;
   currentFrequency: FrequencyType;
-  onSelect: (frequency: FrequencyType) => void;
+  currentStartDate?: string;
+  onSelect: (frequency: FrequencyType, startDate: string) => void;
   onClose: () => void;
+}
+
+// 상대 날짜 텍스트 가져오기
+function getRelativeDateText(
+  dateString: string,
+  today: string,
+  t: (key: string) => string
+): string | null {
+  const targetDate = new Date(dateString + 'T00:00:00');
+  const todayDate = new Date(today + 'T00:00:00');
+  const diffDays = Math.round(
+    (targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays === 0) return t('frequency.today');
+  if (diffDays === 1) return t('frequency.tomorrow');
+  if (diffDays === -1) return t('frequency.yesterday');
+  return null;
+}
+
+// 날짜 포맷
+function formatDisplayDate(dateString: string): string {
+  const locale = getLocales()[0]?.languageTag ?? 'en-US';
+  const date = new Date(dateString + 'T00:00:00');
+  return date.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
 export function FrequencyBottomSheet({
   visible,
   currentFrequency,
+  currentStartDate,
   onSelect,
   onClose,
 }: FrequencyBottomSheetProps) {
   const { t } = useTranslation();
+  const today = getToday();
+
+  // 내부 상태
+  const [selectedFrequency, setSelectedFrequency] = useState<FrequencyType>(currentFrequency);
+  const [selectedDate, setSelectedDate] = useState<string>(currentStartDate ?? today);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // visible 변경 시 상태 초기화
+  useEffect(() => {
+    if (visible) {
+      setSelectedFrequency(currentFrequency);
+      setSelectedDate(currentStartDate ?? today);
+      setShowDatePicker(false);
+    }
+  }, [visible, currentFrequency, currentStartDate, today]);
+
+  // 빈도 변경 시 즉시 반영 (같은 것 클릭 시 해제 → none으로)
+  const handleFrequencyChange = (frequency: FrequencyType) => {
+    if (frequency === selectedFrequency) {
+      // 이미 선택된 것 클릭 → 복용 안함으로 해제
+      setSelectedFrequency('none');
+      onSelect('none', selectedDate);
+    } else {
+      setSelectedFrequency(frequency);
+      onSelect(frequency, selectedDate);
+    }
+  };
+
+  // 날짜 변경 (내부 상태만 변경, 완료 버튼 누를 때 반영)
+  const handleDateChange = (_event: unknown, date?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      setSelectedDate(`${year}-${month}-${day}`);
+    }
+  };
+
+  // 시작일 확정
+  const handleConfirmDate = () => {
+    onSelect(selectedFrequency, selectedDate);
+  };
+
+  const relativeText = getRelativeDateText(selectedDate, today, t);
+  const showStartDateSection = selectedFrequency !== 'daily' && selectedFrequency !== 'none';
 
   return (
     <Modal
@@ -31,9 +114,10 @@ export function FrequencyBottomSheet({
         onPress={onClose}
       >
         <Pressable
-          className="rounded-t-3xl bg-white px-5 pb-10 pt-6"
+          className="rounded-t-3xl bg-white px-5 pb-20 pt-6"
           onPress={(e) => e.stopPropagation()}
         >
+          {/* 헤더 */}
           <View className="mb-6 flex-row items-center justify-between">
             <Text className="text-xl font-bold text-gray-900">
               {t('frequency.title')}
@@ -43,45 +127,108 @@ export function FrequencyBottomSheet({
             </TouchableOpacity>
           </View>
 
-          <View className="gap-3">
+          {/* 빈도 리스트 (가로 스크롤) */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 12 }}
+            className="-mx-5 px-5"
+          >
             {frequencyOptions.map((option) => {
-              const isSelected = option.type === currentFrequency;
+              const isSelected = option.type === selectedFrequency;
               return (
                 <TouchableOpacity
                   key={option.type}
-                  onPress={() => onSelect(option.type)}
-                  className={`flex-row items-center justify-between rounded-xl border-2 p-4 ${
+                  onPress={() => handleFrequencyChange(option.type)}
+                  className={`w-32 rounded-xl border-2 p-3 ${
                     isSelected
                       ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-200 bg-white'
                   }`}
                 >
-                  <View>
-                    <Text
-                      className={`text-base font-semibold ${
-                        isSelected ? 'text-orange-600' : 'text-gray-800'
-                      }`}
-                    >
-                      {t(`frequency.${option.type}.label`)}
-                    </Text>
-                    <Text className="mt-1 text-sm text-gray-500">
-                      {t(`frequency.${option.type}.description`)}
-                    </Text>
-                  </View>
                   {isSelected && (
-                    <Ionicons name="checkmark-circle" size={24} color="#FF6B35" />
+                    <View className="absolute right-2 top-2">
+                      <Ionicons name="checkmark-circle" size={20} color="#FF6B35" />
+                    </View>
                   )}
+                  <Text
+                    className={`text-sm font-semibold ${
+                      isSelected ? 'text-orange-600' : 'text-gray-800'
+                    }`}
+                    numberOfLines={1}
+                  >
+                    {t(`frequency.${option.type}.label`)}
+                  </Text>
+                  <Text className="mt-1 text-xs text-gray-500" numberOfLines={2}>
+                    {t(`frequency.${option.type}.description`)}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
 
-          <TouchableOpacity
-            onPress={onClose}
-            className="mt-6 items-center rounded-xl bg-orange-500 py-4"
-          >
-            <Text className="text-base font-semibold text-white">{t('frequency.done')}</Text>
-          </TouchableOpacity>
+          {/* 시작일 섹션 (매일 복용이 아닐 때만) */}
+          {showStartDateSection && (
+            <>
+              <View className="my-5 h-px bg-gray-200" />
+
+              <View>
+                <Text className="mb-3 text-sm font-medium text-gray-600">
+                  {t('frequency.startDateQuestion')}
+                </Text>
+
+                <View className="flex-row items-center gap-3">
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(true)}
+                    className="flex-1 flex-row items-center rounded-xl border-2 border-gray-200 bg-gray-50 p-4"
+                  >
+                    <Ionicons name="calendar-outline" size={20} color="#666666" />
+                    <Text className="ml-2 flex-1 text-base text-gray-800" numberOfLines={1}>
+                      {formatDisplayDate(selectedDate)}
+                    </Text>
+                    {relativeText && (
+                      <Text className="text-sm text-orange-500">
+                        ({relativeText})
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={handleConfirmDate}
+                    className="rounded-xl bg-orange-500 px-5 py-4"
+                  >
+                    <Text className="text-base font-semibold text-white">
+                      {t('common.done')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* iOS DatePicker (인라인) */}
+              {Platform.OS === 'ios' && showDatePicker && (
+                <View className="mt-4">
+                  <DateTimePicker
+                    value={new Date(selectedDate + 'T00:00:00')}
+                    mode="date"
+                    display="spinner"
+                    onChange={handleDateChange}
+                    locale={getLocales()[0]?.languageTag ?? 'en-US'}
+                  />
+
+                </View>
+              )}
+            </>
+          )}
+
+          {/* Android DatePicker (모달) */}
+          {Platform.OS === 'android' && showDatePicker && (
+            <DateTimePicker
+              value={new Date(selectedDate + 'T00:00:00')}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
         </Pressable>
       </Pressable>
     </Modal>
