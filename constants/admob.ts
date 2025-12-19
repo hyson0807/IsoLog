@@ -14,7 +14,7 @@ export const BANNER_AD_UNIT_ID = __DEV__
 export const INTERSTITIAL_AD_UNIT_ID = __DEV__
   ? TestIds.INTERSTITIAL
   : Platform.select({
-      ios: 'ca-app-pub-2320452683835335/9737597014',
+      ios: 'ca-app-pub-2320452683835335/4358251590',
       android: 'ca-app-pub-2320452683835335/1240159899',
       default: '',
     });
