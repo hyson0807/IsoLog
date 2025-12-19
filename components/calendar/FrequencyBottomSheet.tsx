@@ -60,14 +60,15 @@ export function FrequencyBottomSheet({
   const [selectedDate, setSelectedDate] = useState<string>(currentStartDate ?? today);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // visible 변경 시 상태 초기화
+  // visible이 true로 변경될 때만 상태 초기화
   useEffect(() => {
     if (visible) {
       setSelectedFrequency(currentFrequency);
       setSelectedDate(currentStartDate ?? today);
       setShowDatePicker(false);
     }
-  }, [visible, currentFrequency, currentStartDate, today]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
   // 빈도 변경 시 즉시 반영 (같은 것 클릭 시 해제 → none으로)
   const handleFrequencyChange = (frequency: FrequencyType) => {
@@ -81,7 +82,7 @@ export function FrequencyBottomSheet({
     }
   };
 
-  // 날짜 변경 (내부 상태만 변경, 완료 버튼 누를 때 반영)
+  // 날짜 변경 시 즉시 반영
   const handleDateChange = (_event: unknown, date?: Date) => {
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
@@ -90,13 +91,10 @@ export function FrequencyBottomSheet({
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-      setSelectedDate(`${year}-${month}-${day}`);
+      const newDate = `${year}-${month}-${day}`;
+      setSelectedDate(newDate);
+      onSelect(selectedFrequency, newDate);
     }
-  };
-
-  // 시작일 확정
-  const handleConfirmDate = () => {
-    onSelect(selectedFrequency, selectedDate);
   };
 
   const relativeText = getRelativeDateText(selectedDate, today, t);
@@ -177,31 +175,20 @@ export function FrequencyBottomSheet({
                   {t('frequency.startDateQuestion')}
                 </Text>
 
-                <View className="flex-row items-center gap-3">
-                  <TouchableOpacity
-                    onPress={() => setShowDatePicker(true)}
-                    className="flex-1 flex-row items-center rounded-xl border-2 border-gray-200 bg-gray-50 p-4"
-                  >
-                    <Ionicons name="calendar-outline" size={20} color="#666666" />
-                    <Text className="ml-2 flex-1 text-base text-gray-800" numberOfLines={1}>
-                      {formatDisplayDate(selectedDate)}
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  className="flex-row items-center rounded-xl border-2 border-gray-200 bg-gray-50 p-4"
+                >
+                  <Ionicons name="calendar-outline" size={20} color="#666666" />
+                  <Text className="ml-2 flex-1 text-base text-gray-800" numberOfLines={1}>
+                    {formatDisplayDate(selectedDate)}
+                  </Text>
+                  {relativeText && (
+                    <Text className="text-sm text-orange-500">
+                      ({relativeText})
                     </Text>
-                    {relativeText && (
-                      <Text className="text-sm text-orange-500">
-                        ({relativeText})
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={handleConfirmDate}
-                    className="rounded-xl bg-orange-500 px-5 py-4"
-                  >
-                    <Text className="text-base font-semibold text-white">
-                      {t('common.done')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  )}
+                </TouchableOpacity>
               </View>
 
               {/* iOS DatePicker (인라인) */}
@@ -213,6 +200,7 @@ export function FrequencyBottomSheet({
                     display="spinner"
                     onChange={handleDateChange}
                     locale={getLocales()[0]?.languageTag ?? 'en-US'}
+                    themeVariant="light"
                   />
 
                 </View>
@@ -227,6 +215,7 @@ export function FrequencyBottomSheet({
               mode="date"
               display="default"
               onChange={handleDateChange}
+              themeVariant="light"
             />
           )}
         </Pressable>
