@@ -30,18 +30,32 @@ export function useOnboarding(): UseOnboardingReturn {
         const existingData = await AsyncStorage.getItem(MEDICATION_DATA_KEY);
         if (existingData) {
           const data = JSON.parse(existingData);
-          // 실제 사용 기록이 있는지 확인 (복용 기록 또는 주기 설정)
-          const hasUsageHistory =
-            (data.takenDates && data.takenDates.length > 0) ||
-            (data.schedule && data.schedule.frequency !== 'none');
 
-          if (hasUsageHistory) {
-            // 기존 사용자 -> 온보딩 표시 안 함 + 플래그 설정
-            await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-            setShouldShowOnboarding(false);
-          } else {
-            // 데이터는 있지만 사용 기록 없음 -> 새 사용자
+          // 구버전이 저장한 기본 데이터인지 확인 (OTA race condition 대응)
+          const isLegacyDefaultData =
+            data.schedule?.frequency === 'every2days' &&
+            (!data.takenDates || data.takenDates.length === 0) &&
+            data.firstTakenDate === null &&
+            (!data.drinkingDates || data.drinkingDates.length === 0) &&
+            (!data.skinRecords || data.skinRecords.length === 0);
+
+          if (isLegacyDefaultData) {
+            // 구버전 기본 데이터 -> 새 사용자로 처리
             setShouldShowOnboarding(true);
+          } else {
+            // 실제 사용 기록이 있는지 확인 (복용 기록 또는 주기 설정)
+            const hasUsageHistory =
+              (data.takenDates && data.takenDates.length > 0) ||
+              (data.schedule && data.schedule.frequency !== 'none');
+
+            if (hasUsageHistory) {
+              // 기존 사용자 -> 온보딩 표시 안 함 + 플래그 설정
+              await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+              setShouldShowOnboarding(false);
+            } else {
+              // 데이터는 있지만 사용 기록 없음 -> 새 사용자
+              setShouldShowOnboarding(true);
+            }
           }
         } else {
           // 새 사용자 -> 온보딩 표시
