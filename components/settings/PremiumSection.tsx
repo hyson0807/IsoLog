@@ -39,10 +39,6 @@ export function PremiumSection({ onPurchase, onRestore, onManageSubscription }: 
             <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
             <Text className="ml-2 text-sm text-gray-700">{t('premium.benefits.adFree')}</Text>
           </View>
-          <View className="flex-row items-center py-1.5">
-            <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
-            <Text className="ml-2 text-sm text-gray-700">{t('premium.benefits.notification')}</Text>
-          </View>
           {purchaseDate && (
             <Text className="mt-2 text-xs text-gray-400">
               {new Date(purchaseDate).toLocaleDateString(i18n.language === 'ko' ? 'ko-KR' : 'en-US')}
@@ -70,37 +66,24 @@ export function PremiumSection({ onPurchase, onRestore, onManageSubscription }: 
 
   return (
     <View className="overflow-hidden rounded-xl bg-white">
-      {/* Premium Banner */}
-      <TouchableOpacity
-        onPress={onPurchase}
-        activeOpacity={0.8}
-        className="bg-orange-500 px-5 py-3"
-      >
-        <View className="flex-row items-center justify-between">
-          <View className="flex-1">
-            <Text className="mt-1 text-xl font-bold text-white">
-              {t('premium.title')}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" />
-        </View>
-      </TouchableOpacity>
-
       {/* Benefits List */}
+        <TouchableOpacity
+            onPress={onPurchase}
+            activeOpacity={0.8}
+        >
       <View className="px-5 py-4">
+              <Ionicons className="absolute right-0 p-5" name="chevron-forward" size={20} color="black" />
+
         <View className="flex-row items-center py-2">
           <View className="mr-3 h-1.5 w-1.5 rounded-full bg-orange-500" />
           <Text className="text-sm text-gray-700">{t('paywall.benefit2Title')}</Text>
         </View>
         <View className="flex-row items-center py-2">
           <View className="mr-3 h-1.5 w-1.5 rounded-full bg-orange-500" />
-          <Text className="text-sm text-gray-700">{t('paywall.benefit1Title')}</Text>
-        </View>
-        <View className="flex-row items-center py-2">
-          <View className="mr-3 h-1.5 w-1.5 rounded-full bg-orange-500" />
           <Text className="text-sm text-gray-700">{t('paywall.benefit3Title')}</Text>
         </View>
       </View>
+        </TouchableOpacity>
 
       {/* Restore Purchase Button */}
       <TouchableOpacity

@@ -21,6 +21,7 @@ import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useIsAfter21 } from '@/hooks/useIsAfter21';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { tryRequestReview } from '@/utils/reviewService';
 import { FrequencyType } from '@/types/medication';
 
@@ -49,7 +50,10 @@ export default function HomeScreen() {
   const { isPremium, notificationEnabled, setNotificationEnabled } =
     usePremiumContext();
 
-  // 복용 알림 관리 (프리미엄 기능)
+  // 알림 권한 관리
+  const { requestPermission } = useNotificationPermission();
+
+  // 복용 알림 관리
   const { handleMedicationToggle } = useMedicationReminder();
 
   // Interstitial 광고
@@ -61,7 +65,7 @@ export default function HomeScreen() {
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
 
-  // 복용 체크 시 스낵바 표시 (무료 유저만)
+  // 복용 체크 시 스낵바 표시 (알림 미설정 사용자만)
   useEffect(() => {
     // 초기화 시에는 스킵
     if (prevHasTakenRef.current === null) {
@@ -69,13 +73,13 @@ export default function HomeScreen() {
       return;
     }
 
-    // false → true 변경 시 (복용 체크 완료)
-    if (!prevHasTakenRef.current && hasTakenToday && !isPremium) {
+    // false → true 변경 시 (복용 체크 완료) + 알림 미설정
+    if (!prevHasTakenRef.current && hasTakenToday && !notificationEnabled) {
       setIsSnackbarVisible(true);
     }
 
     prevHasTakenRef.current = hasTakenToday;
-  }, [hasTakenToday, isPremium]);
+  }, [hasTakenToday, notificationEnabled]);
 
   const handleMedicationPress = async () => {
     // 경고 상태인 경우: 확인 팝업
@@ -108,13 +112,16 @@ export default function HomeScreen() {
   };
 
   // 알림 아이콘 클릭 핸들러
-  const handleNotificationPress = () => {
-    if (isPremium) {
-      // 프리미엄 유저: 알림 토글
-      setNotificationEnabled(!notificationEnabled);
+  const handleNotificationPress = async () => {
+    if (notificationEnabled) {
+      // 알림 켜져있으면 끄기
+      setNotificationEnabled(false);
     } else {
-      // 무료 유저: Paywall 페이지로 이동
-      router.push('/paywall');
+      // 알림 꺼져있으면 권한 요청 후 켜기
+      const granted = await requestPermission();
+      if (granted) {
+        setNotificationEnabled(true);
+      }
     }
   };
 
@@ -122,6 +129,14 @@ export default function HomeScreen() {
   const handleSkinRecordComplete = useCallback(() => {
     setTimeout(() => showAd(), 300);
   }, [showAd]);
+
+  // 스낵바 버튼 클릭 시 알림 활성화
+  const handleSnackbarPress = useCallback(async () => {
+    const granted = await requestPermission();
+    if (granted) {
+      setNotificationEnabled(true);
+    }
+  }, [requestPermission, setNotificationEnabled]);
 
   // 온보딩 완료 핸들러
   const handleOnboardingComplete = useCallback(
@@ -142,7 +157,6 @@ export default function HomeScreen() {
         <Header
           today={today}
           onMenuPress={() => setIsDrawerVisible(true)}
-          isPremium={isPremium}
           notificationEnabled={notificationEnabled}
           onNotificationPress={handleNotificationPress}
         />
@@ -250,10 +264,10 @@ export default function HomeScreen() {
         onClose={() => setIsDrawerVisible(false)}
       />
 
-      {/* 복용 완료 후 알림 유도 스낵바 (무료 유저만) */}
+      {/* 복용 완료 후 알림 유도 스낵바 (알림 미설정 사용자) */}
       <NotificationPromptSnackbar
         visible={isSnackbarVisible}
-        onPress={() => router.push('/paywall')}
+        onPress={handleSnackbarPress}
         onDismiss={() => setIsSnackbarVisible(false)}
       />
 

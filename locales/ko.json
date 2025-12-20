@@ -153,11 +153,8 @@
     "usingPremium": "프리미엄 기능 이용 중",
     "benefits": {
       "adFree": "광고 제거 활성화",
-      "notification": "복용 알림 활성화",
       "manage": "구독 관리"
     },
-    "upgrade": "Pro로 업그레이드",
-    "upgradeDesc": "광고 제거 + 복용 알림",
     "restore": "구매 복원"
   },
   "notification": {
@@ -165,8 +162,7 @@
     "description": "복용일에 알림을 보내드려요",
     "time": "알림 시간",
     "timeSettingTitle": "알림 시간 설정",
-    "timeSettingDesc": "복용일에 알림을 받을 시간을 선택해주세요",
-    "premiumRequired": "프리미엄 전용"
+    "timeSettingDesc": "복용일에 알림을 받을 시간을 선택해주세요"
   },
   "settings": {
     "title": "설정",
@@ -187,8 +183,6 @@
   "paywall": {
     "title": "IsoLog Pro로\n완벽한 관리를 시작하세요",
     "subtitle": "한 번 결제로 평생 사용하세요.",
-    "benefit1Title": "매일 복용 알림",
-    "benefit1Desc": "원하는 시간에 잊지 않게 알려드려요",
     "benefit2Title": "광고 없는 화면",
     "benefit2Desc": "방해 요소 없이 기록에만 집중하세요",
     "benefit3Title": "평생 소장",
@@ -247,7 +241,7 @@
     "neverExpires": "평생 (만료 없음)",
     "startPremium": "프리미엄 시작하기",
     "premiumInfo": "IsoLog Pro 평생 이용권을 구매해주셔서 감사합니다. 추가 결제 없이 모든 기능을 영구적으로 사용하실 수 있습니다.",
-    "freeInfo": "IsoLog Pro로 업그레이드하면 광고 없이 앱을 사용하고, 매일 복용 알림을 받을 수 있습니다."
+    "freeInfo": "IsoLog Pro로 업그레이드하면 광고 없이 앱을 사용할 수 있습니다."
   },
   "legal": {
     "termsTitle": "이용약관",

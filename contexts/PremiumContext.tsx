@@ -193,13 +193,9 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     [notificationEnabled, saveData]
   );
 
-  // Toggle notification setting (premium only)
+  // Toggle notification setting
   const setNotificationEnabled = useCallback(
     (enabled: boolean) => {
-      if (!isPremium && enabled) {
-        return;
-      }
-
       setNotificationEnabledState(enabled);
       saveData({
         isPremium,
@@ -211,13 +207,9 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     [isPremium, purchaseDate, notificationTime, saveData]
   );
 
-  // Set notification time (premium only)
+  // Set notification time
   const setNotificationTime = useCallback(
     (hour: number, minute: number) => {
-      if (!isPremium) {
-        return;
-      }
-
       const newTime = { hour, minute };
       setNotificationTimeState(newTime);
       saveData({

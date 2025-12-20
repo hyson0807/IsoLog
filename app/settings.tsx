@@ -67,7 +67,7 @@ export default function SettingsScreen() {
         {/* 알림 설정 */}
         <View className="px-5 pt-6">
           <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.notification')}</Text>
-          <NotificationToggle onPremiumRequired={() => router.push('/paywall')} />
+          <NotificationToggle />
         </View>
 
         {/* 언어 설정 */}

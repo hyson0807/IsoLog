@@ -6,10 +6,6 @@ import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { NotificationTimeBottomSheet } from './NotificationTimeBottomSheet';
 
-interface NotificationToggleProps {
-  onPremiumRequired: () => void;
-}
-
 // 시간 포맷 함수
 function formatTime(hour: number, minute: number, isKorean: boolean): string {
   if (isKorean) {
@@ -25,10 +21,9 @@ function formatTime(hour: number, minute: number, isKorean: boolean): string {
   }
 }
 
-export function NotificationToggle({ onPremiumRequired }: NotificationToggleProps) {
+export function NotificationToggle() {
   const { t, i18n } = useTranslation();
   const {
-    isPremium,
     notificationEnabled,
     setNotificationEnabled,
     notificationTime,
@@ -39,11 +34,6 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
   const isKorean = i18n.language === 'ko';
 
   const handleToggle = async () => {
-    if (!isPremium) {
-      onPremiumRequired();
-      return;
-    }
-
     // 알림 권한이 없으면 먼저 요청
     if (!hasPermission) {
       const granted = await requestPermission();
@@ -56,10 +46,6 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
   };
 
   const handleTimePress = () => {
-    if (!isPremium) {
-      onPremiumRequired();
-      return;
-    }
     setShowTimePicker(true);
   };
 
@@ -72,9 +58,6 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
     );
   };
 
-  const isEnabled = isPremium && notificationEnabled;
-  const isLocked = !isPremium;
-
   return (
     <>
       <View className="rounded-xl bg-white px-4 py-4">
@@ -84,41 +67,23 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
             activeOpacity={0.7}
             className="flex-1 flex-row items-center"
           >
-            <View
-              className={`mr-3 h-10 w-10 items-center justify-center rounded-full ${
-                isLocked ? 'bg-gray-100' : 'bg-orange-100'
-              }`}
-            >
-              <Ionicons
-                name={isLocked ? 'lock-closed' : 'notifications'}
-                size={20}
-                color={isLocked ? '#9CA3AF' : '#F97316'}
-              />
+            <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+              <Ionicons name="notifications" size={20} color="#F97316" />
             </View>
             <View className="flex-1">
-              <View className="flex-row items-center">
-                <Text
-                  className={`text-base font-medium ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}
-                >
-                  {t('notification.title')}
-                </Text>
-                {isLocked && (
-                  <View className="ml-2 rounded-full bg-orange-100 px-2 py-0.5">
-                    <Text className="text-xs font-medium text-orange-600">{t('premium.pro')}</Text>
-                  </View>
-                )}
-              </View>
-              <Text className={`mt-0.5 text-sm ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
+              <Text className="text-base font-medium text-gray-900">
+                {t('notification.title')}
+              </Text>
+              <Text className="mt-0.5 text-sm text-gray-500">
                 {t('notification.description')}
               </Text>
             </View>
           </TouchableOpacity>
           <Switch
-            value={isEnabled}
+            value={notificationEnabled}
             onValueChange={handleToggle}
-            disabled={isLocked}
             trackColor={{ false: '#E5E7EB', true: '#FDBA74' }}
-            thumbColor={isEnabled ? '#F97316' : '#F3F4F6'}
+            thumbColor={notificationEnabled ? '#F97316' : '#F3F4F6'}
             ios_backgroundColor="#E5E7EB"
           />
         </View>
@@ -129,20 +94,12 @@ export function NotificationToggle({ onPremiumRequired }: NotificationToggleProp
           activeOpacity={0.7}
           className="mt-3 flex-row items-center justify-between border-t border-gray-100 pt-3"
         >
-          <Text className={`text-sm ${isLocked ? 'text-gray-300' : 'text-gray-500'}`}>
-            {t('notification.time')}
-          </Text>
+          <Text className="text-sm text-gray-500">{t('notification.time')}</Text>
           <View className="flex-row items-center">
-            <Text
-              className={`mr-1 text-base font-medium ${isLocked ? 'text-gray-300' : 'text-orange-500'}`}
-            >
+            <Text className="mr-1 text-base font-medium text-orange-500">
               {formatTime(notificationTime.hour, notificationTime.minute, isKorean)}
             </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={isLocked ? '#D1D5DB' : '#F97316'}
-            />
+            <Ionicons name="chevron-forward" size={16} color="#F97316" />
           </View>
         </TouchableOpacity>
       </View>

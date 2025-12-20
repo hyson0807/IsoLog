@@ -147,7 +147,6 @@ export async function checkAndScheduleTodayReminder(
   date: string,
   isMedicationDay: boolean,
   hasTaken: boolean,
-  isPremium: boolean,
   notificationEnabled: boolean,
   hour: number = 22,
   minute: number = 0
@@ -156,8 +155,8 @@ export async function checkAndScheduleTodayReminder(
     return;
   }
 
-  // 프리미엄 유저가 아니거나 알림이 비활성화면 스킵
-  if (!isPremium || !notificationEnabled) {
+  // 알림이 비활성화면 스킵
+  if (!notificationEnabled) {
     await cancelReminder(date);
     return;
   }

@@ -12,13 +12,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **복용 주기 설정**: 복용 안함/매일/격일/3일/주1회 등 다양한 복용 주기 + 시작일 설정 지원 (캘린더 탭에서 설정)
 - **캘린더**: 월별 복용 기록 조회, 과거 기록 수정, 미래 복용 예정일 표시
 - **술 약속 경고**: 음주 예정일 D±4일 경고 표시, 복용 시 확인 팝업
+- **복용 알림**: 복용일 지정 시간에 로컬 알림 (무료 기능)
+- **알림 시간 설정**: 바텀시트 타임피커로 원하는 시간 설정 (기본값 오후 10시)
 - **데이터 영속성**: AsyncStorage로 앱 재시작 후에도 기록 유지
 - **글로벌 지원**: 기기의 locale에 따라 날짜 형식 자동 변환
 
 ### 프리미엄 기능 (구현 완료)
-- **복용 알림**: 복용일 지정 시간에 로컬 알림 (프리미엄 전용)
-- **알림 시간 설정**: 바텀시트 타임피커로 원하는 시간 설정 (기본값 오후 10시)
-- **광고 제거**: 프리미엄 유저는 AdMob 배너 미표시
+- **광고 제거**: 프리미엄 유저는 AdMob 배너/전면 광고 미표시
 - **익명 ID 시스템**: 로그인 없이 기기 중심 결제 관리
 - **인앱 결제**: RevenueCat 연동 (평생 이용권 $9.99)
 
@@ -79,7 +79,7 @@ app/
 
 components/
 ├── common/              # Shared components
-│   ├── Header.tsx                    # 날짜 표시 + 메뉴 버튼
+│   ├── Header.tsx                    # 날짜 표시 + 알림 토글 + 메뉴 버튼
 │   ├── DrawerMenu.tsx                # 사이드 드로어 메뉴
 │   ├── WarningConfirmModal.tsx       # 경고 확인 팝업
 │   ├── AdBanner.tsx                  # Google AdMob 배너 광고
@@ -110,7 +110,7 @@ components/
 
 contexts/                # React Context providers
 ├── MedicationContext.tsx    # Global state + AsyncStorage + today 자동 갱신
-└── PremiumContext.tsx       # Premium/알림 상태 관리
+└── PremiumContext.tsx       # Premium 상태 + 알림 설정 관리
 
 services/                # Business logic services
 └── notificationService.ts   # 로컬 알림 예약/취소
@@ -439,7 +439,7 @@ RevenueCat을 통한 인앱 결제 (평생 이용권)가 구현되어 있습니�
                     ↓
               isPremium 상태 업데이트
                     ↓
-         광고 숨김 / 알림 기능 활성화
+              광고 숨김 활성화
 ```
 
 **구매 흐름** (Offering → Package → Product):

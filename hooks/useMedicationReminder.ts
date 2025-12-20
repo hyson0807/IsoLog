@@ -12,13 +12,12 @@ import { getToday } from '@/utils/dateUtils';
  * 복용 알림 관리 훅
  * - 앱 시작 시 오늘의 알림 예약 상태 체크
  * - 복용 체크/해제 시 알림 예약/취소
- * - 프리미엄/알림 설정 변경 시 알림 업데이트
+ * - 알림 설정 변경 시 알림 업데이트
  * - 알림 시간 변경 시 알림 재예약
  */
 export function useMedicationReminder() {
   const { todayStatus, isMedicationDay, hasTaken } = useMedicationContext();
   const {
-    isPremium,
     notificationEnabled,
     notificationTime,
     isLoading: premiumLoading,
@@ -34,16 +33,15 @@ export function useMedicationReminder() {
       today,
       todayStatus.isMedicationDay,
       todayStatus.hasTakenToday,
-      isPremium,
       notificationEnabled,
       notificationTime.hour,
       notificationTime.minute
     );
-  }, [today, todayStatus, isPremium, notificationEnabled, notificationTime, premiumLoading]);
+  }, [today, todayStatus, notificationEnabled, notificationTime, premiumLoading]);
 
   // 특정 날짜 복용 토글 시 호출할 함수들
   const handleMedicationToggle = async (date: string, willTake: boolean) => {
-    if (!isPremium || !notificationEnabled) return;
+    if (!notificationEnabled) return;
 
     // 오늘 날짜가 아니면 알림 관리 불필요
     if (date !== today) return;

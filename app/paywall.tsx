@@ -137,11 +137,6 @@ export default function PaywallScreen() {
         {/* Benefits */}
         <View className="mt-10">
           <BenefitItem
-            icon="notifications-outline"
-            title={t('paywall.benefit1Title')}
-            description={t('paywall.benefit1Desc')}
-          />
-          <BenefitItem
             icon="close-circle-outline"
             title={t('paywall.benefit2Title')}
             description={t('paywall.benefit2Desc')}

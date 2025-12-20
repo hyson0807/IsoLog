@@ -153,11 +153,8 @@
     "usingPremium": "Premium features active",
     "benefits": {
       "adFree": "Ad-free enabled",
-      "notification": "Reminders enabled",
       "manage": "Manage subscription"
     },
-    "upgrade": "Upgrade to Pro",
-    "upgradeDesc": "Ad-free + Reminders",
     "restore": "Restore Purchase"
   },
   "notification": {
@@ -165,8 +162,7 @@
     "description": "Get notified on medication days",
     "time": "Reminder Time",
     "timeSettingTitle": "Set Reminder Time",
-    "timeSettingDesc": "Choose when to receive reminders on medication days",
-    "premiumRequired": "Premium only"
+    "timeSettingDesc": "Choose when to receive reminders on medication days"
   },
   "settings": {
     "title": "Settings",
@@ -187,8 +183,6 @@
   "paywall": {
     "title": "Start your perfect\nroutine with IsoLog Pro",
     "subtitle": "One-time purchase, lifetime access.",
-    "benefit1Title": "Daily Reminders",
-    "benefit1Desc": "Never miss a dose with timely notifications",
     "benefit2Title": "Ad-Free Experience",
     "benefit2Desc": "Focus on tracking without distractions",
     "benefit3Title": "Lifetime Access",
@@ -247,7 +241,7 @@
     "neverExpires": "Lifetime (Never expires)",
     "startPremium": "Start Premium",
     "premiumInfo": "Thank you for purchasing IsoLog Pro Lifetime. You can use all features permanently without additional payment.",
-    "freeInfo": "Upgrade to IsoLog Pro to use the app ad-free and receive daily medication reminders."
+    "freeInfo": "Upgrade to IsoLog Pro to use the app ad-free."
   },
   "legal": {
     "termsTitle": "Terms of Service",
