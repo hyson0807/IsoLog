@@ -162,7 +162,10 @@
     "description": "복용일에 알림을 보내드려요",
     "time": "알림 시간",
     "timeSettingTitle": "알림 시간 설정",
-    "timeSettingDesc": "복용일에 알림을 받을 시간을 선택해주세요"
+    "timeSettingDesc": "복용일에 알림을 받을 시간을 선택해주세요",
+    "permissionDeniedTitle": "알림을 받으시려면",
+    "permissionDeniedMessage": "설정에서 IsoLog 알림을 켜주세요.",
+    "openSettings": "설정으로 이동"
   },
   "settings": {
     "title": "설정",

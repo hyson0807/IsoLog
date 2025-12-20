@@ -60,6 +60,20 @@ export async function getNotificationPermissionStatus(): Promise<boolean> {
   return status === 'granted';
 }
 
+// 상세 권한 상태 반환 (granted/denied/undetermined)
+export type PermissionStatus = 'granted' | 'denied' | 'undetermined';
+
+export async function getDetailedPermissionStatus(): Promise<PermissionStatus> {
+  if (Platform.OS === 'web') {
+    return 'denied';
+  }
+
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status === 'granted') return 'granted';
+  if (status === 'denied') return 'denied';
+  return 'undetermined';
+}
+
 // 특정 날짜 지정 시간에 알림 예약
 export async function scheduleReminder(
   date: string,

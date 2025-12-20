@@ -162,7 +162,10 @@
     "description": "Get notified on medication days",
     "time": "Reminder Time",
     "timeSettingTitle": "Set Reminder Time",
-    "timeSettingDesc": "Choose when to receive reminders on medication days"
+    "timeSettingDesc": "Choose when to receive reminders on medication days",
+    "permissionDeniedTitle": "To receive reminders",
+    "permissionDeniedMessage": "Please enable notifications for IsoLog in Settings.",
+    "openSettings": "Open Settings"
   },
   "settings": {
     "title": "Settings",
