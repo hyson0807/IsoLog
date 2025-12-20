@@ -15,7 +15,6 @@ export function Header({
   today,
   showMenu = true,
   onMenuPress,
-  isPremium = false,
   notificationEnabled = false,
   onNotificationPress,
 }: HeaderProps) {

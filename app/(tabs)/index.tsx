@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Alert, Linking, AppState, type AppStateStatus } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
@@ -26,6 +27,7 @@ import { tryRequestReview } from '@/utils/reviewService';
 import { FrequencyType } from '@/types/medication';
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -51,7 +53,62 @@ export default function HomeScreen() {
     usePremiumContext();
 
   // 알림 권한 관리
-  const { requestPermission } = useNotificationPermission();
+  const { permissionStatus, requestPermission, recheckPermission } = useNotificationPermission();
+
+  // 앱 상태 추적 (설정에서 돌아왔을 때 권한 재확인용)
+  const appState = useRef(AppState.currentState);
+  const wasInBackground = useRef(false);
+
+  // 권한 거부 시 설정으로 안내하는 Alert
+  const showPermissionDeniedAlert = useCallback(() => {
+    Alert.alert(
+      t('notification.permissionDeniedTitle'),
+      t('notification.permissionDeniedMessage'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('notification.openSettings'),
+          onPress: () => Linking.openSettings(),
+        },
+      ]
+    );
+  }, [t]);
+
+  // 설정에서 돌아왔을 때 권한 상태 다시 확인
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      'change',
+      async (nextAppState: AppStateStatus) => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === 'active'
+        ) {
+          wasInBackground.current = true;
+          await recheckPermission();
+        }
+        appState.current = nextAppState;
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [recheckPermission]);
+
+  // 백그라운드에서 돌아온 경우 권한 상태에 따라 알림 토글 자동 조정
+  useEffect(() => {
+    if (wasInBackground.current) {
+      // 권한이 granted로 바뀌면 자동으로 알림 ON
+      if (permissionStatus === 'granted' && !notificationEnabled) {
+        setNotificationEnabled(true);
+      }
+      // 권한이 denied로 바뀌면 자동으로 알림 OFF
+      if (permissionStatus === 'denied' && notificationEnabled) {
+        setNotificationEnabled(false);
+      }
+      wasInBackground.current = false;
+    }
+  }, [permissionStatus, notificationEnabled, setNotificationEnabled]);
 
   // 복용 알림 관리
   const { handleMedicationToggle } = useMedicationReminder();
@@ -113,15 +170,23 @@ export default function HomeScreen() {
 
   // 알림 아이콘 클릭 핸들러
   const handleNotificationPress = async () => {
+    // 알림 OFF로 변경하는 경우 → 권한과 관계없이 항상 허용
     if (notificationEnabled) {
-      // 알림 켜져있으면 끄기
       setNotificationEnabled(false);
-    } else {
-      // 알림 꺼져있으면 권한 요청 후 켜기
-      const granted = await requestPermission();
-      if (granted) {
-        setNotificationEnabled(true);
-      }
+      return;
+    }
+
+    // 알림 ON으로 변경하려는 경우 → 권한 체크 필요
+    // 권한이 명시적으로 거부된 상태면 설정으로 안내
+    if (permissionStatus === 'denied') {
+      showPermissionDeniedAlert();
+      return;
+    }
+
+    // 아직 요청 안 한 상태면 권한 요청 후 켜기
+    const granted = await requestPermission();
+    if (granted) {
+      setNotificationEnabled(true);
     }
   };
 
@@ -132,11 +197,21 @@ export default function HomeScreen() {
 
   // 스낵바 버튼 클릭 시 알림 활성화
   const handleSnackbarPress = useCallback(async () => {
+    // 권한이 명시적으로 거부된 상태면 설정으로 안내
+    if (permissionStatus === 'denied') {
+      showPermissionDeniedAlert();
+      return;
+    }
+
+    // 권한 요청
     const granted = await requestPermission();
     if (granted) {
       setNotificationEnabled(true);
+    } else {
+      // 권한 요청이 거부되면 설정으로 안내
+      showPermissionDeniedAlert();
     }
-  }, [requestPermission, setNotificationEnabled]);
+  }, [permissionStatus, requestPermission, setNotificationEnabled, showPermissionDeniedAlert]);
 
   // 온보딩 완료 핸들러
   const handleOnboardingComplete = useCallback(
