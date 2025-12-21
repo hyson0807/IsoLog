@@ -190,3 +190,34 @@ export async function checkAndScheduleTodayReminder(
   // 알림 예약
   await scheduleReminder(date, hour, minute);
 }
+
+// 향후 복용일들에 대해 알림 예약 (앱을 안 열어도 알림이 울리도록)
+export async function scheduleUpcomingReminders(
+  upcomingDates: string[],
+  takenDates: Set<string>,
+  notificationEnabled: boolean,
+  hour: number = 22,
+  minute: number = 0
+): Promise<void> {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
+  // 알림이 비활성화면 모든 알림 취소
+  if (!notificationEnabled) {
+    await cancelAllReminders();
+    return;
+  }
+
+  // 각 복용일에 대해 알림 예약
+  for (const date of upcomingDates) {
+    // 이미 복용한 날짜는 스킵
+    if (takenDates.has(date)) {
+      await cancelReminder(date);
+      continue;
+    }
+
+    // 알림 예약
+    await scheduleReminder(date, hour, minute);
+  }
+}

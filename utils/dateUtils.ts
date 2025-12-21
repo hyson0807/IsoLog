@@ -130,3 +130,39 @@ export function isDateInMonth(dateString: string, year: number, month: number): 
 export function getDayFromDate(dateString: string): number {
   return new Date(dateString + 'T00:00:00').getDate();
 }
+
+// 날짜에 일수 더하기
+export function addDays(dateString: string, days: number): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day + days);
+  return formatDateToString(date);
+}
+
+// Date 객체를 YYYY-MM-DD 문자열로 변환
+function formatDateToString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// 오늘부터 향후 N일간의 복용일 목록 반환
+export function getUpcomingMedicationDays(
+  referenceDate: string,
+  frequencyDays: number,
+  daysAhead: number = 7
+): string[] {
+  if (frequencyDays === 0) return [];
+
+  const today = getToday();
+  const result: string[] = [];
+
+  for (let i = 0; i <= daysAhead; i++) {
+    const targetDate = addDays(today, i);
+    if (isMedicationDay(referenceDate, frequencyDays, targetDate)) {
+      result.push(targetDate);
+    }
+  }
+
+  return result;
+}

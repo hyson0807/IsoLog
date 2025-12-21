@@ -35,13 +35,42 @@
 - 기본 알림 시간: 오후 10시
 - 바텀시트 타임피커로 원하는 시간 설정 가능
 
+### 향후 복용일 알림 예약
+
+앱 실행 시 **향후 7일간의 복용일**에 대해 알림을 미리 예약합니다.
+
+```
+앱 실행 또는 알림 설정 변경
+         ↓
+오늘부터 7일간 복용일 계산 (getUpcomingMedicationDays)
+         ↓
+각 복용일에 알림 예약 (scheduleUpcomingReminders)
+  - 이미 복용한 날짜는 스킵
+  - 이미 지난 시간은 스킵
+         ↓
+사용자가 앱을 안 열어도 7일간 알림 작동
+```
+
+- `DAYS_AHEAD = 7` (hooks/useMedicationReminder.ts)
+- 7일 넘게 앱을 안 열면 알림이 안 옴 (필요시 값 증가 가능, iOS 최대 64개 제한 주의)
+
+### 알림 예약 트리거 조건
+
+다음 상황에서 알림이 재스케줄링됩니다:
+- 앱 시작 시
+- 알림 토글 ON/OFF 변경 시
+- 알림 시간 변경 시
+- 복용 주기 변경 시
+- 복용 체크/해제 시
+
 ---
 
 ## 관련 파일
 
-- `services/notificationService.ts` - `getDetailedPermissionStatus()`, 알림 예약/취소
+- `services/notificationService.ts` - 알림 권한, 예약/취소, `scheduleUpcomingReminders()`
 - `hooks/useNotificationPermission.ts` - `permissionStatus`, `recheckPermission` 제공
-- `hooks/useMedicationReminder.ts` - 복용 알림 관리
+- `hooks/useMedicationReminder.ts` - 복용 알림 관리, 향후 7일 알림 예약
+- `utils/dateUtils.ts` - `getUpcomingMedicationDays()` 향후 복용일 목록 계산
 - `components/settings/NotificationToggle.tsx` - 설정 페이지 알림 토글
 - `components/settings/NotificationTimeBottomSheet.tsx` - 알림 시간 선택
 - `components/common/NotificationPromptSnackbar.tsx` - 알림 유도 스낵바
