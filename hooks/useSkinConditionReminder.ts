@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { usePremiumContext } from '@/contexts/PremiumContext';
+import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import { updateSkinConditionReminder } from '@/services/notificationService';
 
 /**
@@ -12,12 +12,12 @@ export function useSkinConditionReminder() {
     notificationEnabled,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
-    isLoading: premiumLoading,
-  } = usePremiumContext();
+    isLoading: notificationLoading,
+  } = useNotificationSettingsContext();
 
   // 설정 변경 시 알림 업데이트
   useEffect(() => {
-    if (premiumLoading) return;
+    if (notificationLoading) return;
 
     updateSkinConditionReminder(
       notificationEnabled,
@@ -29,6 +29,6 @@ export function useSkinConditionReminder() {
     notificationEnabled,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
-    premiumLoading,
+    notificationLoading,
   ]);
 }

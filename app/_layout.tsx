@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MedicationProvider } from "@/contexts/MedicationContext";
 import { PremiumProvider } from "@/contexts/PremiumContext";
+import { NotificationSettingsProvider } from "@/contexts/NotificationSettingsContext";
 import { UpdateLoadingScreen } from "@/components/common/UpdateLoadingScreen";
 import { useAppUpdates } from "@/hooks/useAppUpdates";
 import "./global.css";
@@ -43,11 +44,13 @@ function AppContent() {
 export default function RootLayout() {
   return (
     <PremiumProvider>
-      <MedicationProvider>
-        <SafeAreaProvider>
-          <AppContent />
-        </SafeAreaProvider>
-      </MedicationProvider>
+      <NotificationSettingsProvider>
+        <MedicationProvider>
+          <SafeAreaProvider>
+            <AppContent />
+          </SafeAreaProvider>
+        </MedicationProvider>
+      </NotificationSettingsProvider>
     </PremiumProvider>
   );
 }

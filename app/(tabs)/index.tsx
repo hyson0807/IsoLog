@@ -18,6 +18,7 @@ import {
 import { OnboardingBottomSheet } from '@/components/onboarding/OnboardingBottomSheet';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
+import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useSkinConditionReminder } from '@/hooks/useSkinConditionReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
@@ -50,8 +51,9 @@ export default function HomeScreen() {
   // 온보딩 상태 관리
   const { shouldShowOnboarding, completeOnboarding, skipOnboarding } = useOnboarding();
 
-  const { isPremium, notificationEnabled, setNotificationEnabled } =
-    usePremiumContext();
+  const { isPremium } = usePremiumContext();
+  const { notificationEnabled, setNotificationEnabled } =
+    useNotificationSettingsContext();
 
   // 알림 권한 관리
   const { permissionStatus, requestPermission, recheckPermission } = useNotificationPermission();

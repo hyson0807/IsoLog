@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useMedicationContext } from '@/contexts/MedicationContext';
-import { usePremiumContext } from '@/contexts/PremiumContext';
+import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import {
   cancelReminder,
   scheduleReminder,
@@ -25,8 +25,8 @@ export function useMedicationReminder() {
     notificationEnabled,
     notificationTime,
     medicationReminderEnabled,
-    isLoading: premiumLoading,
-  } = usePremiumContext();
+    isLoading: notificationLoading,
+  } = useNotificationSettingsContext();
 
   const today = getToday();
 
@@ -44,7 +44,7 @@ export function useMedicationReminder() {
 
   // 앱 시작 시 및 상태 변경 시 향후 복용일들에 대해 알림 예약
   useEffect(() => {
-    if (premiumLoading) return;
+    if (notificationLoading) return;
 
     scheduleUpcomingReminders(
       upcomingMedicationDays,
@@ -60,7 +60,7 @@ export function useMedicationReminder() {
     notificationEnabled,
     notificationTime,
     medicationReminderEnabled,
-    premiumLoading,
+    notificationLoading,
   ]);
 
   // 특정 날짜 복용 토글 시 호출할 함수들

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { usePremiumContext } from '@/contexts/PremiumContext';
+import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { NotificationTimeBottomSheet } from './NotificationTimeBottomSheet';
 import { formatTime } from '@/utils/timeFormat';
@@ -23,7 +23,7 @@ export function NotificationToggle() {
     setNotificationEnabled,
     notificationTime,
     setNotificationTime,
-  } = usePremiumContext();
+  } = useNotificationSettingsContext();
   const { hasPermission, permissionStatus, requestPermission, recheckPermission } =
     useNotificationPermission();
   const [showTimePicker, setShowTimePicker] = useState(false);

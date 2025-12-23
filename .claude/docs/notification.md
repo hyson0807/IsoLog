@@ -112,7 +112,7 @@
 - `app/notification-settings.tsx` - 알림 설정 페이지
 - `app/(tabs)/index.tsx` - 홈 화면 알림 토글 및 스낵바
 
-## Context 상태 (PremiumContext)
+## Context 상태 (NotificationSettingsContext)
 
 | 상태 | 타입 | 기본값 | 설명 |
 |------|------|--------|------|

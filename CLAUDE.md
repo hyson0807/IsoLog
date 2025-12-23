@@ -49,7 +49,7 @@ npm run lint         # Run ESLint
 - **Framework**: Expo SDK 54 with React Native 0.81
 - **Routing**: File-based routing using `expo-router`
 - **Styling**: NativeWind (TailwindCSS for React Native)
-- **State Management**: React Context API (`MedicationContext`, `PremiumContext`)
+- **State Management**: React Context API (`MedicationContext`, `PremiumContext`, `NotificationSettingsContext`)
 - **Storage**: AsyncStorage for data persistence
 - **Notifications**: `expo-notifications` for local push notifications
 - **Time Picker**: `@react-native-community/datetimepicker`
@@ -88,7 +88,7 @@ components/
 ├── onboarding/          # OnboardingBottomSheet
 └── tracking/            # (TBD)
 
-contexts/                # MedicationContext, PremiumContext
+contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext
 services/                # notificationService
 hooks/                   # useMedicationReminder, useSkinConditionReminder, useNotificationSettings, etc.
 constants/               # theme, frequency, skin, revenuecat, admob

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { Alert, Linking, AppState, type AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { usePremiumContext } from '@/contexts/PremiumContext';
+import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 
 /**
@@ -22,7 +22,7 @@ export function useNotificationSettings() {
     setSkinConditionReminderEnabled,
     skinConditionReminderTime,
     setSkinConditionReminderTime,
-  } = usePremiumContext();
+  } = useNotificationSettingsContext();
 
   const { hasPermission, permissionStatus, requestPermission, recheckPermission } =
     useNotificationPermission();
