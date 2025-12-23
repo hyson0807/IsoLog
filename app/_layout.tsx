@@ -24,17 +24,31 @@ function AppContent() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen
-        name="settings"
+        name="(settings)/settings"
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
       <Stack.Screen
-        name="paywall"
+        name="(settings)/notification-settings"
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="(premium)/paywall"
         options={{
           presentation: 'modal',
           animation: 'fade',
+        }}
+      />
+      <Stack.Screen
+        name="(premium)/subscription"
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
         }}
       />
     </Stack>

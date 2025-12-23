@@ -72,11 +72,16 @@ app/
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
 │   └── tracking.tsx     # Tracking screen
+├── (settings)/          # 설정 관련 그룹 (URL에 미포함)
+│   ├── settings.tsx     # 설정 페이지 (/settings)
+│   └── notification-settings.tsx  # 알림 설정 페이지 (/notification-settings)
+├── (premium)/           # 프리미엄 관련 그룹 (URL에 미포함)
+│   ├── paywall.tsx      # 프리미엄 구매 페이지 (/paywall)
+│   └── subscription.tsx # 구독 관리 페이지 (/subscription)
+├── legal/               # 법적 문서
+│   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
+│   └── terms.tsx        # 이용약관 (/legal/terms)
 ├── _layout.tsx          # Root layout with Provider 설정
-├── settings.tsx         # 설정 페이지
-├── notification-settings.tsx  # 알림 설정 페이지
-├── paywall.tsx          # 프리미엄 구매 페이지
-├── subscription.tsx     # 구독 관리 페이지
 └── global.css           # Tailwind CSS imports
 
 components/
