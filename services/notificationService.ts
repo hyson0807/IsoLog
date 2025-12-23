@@ -212,9 +212,12 @@ export async function scheduleUpcomingReminders(
     return;
   }
 
-  // 전체 알림 또는 복용 리마인더가 비활성화면 모든 알림 취소
+  // 전체 알림 또는 복용 리마인더가 비활성화면 복용 알림만 취소
+  // (피부 상태 알림은 별도로 관리되므로 cancelAllReminders 사용하면 안 됨)
   if (!notificationEnabled || !medicationReminderEnabled) {
-    await cancelAllReminders();
+    for (const date of upcomingDates) {
+      await cancelReminder(date);
+    }
     return;
   }
 
