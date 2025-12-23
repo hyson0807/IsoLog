@@ -24,6 +24,7 @@ export function useMedicationReminder() {
   const {
     notificationEnabled,
     notificationTime,
+    medicationReminderEnabled,
     isLoading: premiumLoading,
   } = usePremiumContext();
 
@@ -50,19 +51,21 @@ export function useMedicationReminder() {
       takenDates,
       notificationEnabled,
       notificationTime.hour,
-      notificationTime.minute
+      notificationTime.minute,
+      medicationReminderEnabled
     );
   }, [
     upcomingMedicationDays,
     takenDates,
     notificationEnabled,
     notificationTime,
+    medicationReminderEnabled,
     premiumLoading,
   ]);
 
   // 특정 날짜 복용 토글 시 호출할 함수들
   const handleMedicationToggle = async (date: string, willTake: boolean) => {
-    if (!notificationEnabled) return;
+    if (!notificationEnabled || !medicationReminderEnabled) return;
 
     // 오늘 날짜가 아니면 알림 관리 불필요
     if (date !== today) return;

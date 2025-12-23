@@ -14,21 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { NotificationTimeBottomSheet } from './NotificationTimeBottomSheet';
-
-// 시간 포맷 함수
-function formatTime(hour: number, minute: number, isKorean: boolean): string {
-  if (isKorean) {
-    const period = hour < 12 ? '오전' : '오후';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    const displayMinute = minute.toString().padStart(2, '0');
-    return `${period} ${displayHour}:${displayMinute}`;
-  } else {
-    const period = hour < 12 ? 'AM' : 'PM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    const displayMinute = minute.toString().padStart(2, '0');
-    return `${displayHour}:${displayMinute} ${period}`;
-  }
-}
+import { formatTime } from '@/utils/timeFormat';
 
 export function NotificationToggle() {
   const { t, i18n } = useTranslation();

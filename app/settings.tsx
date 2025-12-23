@@ -5,7 +5,6 @@ import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { NotificationToggle } from '@/components/settings/NotificationToggle';
 import { PremiumSection } from '@/components/settings/PremiumSection';
 import { LanguageBottomSheet } from '@/components/settings/LanguageBottomSheet';
 import { usePremiumContext } from '@/contexts/PremiumContext';
@@ -67,7 +66,18 @@ export default function SettingsScreen() {
         {/* 알림 설정 */}
         <View className="px-5 pt-6">
           <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.notification')}</Text>
-          <NotificationToggle />
+          <TouchableOpacity
+            onPress={() => router.push('/notification-settings')}
+            className="flex-row items-center justify-between rounded-xl bg-white px-4 py-4"
+          >
+            <View className="flex-row items-center">
+              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+                <Ionicons name="notifications" size={20} color="#F97316" />
+              </View>
+              <Text className="text-base text-gray-700">{t('settings.notificationSettings')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#D1D5DB" />
+          </TouchableOpacity>
         </View>
 
         {/* 언어 설정 */}

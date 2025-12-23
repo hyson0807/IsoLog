@@ -10,7 +10,7 @@ interface UseNotificationPermissionResult {
   permissionStatus: PermissionStatus | null;
   isLoading: boolean;
   requestPermission: () => Promise<boolean>;
-  recheckPermission: () => Promise<void>;
+  recheckPermission: () => Promise<PermissionStatus>;
 }
 
 export function useNotificationPermission(): UseNotificationPermissionResult {
@@ -37,9 +37,12 @@ export function useNotificationPermission(): UseNotificationPermissionResult {
   }, [checkPermission]);
 
   // 설정에서 돌아왔을 때 권한 상태 다시 확인
-  const recheckPermission = useCallback(async () => {
-    await checkPermission();
-  }, [checkPermission]);
+  const recheckPermission = useCallback(async (): Promise<PermissionStatus> => {
+    const status = await getDetailedPermissionStatus();
+    setPermissionStatus(status);
+    setIsLoading(false);
+    return status;
+  }, []);
 
   return {
     hasPermission: permissionStatus === 'granted',

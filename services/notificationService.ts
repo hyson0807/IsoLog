@@ -12,11 +12,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const NOTIFICATION_ID_PREFIX = 'medication_reminder_';
+const MEDICATION_REMINDER_PREFIX = 'medication_reminder_';
+const SKIN_CONDITION_REMINDER_ID = 'skin_condition_reminder';
 
-// 알림 ID 생성 (날짜 기반)
-function getNotificationId(date: string): string {
-  return `${NOTIFICATION_ID_PREFIX}${date}`;
+// 복용 알림 ID 생성 (날짜 기반)
+function getMedicationReminderId(date: string): string {
+  return `${MEDICATION_REMINDER_PREFIX}${date}`;
 }
 
 // 알림 권한 요청
@@ -44,6 +45,12 @@ export async function requestNotificationPermission(): Promise<boolean> {
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#FF9500',
+    });
+    await Notifications.setNotificationChannelAsync('skin-condition-reminders', {
+      name: '피부 상태 기록 알림',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#3B82F6',
     });
   }
 
@@ -108,7 +115,7 @@ export async function scheduleReminder(
         date: triggerDate,
         channelId: Platform.OS === 'android' ? 'medication-reminders' : undefined,
       },
-      identifier: getNotificationId(date),
+      identifier: getMedicationReminderId(date),
     });
 
     return notificationId;
@@ -117,14 +124,14 @@ export async function scheduleReminder(
   }
 }
 
-// 특정 날짜의 예약된 알림 취소
+// 특정 날짜의 예약된 복용 알림 취소
 export async function cancelReminder(date: string): Promise<void> {
   if (Platform.OS === 'web') {
     return;
   }
 
   try {
-    await Notifications.cancelScheduledNotificationAsync(getNotificationId(date));
+    await Notifications.cancelScheduledNotificationAsync(getMedicationReminderId(date));
   } catch {
     // Failed to cancel notification
   }
@@ -163,14 +170,15 @@ export async function checkAndScheduleTodayReminder(
   hasTaken: boolean,
   notificationEnabled: boolean,
   hour: number = 22,
-  minute: number = 0
+  minute: number = 0,
+  medicationReminderEnabled: boolean = true
 ): Promise<void> {
   if (Platform.OS === 'web') {
     return;
   }
 
-  // 알림이 비활성화면 스킵
-  if (!notificationEnabled) {
+  // 전체 알림 또는 복용 리마인더가 비활성화면 스킵
+  if (!notificationEnabled || !medicationReminderEnabled) {
     await cancelReminder(date);
     return;
   }
@@ -197,14 +205,15 @@ export async function scheduleUpcomingReminders(
   takenDates: Set<string>,
   notificationEnabled: boolean,
   hour: number = 22,
-  minute: number = 0
+  minute: number = 0,
+  medicationReminderEnabled: boolean = true
 ): Promise<void> {
   if (Platform.OS === 'web') {
     return;
   }
 
-  // 알림이 비활성화면 모든 알림 취소
-  if (!notificationEnabled) {
+  // 전체 알림 또는 복용 리마인더가 비활성화면 모든 알림 취소
+  if (!notificationEnabled || !medicationReminderEnabled) {
     await cancelAllReminders();
     return;
   }
@@ -220,4 +229,77 @@ export async function scheduleUpcomingReminders(
     // 알림 예약
     await scheduleReminder(date, hour, minute);
   }
+}
+
+// ============================================
+// 피부 상태 기록 알림
+// ============================================
+
+// 피부 상태 알림 예약 (매일 반복)
+export async function scheduleSkinConditionReminder(
+  hour: number = 21,
+  minute: number = 0
+): Promise<string | null> {
+  if (Platform.OS === 'web') {
+    return null;
+  }
+
+  try {
+    // 기존 알림 취소
+    await cancelSkinConditionReminder();
+
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '피부 상태 기록',
+        body: '오늘의 피부 상태는 어떠신가요? 기록을 남겨주세요!',
+        data: { type: 'skin_condition' },
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+        channelId: Platform.OS === 'android' ? 'skin-condition-reminders' : undefined,
+      },
+      identifier: SKIN_CONDITION_REMINDER_ID,
+    });
+
+    return notificationId;
+  } catch {
+    return null;
+  }
+}
+
+// 피부 상태 알림 취소
+export async function cancelSkinConditionReminder(): Promise<void> {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
+  try {
+    await Notifications.cancelScheduledNotificationAsync(SKIN_CONDITION_REMINDER_ID);
+  } catch {
+    // Failed to cancel notification
+  }
+}
+
+// 피부 상태 알림 설정 업데이트
+export async function updateSkinConditionReminder(
+  notificationEnabled: boolean,
+  skinConditionReminderEnabled: boolean,
+  hour: number = 21,
+  minute: number = 0
+): Promise<void> {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
+  // 전체 알림 또는 피부 상태 알림이 비활성화면 취소
+  if (!notificationEnabled || !skinConditionReminderEnabled) {
+    await cancelSkinConditionReminder();
+    return;
+  }
+
+  // 알림 예약
+  await scheduleSkinConditionReminder(hour, minute);
 }

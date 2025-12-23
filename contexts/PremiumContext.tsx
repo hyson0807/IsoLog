@@ -29,6 +29,9 @@ interface PremiumStorageData {
   purchaseDate: string | null;
   notificationEnabled: boolean;
   notificationTime?: NotificationTime;
+  medicationReminderEnabled?: boolean;
+  skinConditionReminderEnabled?: boolean;
+  skinConditionReminderTime?: NotificationTime;
 }
 
 interface PremiumContextValue {
@@ -38,6 +41,9 @@ interface PremiumContextValue {
   isLoading: boolean;
   notificationEnabled: boolean;
   notificationTime: NotificationTime;
+  medicationReminderEnabled: boolean;
+  skinConditionReminderEnabled: boolean;
+  skinConditionReminderTime: NotificationTime;
   purchaseDate: string | null;
   customerInfo: CustomerInfo | null;
   currentOffering: PurchasesOffering | null;
@@ -46,6 +52,9 @@ interface PremiumContextValue {
   setPremiumStatus: (isPremium: boolean) => void;
   setNotificationEnabled: (enabled: boolean) => void;
   setNotificationTime: (hour: number, minute: number) => void;
+  setMedicationReminderEnabled: (enabled: boolean) => void;
+  setSkinConditionReminderEnabled: (enabled: boolean) => void;
+  setSkinConditionReminderTime: (hour: number, minute: number) => void;
   restorePurchase: () => Promise<boolean>;
   refreshCustomerInfo: () => Promise<void>;
   getOfferings: () => Promise<PurchasesOffering | null>;
@@ -54,6 +63,7 @@ interface PremiumContextValue {
 const PremiumContext = createContext<PremiumContextValue | undefined>(undefined);
 
 const DEFAULT_NOTIFICATION_TIME: NotificationTime = { hour: 22, minute: 0 };
+const DEFAULT_SKIN_CONDITION_TIME: NotificationTime = { hour: 21, minute: 0 };
 
 export function PremiumProvider({ children }: { children: ReactNode }) {
   const [isPremium, setIsPremium] = useState(false);
@@ -61,6 +71,9 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationEnabled, setNotificationEnabledState] = useState(false);
   const [notificationTime, setNotificationTimeState] = useState<NotificationTime>(DEFAULT_NOTIFICATION_TIME);
+  const [medicationReminderEnabled, setMedicationReminderEnabledState] = useState(true);
+  const [skinConditionReminderEnabled, setSkinConditionReminderEnabledState] = useState(true);
+  const [skinConditionReminderTime, setSkinConditionReminderTimeState] = useState<NotificationTime>(DEFAULT_SKIN_CONDITION_TIME);
   const [purchaseDate, setPurchaseDate] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [currentOffering, setCurrentOffering] = useState<PurchasesOffering | null>(null);
@@ -118,6 +131,12 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
           if (data.notificationTime) {
             setNotificationTimeState(data.notificationTime);
           }
+          // 기본값은 true (기존 사용자 호환)
+          setMedicationReminderEnabledState(data.medicationReminderEnabled ?? true);
+          setSkinConditionReminderEnabledState(data.skinConditionReminderEnabled ?? true);
+          if (data.skinConditionReminderTime) {
+            setSkinConditionReminderTimeState(data.skinConditionReminderTime);
+          }
         }
 
         // Skip RevenueCat initialization on web
@@ -168,14 +187,41 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     };
   }, [updatePremiumFromCustomerInfo]);
 
+  // 현재 상태를 모두 가져오는 헬퍼 (ref를 사용하여 최신 값 보장)
+  const getCurrentData = useCallback((): PremiumStorageData => ({
+    isPremium,
+    purchaseDate,
+    notificationEnabled,
+    notificationTime,
+    medicationReminderEnabled,
+    skinConditionReminderEnabled,
+    skinConditionReminderTime,
+  }), [
+    isPremium,
+    purchaseDate,
+    notificationEnabled,
+    notificationTime,
+    medicationReminderEnabled,
+    skinConditionReminderEnabled,
+    skinConditionReminderTime,
+  ]);
+
   // Save notification data to AsyncStorage
-  const saveData = useCallback(async (data: PremiumStorageData) => {
+  const saveData = useCallback(async (updates: Partial<PremiumStorageData>) => {
     try {
-      await AsyncStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(data));
+      const stored = await AsyncStorage.getItem(PREMIUM_STORAGE_KEY);
+      const existingData: PremiumStorageData = stored
+        ? JSON.parse(stored)
+        : getCurrentData();
+
+      await AsyncStorage.setItem(
+        PREMIUM_STORAGE_KEY,
+        JSON.stringify({ ...existingData, ...updates })
+      );
     } catch {
       // Failed to save premium data
     }
-  }, []);
+  }, [getCurrentData]);
 
   // Manual premium status update (for testing or fallback)
   const setPremiumStatus = useCallback(
@@ -183,28 +229,18 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       const newPurchaseDate = premium ? new Date().toISOString() : null;
       setIsPremium(premium);
       setPurchaseDate(newPurchaseDate);
-
-      saveData({
-        isPremium: premium,
-        purchaseDate: newPurchaseDate,
-        notificationEnabled,
-      });
+      saveData({ isPremium: premium, purchaseDate: newPurchaseDate });
     },
-    [notificationEnabled, saveData]
+    [saveData]
   );
 
   // Toggle notification setting
   const setNotificationEnabled = useCallback(
     (enabled: boolean) => {
       setNotificationEnabledState(enabled);
-      saveData({
-        isPremium,
-        purchaseDate,
-        notificationEnabled: enabled,
-        notificationTime,
-      });
+      saveData({ notificationEnabled: enabled });
     },
-    [isPremium, purchaseDate, notificationTime, saveData]
+    [saveData]
   );
 
   // Set notification time
@@ -212,14 +248,37 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     (hour: number, minute: number) => {
       const newTime = { hour, minute };
       setNotificationTimeState(newTime);
-      saveData({
-        isPremium,
-        purchaseDate,
-        notificationEnabled,
-        notificationTime: newTime,
-      });
+      saveData({ notificationTime: newTime });
     },
-    [isPremium, purchaseDate, notificationEnabled, saveData]
+    [saveData]
+  );
+
+  // Toggle medication reminder setting
+  const setMedicationReminderEnabled = useCallback(
+    (enabled: boolean) => {
+      setMedicationReminderEnabledState(enabled);
+      saveData({ medicationReminderEnabled: enabled });
+    },
+    [saveData]
+  );
+
+  // Toggle skin condition reminder setting
+  const setSkinConditionReminderEnabled = useCallback(
+    (enabled: boolean) => {
+      setSkinConditionReminderEnabledState(enabled);
+      saveData({ skinConditionReminderEnabled: enabled });
+    },
+    [saveData]
+  );
+
+  // Set skin condition reminder time
+  const setSkinConditionReminderTime = useCallback(
+    (hour: number, minute: number) => {
+      const newTime = { hour, minute };
+      setSkinConditionReminderTimeState(newTime);
+      saveData({ skinConditionReminderTime: newTime });
+    },
+    [saveData]
   );
 
   // Restore purchases from RevenueCat
@@ -274,12 +333,18 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isLoading,
       notificationEnabled,
       notificationTime,
+      medicationReminderEnabled,
+      skinConditionReminderEnabled,
+      skinConditionReminderTime,
       purchaseDate,
       customerInfo,
       currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
       setNotificationTime,
+      setMedicationReminderEnabled,
+      setSkinConditionReminderEnabled,
+      setSkinConditionReminderTime,
       restorePurchase,
       refreshCustomerInfo,
       getOfferings,
@@ -290,12 +355,18 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
       isLoading,
       notificationEnabled,
       notificationTime,
+      medicationReminderEnabled,
+      skinConditionReminderEnabled,
+      skinConditionReminderTime,
       purchaseDate,
       customerInfo,
       currentOffering,
       setPremiumStatus,
       setNotificationEnabled,
       setNotificationTime,
+      setMedicationReminderEnabled,
+      setSkinConditionReminderEnabled,
+      setSkinConditionReminderTime,
       restorePurchase,
       refreshCustomerInfo,
       getOfferings,

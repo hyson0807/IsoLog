@@ -19,6 +19,7 @@ import { OnboardingBottomSheet } from '@/components/onboarding/OnboardingBottomS
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
+import { useSkinConditionReminder } from '@/hooks/useSkinConditionReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useIsAfter21 } from '@/hooks/useIsAfter21';
 import { useOnboarding } from '@/hooks/useOnboarding';
@@ -112,6 +113,9 @@ export default function HomeScreen() {
 
   // 복용 알림 관리
   const { handleMedicationToggle } = useMedicationReminder();
+
+  // 피부 상태 알림 관리
+  useSkinConditionReminder();
 
   // Interstitial 광고
   const { showAd } = useInterstitialAd();

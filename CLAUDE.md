@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **복용 주기 설정**: 복용 안함/매일/격일/3일/주1회 등 지원
 - **캘린더**: 월별 복용 기록 조회, 과거 기록 수정
 - **술 약속 경고**: 음주 예정일 D±4일 경고
-- **복용 알림**: 복용일 지정 시간에 로컬 알림
+- **알림**: 복용 알림(복용일), 피부 상태 기록 알림(매일)
 - **프리미엄**: 광고 제거 (RevenueCat 연동)
 - **다국어**: 한국어 (ko), 영어 (en)
 
@@ -74,6 +74,7 @@ app/
 │   └── tracking.tsx     # Tracking screen
 ├── _layout.tsx          # Root layout with Provider 설정
 ├── settings.tsx         # 설정 페이지
+├── notification-settings.tsx  # 알림 설정 페이지
 ├── paywall.tsx          # 프리미엄 구매 페이지
 ├── subscription.tsx     # 구독 관리 페이지
 └── global.css           # Tailwind CSS imports
@@ -82,16 +83,17 @@ components/
 ├── common/              # Header, DrawerMenu, AdBanner, etc.
 ├── home/                # StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard
 ├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet
-├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet
+├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
+├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingBottomSheet
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext
 services/                # notificationService
-hooks/                   # useMedicationReminder, useNotificationPermission, useInterstitialAd, etc.
+hooks/                   # useMedicationReminder, useSkinConditionReminder, useNotificationSettings, etc.
 constants/               # theme, frequency, skin, revenuecat, admob
 types/                   # medication.ts
-utils/                   # dateUtils, deviceId, reviewService
+utils/                   # dateUtils, deviceId, reviewService, timeFormat
 locales/                 # ko.json, en.json, index.ts
 ```
 

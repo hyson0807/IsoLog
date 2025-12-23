@@ -160,6 +160,8 @@
   "notification": {
     "title": "Medication Reminder",
     "description": "Get notified on medication days",
+    "skinCondition": "Skin Condition Log",
+    "skinConditionDesc": "Daily reminder to log your skin condition",
     "time": "Reminder Time",
     "timeSettingTitle": "Set Reminder Time",
     "timeSettingDesc": "Choose when to receive reminders on medication days",
@@ -167,9 +169,17 @@
     "permissionDeniedMessage": "Please enable notifications for IsoLog in Settings.",
     "openSettings": "Open Settings"
   },
+  "notificationSettings": {
+    "title": "Notification Settings",
+    "masterToggle": "Enable Notifications",
+    "masterToggleDesc": "Turn all notifications on or off",
+    "subNotifications": "Notification Types",
+    "hint": "Notifications are sent only on medication days"
+  },
   "settings": {
     "title": "Settings",
     "notification": "Notifications",
+    "notificationSettings": "Notification Settings",
     "account": "Account",
     "info": "Info",
     "loginSync": "Login / Sync",
