@@ -150,6 +150,24 @@ export async function cancelAllReminders(): Promise<void> {
   }
 }
 
+// 모든 복용 알림만 취소 (피부 상태 알림은 유지)
+export async function cancelAllMedicationReminders(): Promise<void> {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
+  try {
+    const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+    for (const notification of scheduledNotifications) {
+      if (notification.identifier.startsWith(MEDICATION_REMINDER_PREFIX)) {
+        await Notifications.cancelScheduledNotificationAsync(notification.identifier);
+      }
+    }
+  } catch {
+    // Failed to cancel medication reminders
+  }
+}
+
 // 예약된 알림 목록 조회
 export async function getScheduledReminders(): Promise<Notifications.NotificationRequest[]> {
   if (Platform.OS === 'web') {
@@ -212,12 +230,11 @@ export async function scheduleUpcomingReminders(
     return;
   }
 
-  // 전체 알림 또는 복용 리마인더가 비활성화면 복용 알림만 취소
-  // (피부 상태 알림은 별도로 관리되므로 cancelAllReminders 사용하면 안 됨)
+  // 기존 복용 알림 모두 취소 (주기 변경 시 이전 알림이 남아있는 버그 방지)
+  await cancelAllMedicationReminders();
+
+  // 전체 알림 또는 복용 리마인더가 비활성화면 취소만 하고 종료
   if (!notificationEnabled || !medicationReminderEnabled) {
-    for (const date of upcomingDates) {
-      await cancelReminder(date);
-    }
     return;
   }
 
@@ -225,7 +242,6 @@ export async function scheduleUpcomingReminders(
   for (const date of upcomingDates) {
     // 이미 복용한 날짜는 스킵
     if (takenDates.has(date)) {
-      await cancelReminder(date);
       continue;
     }
 
