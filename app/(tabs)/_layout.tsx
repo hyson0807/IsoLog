@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Pressable, View, GestureResponderEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface TabIconProps {
   name: keyof typeof Ionicons.glyphMap;
@@ -50,6 +51,10 @@ function TabBarButton({ children, onPress, ...rest }: TabBarButtonProps) {
 }
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
+  const TAB_BAR_CONTENT_HEIGHT = 55;
+
   return (
     <Tabs
       initialRouteName="index"
@@ -60,8 +65,8 @@ export default function TabLayout() {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: '#E5E5E5',
-          height: 85,
-          paddingBottom: 30,
+          height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
+          paddingBottom: insets.bottom,
           paddingTop: 12,
         },
       }}
