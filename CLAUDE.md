@@ -86,9 +86,9 @@ app/
 └── global.css           # Tailwind CSS imports
 
 components/
-├── common/              # Header, DrawerMenu, AdBanner, etc.
+├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, etc.
 ├── home/                # StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard
-├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet
+├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, MonthlySummary
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
@@ -96,7 +96,7 @@ components/
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext
 services/                # notificationService
-hooks/                   # useMedicationReminder, useSkinConditionReminder, useNotificationSettings, etc.
+hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, etc.
 constants/               # theme, frequency, skin, revenuecat, admob
 types/                   # medication.ts
 utils/                   # dateUtils, deviceId, reviewService, timeFormat

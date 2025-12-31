@@ -21,7 +21,7 @@ import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsC
 import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useSkinConditionReminder } from '@/hooks/useSkinConditionReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
-import { useIsAfter21 } from '@/hooks/useIsAfter21';
+import { useIsAfterHour } from '@/hooks/useIsAfterHour';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { tryRequestReview } from '@/utils/reviewService';
@@ -55,8 +55,12 @@ export default function HomeScreen() {
   }, [isOnboardingLoading, shouldShowOnboarding, router]);
 
   const { isPremium } = usePremiumContext();
-  const { notificationEnabled, setNotificationEnabled } =
-    useNotificationSettingsContext();
+  const {
+    notificationEnabled,
+    setNotificationEnabled,
+    skinConditionReminderEnabled,
+    skinConditionReminderTime,
+  } = useNotificationSettingsContext();
 
   // 알림 권한 관리
   const { permissionStatus, requestPermission, recheckPermission } = useNotificationPermission();
@@ -125,8 +129,13 @@ export default function HomeScreen() {
   // Interstitial 광고
   const { showAd } = useInterstitialAd();
 
-  // 21시 이후 여부 (실시간 업데이트)
-  const isAfter21 = useIsAfter21();
+  // 피부 기록 카드 표시 시간 (알림 OFF면 기본 21시)
+  const skinRecordDisplayHour = skinConditionReminderEnabled
+    ? skinConditionReminderTime.hour
+    : 21;
+
+  // 표시 시간 이후 여부 (실시간 업데이트)
+  const isAfterDisplayHour = useIsAfterHour(skinRecordDisplayHour);
 
   const hasTakenToday = todayStatus.hasTakenToday;
   const todayWarningLevel = getDrinkingWarningLevel(today);
@@ -253,7 +262,7 @@ export default function HomeScreen() {
               // 복용일
               if (!hasTakenToday) {
                 // 미복용
-                if (isAfter21) {
+                if (isAfterDisplayHour) {
                   // 21시 이후: 복용 카드 + (피부기록 카드 or 팁 카드)
                   return (
                     <View className="w-full">
@@ -289,7 +298,7 @@ export default function HomeScreen() {
                     </View>
                   );
                 }
-              } else if (!isAfter21 || isSkinRecordComplete) {
+              } else if (!isAfterDisplayHour || isSkinRecordComplete) {
                 // 복용완료 + (21시 전 OR 피부기록 완료)
                 return <DailyTipCard />;
               } else {
@@ -306,7 +315,7 @@ export default function HomeScreen() {
               }
             } else {
               // 휴약일
-              if (!isAfter21 || isSkinRecordComplete) {
+              if (!isAfterDisplayHour || isSkinRecordComplete) {
                 // 21시 전 OR 피부기록 완료
                 return <DailyTipCard />;
               } else {
