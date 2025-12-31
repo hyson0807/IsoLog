@@ -295,6 +295,38 @@
     "selectFrequency": "복용 주기를 선택해주세요",
     "startButton": "시작하기",
     "skipButton": "나중에 설정",
-    "hint": "설정은 캘린더 탭에서 언제든 변경할 수 있어요"
+    "hint": "설정은 캘린더 탭에서 언제든 변경할 수 있어요",
+    "skip": "건너뛰기",
+    "next": "다음",
+    "complete": "시작하기",
+    "page1": {
+      "title": "복용 기록을 시작하세요",
+      "subtitle": "이소티논 복용 관리의 첫 걸음",
+      "feature1Title": "복용 체크",
+      "feature1Desc": "매일 앱에서 복용 여부를 체크하고 기록하세요",
+      "feature2Title": "캘린더에서 관리",
+      "feature2Desc": "홈화면 또는 캘린더에서 복용 체크가 가능해요"
+    },
+    "page2": {
+      "title": "복용 주기를 설정하세요",
+      "subtitle": "나에게 맞는 복용 패턴을 선택해주세요",
+      "lastDoseDate": "마지막으로 약을 복용한 날",
+      "selectFrequency": "복용 주기 선택"
+    },
+    "page3": {
+      "title": "복용 알림을 받으세요",
+      "subtitle": "복용일에 잊지 않도록 알려드려요",
+      "description": "복용일에 체크하지 않으면 설정한 시간에 알림을 보내드려요",
+      "enableReminder": "복용 알림 받기",
+      "reminderTime": "알림 시간"
+    },
+    "page4": {
+      "title": "피부 상태도 기록하세요",
+      "subtitle": "매일 피부 변화를 기록해보세요",
+      "description": "매일 같은 시간에 피부 상태를 기록하면 변화를 한눈에 볼 수 있어요",
+      "enableReminder": "피부 체크 알림 받기",
+      "reminderTime": "알림 시간",
+      "hint": "설정은 나중에 언제든 변경할 수 있어요"
+    }
   }
 }

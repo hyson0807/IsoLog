@@ -295,6 +295,38 @@
     "selectFrequency": "Select your dosing schedule",
     "startButton": "Get Started",
     "skipButton": "Set up later",
-    "hint": "You can change this anytime in the Calendar tab"
+    "hint": "You can change this anytime in the Calendar tab",
+    "skip": "Skip",
+    "next": "Next",
+    "complete": "Get Started",
+    "page1": {
+      "title": "Start tracking your doses",
+      "subtitle": "Your first step to better medication management",
+      "feature1Title": "Daily Check-in",
+      "feature1Desc": "Check and record your daily medication intake",
+      "feature2Title": "Calendar View",
+      "feature2Desc": "Track from Home or Calendar screen"
+    },
+    "page2": {
+      "title": "Set your dosing schedule",
+      "subtitle": "Choose the pattern that works for you",
+      "lastDoseDate": "When did you last take your medication?",
+      "selectFrequency": "Select dosing frequency"
+    },
+    "page3": {
+      "title": "Get medication reminders",
+      "subtitle": "Never miss a dose again",
+      "description": "We'll send you a reminder at your chosen time if you haven't checked in",
+      "enableReminder": "Enable medication reminders",
+      "reminderTime": "Reminder time"
+    },
+    "page4": {
+      "title": "Track your skin condition",
+      "subtitle": "Record daily changes in your skin",
+      "description": "Recording at the same time each day helps you see progress clearly",
+      "enableReminder": "Enable skin check reminders",
+      "reminderTime": "Reminder time",
+      "hint": "You can change these settings anytime"
+    }
   }
 }

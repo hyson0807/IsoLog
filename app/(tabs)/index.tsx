@@ -15,7 +15,6 @@ import {
   SkinRecordCard,
   DailyTipCard,
 } from '@/components/home';
-import { OnboardingBottomSheet } from '@/components/onboarding/OnboardingBottomSheet';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
@@ -26,7 +25,6 @@ import { useIsAfter21 } from '@/hooks/useIsAfter21';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { tryRequestReview } from '@/utils/reviewService';
-import { FrequencyType } from '@/types/medication';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -42,14 +40,19 @@ export default function HomeScreen() {
     todayStatus,
     today,
     toggleMedication,
-    updateFrequency,
     getDrinkingWarningLevel,
     getSkinRecord,
     saveSkinRecord,
   } = useMedicationContext();
 
-  // 온보딩 상태 관리
-  const { shouldShowOnboarding, completeOnboarding, skipOnboarding } = useOnboarding();
+  // 온보딩 상태 관리 - 온보딩 화면으로 리다이렉트
+  const { shouldShowOnboarding, isLoading: isOnboardingLoading } = useOnboarding();
+
+  useEffect(() => {
+    if (!isOnboardingLoading && shouldShowOnboarding) {
+      router.replace('/onboarding');
+    }
+  }, [isOnboardingLoading, shouldShowOnboarding, router]);
 
   const { isPremium } = usePremiumContext();
   const { notificationEnabled, setNotificationEnabled } =
@@ -219,15 +222,6 @@ export default function HomeScreen() {
     }
   }, [permissionStatus, requestPermission, setNotificationEnabled, showPermissionDeniedAlert]);
 
-  // 온보딩 완료 핸들러
-  const handleOnboardingComplete = useCallback(
-    async (frequency: FrequencyType, startDate: string) => {
-      updateFrequency(frequency, startDate);
-      await completeOnboarding();
-    },
-    [updateFrequency, completeOnboarding]
-  );
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ScrollView
@@ -350,13 +344,6 @@ export default function HomeScreen() {
         visible={isSnackbarVisible}
         onPress={handleSnackbarPress}
         onDismiss={() => setIsSnackbarVisible(false)}
-      />
-
-      {/* 온보딩 바텀시트 (첫 실행 시) */}
-      <OnboardingBottomSheet
-        visible={shouldShowOnboarding}
-        onComplete={handleOnboardingComplete}
-        onSkip={skipOnboarding}
       />
     </SafeAreaView>
   );

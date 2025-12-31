@@ -24,6 +24,14 @@ function AppContent() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen
+        name="onboarding"
+        options={{
+          presentation: 'fullScreenModal',
+          animation: 'fade',
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
         name="(settings)/settings"
         options={{
           presentation: 'card',
