@@ -81,6 +81,7 @@ app/
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)
+├── onboarding.tsx       # 온보딩 화면 (첫 실행 시 fullScreenModal)
 ├── _layout.tsx          # Root layout with Provider 설정
 └── global.css           # Tailwind CSS imports
 
@@ -90,7 +91,7 @@ components/
 ├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
-├── onboarding/          # OnboardingBottomSheet
+├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext

@@ -21,11 +21,12 @@ import { getToday } from '@/utils/dateUtils';
 import { PageIndicator } from '@/components/onboarding/PageIndicator';
 import { WelcomePage } from '@/components/onboarding/WelcomePage';
 import { FrequencyPage } from '@/components/onboarding/FrequencyPage';
+import { DateSelectPage } from '@/components/onboarding/DateSelectPage';
 import { MedicationReminderPage } from '@/components/onboarding/MedicationReminderPage';
 import { SkinReminderPage } from '@/components/onboarding/SkinReminderPage';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const TOTAL_PAGES = 4;
+const TOTAL_PAGES = 5;
 
 interface OnboardingData {
   referenceDate: string;
@@ -50,7 +51,7 @@ export default function OnboardingScreen() {
     setSkinConditionReminderEnabled,
     setSkinConditionReminderTime,
   } = useNotificationSettingsContext();
-  const { completeOnboarding, skipOnboarding } = useOnboarding();
+  const { completeOnboarding } = useOnboarding();
 
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     referenceDate: getToday(),
@@ -75,26 +76,27 @@ export default function OnboardingScreen() {
     }
   }, [currentPage]);
 
-  const goToPrevPage = useCallback(() => {
-    if (currentPage > 0) {
-      flatListRef.current?.scrollToIndex({ index: currentPage - 1, animated: true });
-    }
-  }, [currentPage]);
-
   const handleComplete = useCallback(async () => {
     // 1. Save frequency settings
     const frequency = onboardingData.frequency ?? 'none';
     updateFrequency(frequency, onboardingData.referenceDate);
 
     // 2. Save notification settings
-    if (onboardingData.medicationReminderEnabled) {
+    const anyReminderEnabled =
+      onboardingData.medicationReminderEnabled || onboardingData.skinReminderEnabled;
+
+    if (anyReminderEnabled) {
       setNotificationEnabled(true);
+    }
+
+    if (onboardingData.medicationReminderEnabled) {
       setNotificationTime(
         onboardingData.medicationReminderTime.hour,
         onboardingData.medicationReminderTime.minute
       );
     }
     setMedicationReminderEnabled(onboardingData.medicationReminderEnabled);
+
     setSkinConditionReminderEnabled(onboardingData.skinReminderEnabled);
     if (onboardingData.skinReminderEnabled) {
       setSkinConditionReminderTime(
@@ -120,11 +122,6 @@ export default function OnboardingScreen() {
     router,
   ]);
 
-  const handleSkip = useCallback(async () => {
-    await skipOnboarding();
-    router.replace('/(tabs)');
-  }, [skipOnboarding, router]);
-
   const updateData = useCallback(<K extends keyof OnboardingData>(
     key: K,
     value: OnboardingData[K]
@@ -138,10 +135,17 @@ export default function OnboardingScreen() {
       key: 'frequency',
       component: (
         <FrequencyPage
-          selectedDate={onboardingData.referenceDate}
           selectedFrequency={onboardingData.frequency}
-          onDateChange={(date) => updateData('referenceDate', date)}
           onFrequencyChange={(freq) => updateData('frequency', freq)}
+        />
+      ),
+    },
+    {
+      key: 'date',
+      component: (
+        <DateSelectPage
+          selectedDate={onboardingData.referenceDate}
+          onDateChange={(date) => updateData('referenceDate', date)}
         />
       ),
     },
@@ -177,20 +181,6 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2">
-        {currentPage > 0 ? (
-          <TouchableOpacity onPress={goToPrevPage} className="p-2">
-            <Ionicons name="chevron-back" size={24} color="#374151" />
-          </TouchableOpacity>
-        ) : (
-          <View className="p-2" style={{ width: 24 }} />
-        )}
-        <TouchableOpacity onPress={handleSkip}>
-          <Text className="text-gray-500">{t('onboarding.skip')}</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Pages */}
       <FlatList
         ref={flatListRef}

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, Platform, Alert, Linking } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { requestNotificationPermission, getDetailedPermissionStatus } from '@/services/notificationService';
 import { OnboardingPage } from './OnboardingPage';
@@ -59,34 +58,25 @@ export function MedicationReminderPage({
 
   return (
     <OnboardingPage
-      title={t('onboarding.page3.title')}
-      subtitle={t('onboarding.page3.subtitle')}
+      title={t('onboarding.page4.title')}
+      subtitle={t('onboarding.page4.subtitle')}
     >
       <View className="flex-1">
-        {/* Illustration */}
-        <View className="mb-8 items-center">
-          <View className="h-32 w-32 items-center justify-center rounded-full bg-blue-50">
-            <Ionicons name="notifications" size={64} color="#3B82F6" />
-          </View>
-        </View>
-
         {/* Description */}
-        <View className="mb-6 rounded-xl bg-gray-50 p-4">
-          <Text className="text-center text-gray-600">
-            {t('onboarding.page3.description')}
+        <View className="mb-6">
+          <Text className="mb-2 text-base text-gray-600">
+            {t('onboarding.page4.description1')}
+          </Text>
+          <Text className="text-base text-gray-600">
+            {t('onboarding.page4.description2')}
           </Text>
         </View>
 
         {/* Toggle */}
         <View className="flex-row items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4">
-          <View className="flex-1 flex-row items-center">
-            <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
-              <Ionicons name="medical" size={20} color="#F97316" />
-            </View>
-            <Text className="font-semibold text-gray-800">
-              {t('onboarding.page3.enableReminder')}
-            </Text>
-          </View>
+          <Text className="flex-1 font-semibold text-gray-800">
+            {t('onboarding.page4.enableReminder')}
+          </Text>
           <Switch
             value={enabled}
             onValueChange={handleToggle}
@@ -99,19 +89,15 @@ export function MedicationReminderPage({
         {enabled && (
           <View className="mt-4">
             <Text className="mb-2 text-sm font-medium text-gray-600">
-              {t('onboarding.page3.reminderTime')}
+              {t('onboarding.page4.reminderTime')}
             </Text>
             <TouchableOpacity
               onPress={() => setShowTimePicker(true)}
               className="flex-row items-center justify-between rounded-xl border-2 border-gray-200 bg-gray-50 p-4"
             >
-              <View className="flex-row items-center">
-                <Ionicons name="time-outline" size={20} color="#666666" />
-                <Text className="ml-2 text-base text-gray-800">
-                  {formatTime(time.hour, time.minute, isKorean)}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              <Text className="text-base text-gray-800">
+                {formatTime(time.hour, time.minute, isKorean)}
+              </Text>
             </TouchableOpacity>
           </View>
         )}

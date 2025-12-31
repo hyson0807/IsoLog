@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { OnboardingPage } from './OnboardingPage';
 import { formatTime } from '@/utils/timeFormat';
@@ -34,34 +33,25 @@ export function SkinReminderPage({
 
   return (
     <OnboardingPage
-      title={t('onboarding.page4.title')}
-      subtitle={t('onboarding.page4.subtitle')}
+      title={t('onboarding.page5.title')}
+      subtitle={t('onboarding.page5.subtitle')}
     >
       <View className="flex-1">
-        {/* Illustration */}
-        <View className="mb-8 items-center">
-          <View className="h-32 w-32 items-center justify-center rounded-full bg-green-50">
-            <Ionicons name="sparkles" size={64} color="#22C55E" />
-          </View>
-        </View>
-
         {/* Description */}
-        <View className="mb-6 rounded-xl bg-gray-50 p-4">
-          <Text className="text-center text-gray-600">
-            {t('onboarding.page4.description')}
+        <View className="mb-6">
+          <Text className="mb-2 text-base text-gray-600">
+            {t('onboarding.page5.description1')}
+          </Text>
+          <Text className="text-base text-gray-600">
+            {t('onboarding.page5.description2')}
           </Text>
         </View>
 
         {/* Toggle */}
         <View className="flex-row items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4">
-          <View className="flex-1 flex-row items-center">
-            <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-green-100">
-              <Ionicons name="sparkles" size={20} color="#22C55E" />
-            </View>
-            <Text className="font-semibold text-gray-800">
-              {t('onboarding.page4.enableReminder')}
-            </Text>
-          </View>
+          <Text className="flex-1 font-semibold text-gray-800">
+            {t('onboarding.page5.enableReminder')}
+          </Text>
           <Switch
             value={enabled}
             onValueChange={onEnabledChange}
@@ -74,19 +64,15 @@ export function SkinReminderPage({
         {enabled && (
           <View className="mt-4">
             <Text className="mb-2 text-sm font-medium text-gray-600">
-              {t('onboarding.page4.reminderTime')}
+              {t('onboarding.page5.reminderTime')}
             </Text>
             <TouchableOpacity
               onPress={() => setShowTimePicker(true)}
               className="flex-row items-center justify-between rounded-xl border-2 border-gray-200 bg-gray-50 p-4"
             >
-              <View className="flex-row items-center">
-                <Ionicons name="time-outline" size={20} color="#666666" />
-                <Text className="ml-2 text-base text-gray-800">
-                  {formatTime(time.hour, time.minute, isKorean)}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              <Text className="text-base text-gray-800">
+                {formatTime(time.hour, time.minute, isKorean)}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -115,10 +101,9 @@ export function SkinReminderPage({
         )}
 
         {/* Hint */}
-        <View className="mt-6 flex-row items-center justify-center">
-          <Ionicons name="information-circle-outline" size={16} color="#888888" />
-          <Text className="ml-1 text-sm text-gray-500">
-            {t('onboarding.page4.hint')}
+        <View className="mt-6">
+          <Text className="text-center text-sm text-gray-500">
+            {t('onboarding.page5.hint')}
           </Text>
         </View>
       </View>
