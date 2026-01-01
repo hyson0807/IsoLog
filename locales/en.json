@@ -244,6 +244,16 @@
     "empty": "No content available.",
     "searchPlaceholder": "Search by title or content",
     "noSearchResults": "No search results.",
+    "likedList": "Liked",
+    "emptyLiked": "No liked content yet.",
+    "menu": {
+      "title": "Menu",
+      "liked": "Liked"
+    },
+    "liked": {
+      "title": "Liked",
+      "empty": "No liked content yet."
+    },
     "tabs": {
       "all": "All",
       "articles": "Articles",

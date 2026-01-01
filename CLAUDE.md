@@ -72,8 +72,8 @@ app/
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
-│   ├── info.tsx         # Info screen (curated contents)
-│   └── tracking.tsx     # Tracking screen
+│   └── info.tsx         # Info screen (curated contents)
+├── tracking.tsx         # Tracking screen (/tracking, DrawerMenu에서 접근)
 ├── (settings)/          # 설정 관련 그룹 (URL에 미포함)
 │   ├── settings.tsx     # 설정 페이지 (/settings)
 │   └── notification-settings.tsx  # 알림 설정 페이지 (/notification-settings)
@@ -114,4 +114,4 @@ locales/                 # ko.json, en.json, index.ts
 - **React Compiler**: Enabled
 - **Typed Routes**: Enabled
 - **TypeScript**: Strict mode
-- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 정보 | 트래킹)
+- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 정보)

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useScrollToTop } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 import { ContentCard } from "@/components/info/ContentCard";
+import { InfoMenuSidebar, type InfoMenuItemType } from "@/components/info/InfoMenuSidebar";
 import {
   fetchContentsByTab,
   type CuratedContent,
@@ -21,12 +24,24 @@ import {
 
 export default function InfoScreen() {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
+
   const [contents, setContents] = useState<CuratedContent[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [menuSidebarVisible, setMenuSidebarVisible] = useState(false);
+
+  // 메뉴 항목 선택 핸들러
+  const handleMenuSelect = (type: InfoMenuItemType) => {
+    if (type === "liked") {
+      router.push("/liked");
+    }
+  };
 
   // 현재 언어 (ko 또는 en)
   const currentLanguage = i18n.language.startsWith("ko") ? "ko" : "en";
@@ -91,8 +106,9 @@ export default function InfoScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScrollView
+        ref={scrollRef}
         className="flex-1"
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[1]}
@@ -106,13 +122,22 @@ export default function InfoScreen() {
         }
       >
         {/* 헤더 - 스크롤 시 사라짐 */}
-        <View className="bg-white px-5 py-4">
-          <Text className="text-xl font-bold text-gray-900">
-            {t("info.title", "정보")}
-          </Text>
-          <Text className="mt-1 text-sm text-gray-500">
-            {t("info.subtitle", "이소티논 관련 유용한 정보")}
-          </Text>
+        <View className="flex-row items-start justify-between bg-white px-5 py-4">
+          <View className="flex-1">
+            <Text className="text-xl font-bold text-gray-900">
+              {t("info.title", "정보")}
+            </Text>
+            <Text className="mt-1 text-sm text-gray-500">
+              {t("info.subtitle", "이소티논 관련 유용한 정보")}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => setMenuSidebarVisible(true)}
+            className="ml-2 p-1"
+            hitSlop={8}
+          >
+            <Ionicons name="menu" size={24} color="#374151" />
+          </Pressable>
         </View>
 
         {/* Sticky Header: 검색창 + 탭 바 */}
@@ -230,6 +255,13 @@ export default function InfoScreen() {
           <View className="h-8" />
         </View>
       </ScrollView>
+
+      {/* 메뉴 사이드바 */}
+      <InfoMenuSidebar
+        visible={menuSidebarVisible}
+        onClose={() => setMenuSidebarVisible(false)}
+        onSelectItem={handleMenuSelect}
+      />
     </SafeAreaView>
   );
 }

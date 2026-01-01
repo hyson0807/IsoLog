@@ -244,6 +244,16 @@
     "empty": "콘텐츠가 없습니다.",
     "searchPlaceholder": "제목 또는 내용 검색",
     "noSearchResults": "검색 결과가 없습니다.",
+    "likedList": "좋아요 목록",
+    "emptyLiked": "좋아요한 콘텐츠가 없습니다.",
+    "menu": {
+      "title": "메뉴",
+      "liked": "좋아요 목록"
+    },
+    "liked": {
+      "title": "좋아요 목록",
+      "empty": "좋아요한 콘텐츠가 없습니다."
+    },
     "tabs": {
       "all": "전체",
       "articles": "Articles",

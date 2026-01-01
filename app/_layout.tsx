@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MedicationProvider } from "@/contexts/MedicationContext";
 import { PremiumProvider } from "@/contexts/PremiumContext";
 import { NotificationSettingsProvider } from "@/contexts/NotificationSettingsContext";
+import { LikedContentsProvider } from "@/contexts/LikedContentsContext";
 import { UpdateLoadingScreen } from "@/components/common/UpdateLoadingScreen";
 import { useAppUpdates } from "@/hooks/useAppUpdates";
 import "./global.css";
@@ -69,9 +70,11 @@ export default function RootLayout() {
     <PremiumProvider>
       <NotificationSettingsProvider>
         <MedicationProvider>
-          <SafeAreaProvider>
-            <AppContent />
-          </SafeAreaProvider>
+          <LikedContentsProvider>
+            <SafeAreaProvider>
+              <AppContent />
+            </SafeAreaProvider>
+          </LikedContentsProvider>
         </MedicationProvider>
       </NotificationSettingsProvider>
     </PremiumProvider>

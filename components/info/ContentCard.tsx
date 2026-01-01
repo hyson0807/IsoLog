@@ -2,7 +2,9 @@ import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
 import type { CuratedContent } from "@/services/contentService";
+import { useLikedContents } from "@/contexts/LikedContentsContext";
 
 interface ContentCardProps {
   content: CuratedContent;
@@ -10,6 +12,9 @@ interface ContentCardProps {
 
 export function ContentCard({ content }: ContentCardProps) {
   const { t } = useTranslation();
+  const { isLiked, toggleLike } = useLikedContents();
+
+  const liked = isLiked(content.url);
 
   const handlePress = () => {
     router.push({
@@ -19,6 +24,11 @@ export function ContentCard({ content }: ContentCardProps) {
         source: content.source,
       },
     });
+  };
+
+  const handleLikePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    toggleLike(content);
   };
 
   // 날짜 포맷팅
@@ -65,19 +75,34 @@ export function ContentCard({ content }: ContentCardProps) {
 
       {/* 하단 정보 */}
       <View className="mt-3 flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <Ionicons name="globe-outline" size={14} color="#9CA3AF" />
-          <Text className="ml-1 text-xs text-gray-400">{content.source}</Text>
+        <View className="flex-row items-center gap-3">
+          <View className="flex-row items-center">
+            <Ionicons name="globe-outline" size={14} color="#9CA3AF" />
+            <Text className="ml-1 text-xs text-gray-400">{content.source}</Text>
+          </View>
+
+          {content.publishedAt && (
+            <View className="flex-row items-center">
+              <Ionicons name="time-outline" size={14} color="#9CA3AF" />
+              <Text className="ml-1 text-xs text-gray-400">
+                {formatDate(content.publishedAt)}
+              </Text>
+            </View>
+          )}
         </View>
 
-        {content.publishedAt && (
-          <View className="flex-row items-center">
-            <Ionicons name="time-outline" size={14} color="#9CA3AF" />
-            <Text className="ml-1 text-xs text-gray-400">
-              {formatDate(content.publishedAt)}
-            </Text>
-          </View>
-        )}
+        {/* 좋아요 버튼 */}
+        <Pressable
+          onPress={handleLikePress}
+          hitSlop={8}
+          className="p-1"
+        >
+          <Ionicons
+            name={liked ? "heart" : "heart-outline"}
+            size={20}
+            color={liked ? "#F97316" : "#9CA3AF"}
+          />
+        </Pressable>
       </View>
     </Pressable>
   );
