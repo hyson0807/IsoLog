@@ -339,7 +339,7 @@ function extractDateFromSnippet(snippet: string): { date: string | null; cleanSn
   }
 
   // 한국어 날짜 패턴: "2024. 1. 15. —" 또는 "2024. 01. 15 —"
-  const koPattern = /^(\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.?)\s*[—\-·]\s*/;
+  const koPattern = /^(\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.?)\s*(\.{3}|[—\-·])\s*/;
   match = snippet.match(koPattern);
   if (match) {
     const parts = match[1].split(".").map((p) => p.trim()).filter(Boolean);
@@ -347,8 +347,8 @@ function extractDateFromSnippet(snippet: string): { date: string | null; cleanSn
     return { date: dateStr, cleanSnippet: snippet.replace(koPattern, "") };
   }
 
-  // 영어 날짜 패턴: "Jan 15, 2024 —" 또는 "January 15, 2024 —"
-  const enPattern = /^([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})\s*[—\-·]\s*/;
+  // 영어 날짜 패턴: "Jan 15, 2024 —" 또는 "January 15, 2024 ..."
+  const enPattern = /^([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})\s*(\.{3}|[—\-·])\s*/;
   match = snippet.match(enPattern);
   if (match) {
     const parsed = new Date(match[1]);
@@ -357,8 +357,8 @@ function extractDateFromSnippet(snippet: string): { date: string | null; cleanSn
     }
   }
 
-  // ISO 날짜 패턴: "2024-01-15 —"
-  const isoPattern = /^(\d{4}-\d{2}-\d{2})\s*[—\-·]\s*/;
+  // ISO 날짜 패턴: "2024-01-15 —" 또는 "2024-01-15 ..."
+  const isoPattern = /^(\d{4}-\d{2}-\d{2})\s*(\.{3}|[—\-·])\s*/;
   match = snippet.match(isoPattern);
   if (match) {
     return { date: match[1], cleanSnippet: snippet.replace(isoPattern, "") };

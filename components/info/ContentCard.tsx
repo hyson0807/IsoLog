@@ -33,17 +33,27 @@ export function ContentCard({ content }: ContentCardProps) {
   };
 
   // 날짜 포맷팅
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string | null => {
     const date = new Date(dateString);
+    // Invalid Date 체크
+    if (isNaN(date.getTime())) {
+      return null;
+    }
     const now = new Date();
     const diffTime = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return t("info.date.today", "Today");
     if (diffDays === 1) return t("info.date.yesterday", "Yesterday");
-    if (diffDays < 7) return t("info.date.daysAgo", "{{count}} days ago", { count: diffDays });
-    if (diffDays < 30) return t("info.date.weeksAgo", "{{count}} weeks ago", { count: Math.floor(diffDays / 7) });
-    return t("info.date.monthsAgo", "{{count}} months ago", { count: Math.floor(diffDays / 30) });
+    if (diffDays < 7)
+      return t("info.date.daysAgo", "{{count}} days ago", { count: diffDays });
+    if (diffDays < 30)
+      return t("info.date.weeksAgo", "{{count}} weeks ago", {
+        count: Math.floor(diffDays / 7),
+      });
+    return t("info.date.monthsAgo", "{{count}} months ago", {
+      count: Math.floor(diffDays / 30),
+    });
   };
 
   return (
@@ -82,7 +92,7 @@ export function ContentCard({ content }: ContentCardProps) {
             <Text className="ml-1 text-xs text-gray-400">{content.source}</Text>
           </View>
 
-          {content.publishedAt && (
+          {content.publishedAt && formatDate(content.publishedAt) && (
             <View className="flex-row items-center">
               <Ionicons name="time-outline" size={14} color="#9CA3AF" />
               <Text className="ml-1 text-xs text-gray-400">

@@ -26,6 +26,36 @@ export interface CuratedContent {
   createdAt: string;
 }
 
+// snippet 앞의 날짜를 제거하는 함수 (기존 데이터 호환용)
+function cleanSnippetDate(snippet: string): string {
+  // 상대적 시간: "7 hours ago ..."
+  const relativePattern =
+    /^(\d+)\s+(hour|hours|day|days|week|weeks|month|months)\s+ago\s*\.{3}\s*/i;
+  if (relativePattern.test(snippet)) {
+    return snippet.replace(relativePattern, "");
+  }
+
+  // 한국어: "2024. 1. 15. —"
+  const koPattern = /^(\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.?)\s*(\.{3}|[—\-·])\s*/;
+  if (koPattern.test(snippet)) {
+    return snippet.replace(koPattern, "");
+  }
+
+  // 영어: "Dec 25, 2024 ..." 또는 "Dec 25, 2024 —"
+  const enPattern = /^([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})\s*(\.{3}|[—\-·])\s*/;
+  if (enPattern.test(snippet)) {
+    return snippet.replace(enPattern, "");
+  }
+
+  // ISO: "2024-01-15 —" 또는 "2024-01-15 ..."
+  const isoPattern = /^(\d{4}-\d{2}-\d{2})\s*(\.{3}|[—\-·])\s*/;
+  if (isoPattern.test(snippet)) {
+    return snippet.replace(isoPattern, "");
+  }
+
+  return snippet;
+}
+
 // 개발용 AWS 자격 증명 (프로덕션에서는 API Gateway 사용 권장)
 const AWS_ACCESS_KEY_ID = process.env.EXPO_PUBLIC_AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY;
@@ -65,7 +95,7 @@ export async function fetchCuratedContents(
       IndexName: "language-createdAt-index",
       KeyConditionExpression: "#lang = :lang",
       FilterExpression:
-        "(contentType = :contentType OR attribute_not_exists(contentType)) AND (isBanned <> :true OR attribute_not_exists(isBanned))",
+        "(contentType = :contentType OR attribute_not_exists(contentType)) AND (isBanned <> :true OR attribute_not_exists(isBanned)) AND isVerified = :true",
       ExpressionAttributeNames: { "#lang": "language" },
       ExpressionAttributeValues: {
         ":lang": language,
@@ -85,7 +115,10 @@ export async function fetchCuratedContents(
         return type === contentType;
       })
       .sort((a, b) => {
-        // publishedAt 기준 정렬, 없으면 createdAt으로 fallback
+        // publishedAt이 없으면 뒤로 보냄
+        if (!a.publishedAt && b.publishedAt) return 1;
+        if (a.publishedAt && !b.publishedAt) return -1;
+        // 둘 다 없으면 createdAt 기준
         const dateA = a.publishedAt || a.createdAt;
         const dateB = b.publishedAt || b.createdAt;
         return dateB.localeCompare(dateA); // 최신순
@@ -95,7 +128,7 @@ export async function fetchCuratedContents(
     return filtered.map((item) => ({
       url: item.url,
       title: item.title,
-      snippet: item.snippet,
+      snippet: cleanSnippetDate(item.snippet),
       source: item.source,
       thumbnailUrl: item.thumbnailUrl,
       language: item.language,
@@ -143,6 +176,10 @@ export async function fetchContentsByTab(
 
   // 결과 병합 및 정렬
   const merged = results.flat().sort((a, b) => {
+    // publishedAt이 없으면 뒤로 보냄
+    if (!a.publishedAt && b.publishedAt) return 1;
+    if (a.publishedAt && !b.publishedAt) return -1;
+    // 둘 다 없으면 createdAt 기준
     const dateA = a.publishedAt || a.createdAt;
     const dateB = b.publishedAt || b.createdAt;
     return dateB.localeCompare(dateA); // 최신순
