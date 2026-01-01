@@ -81,7 +81,8 @@ app/
 │   ├── paywall.tsx      # 프리미엄 구매 페이지 (/paywall)
 │   └── subscription.tsx # 구독 관리 페이지 (/subscription)
 ├── (info)/              # 정보탭 상세 그룹 (URL에 미포함)
-│   └── content.tsx      # 콘텐츠 상세 WebView (/content?url=...)
+│   ├── content.tsx      # 콘텐츠 상세 WebView (/content?url=...)
+│   └── liked.tsx        # 좋아요한 콘텐츠 목록 (/liked)
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)
@@ -96,7 +97,7 @@ components/
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
-├── info/                # ContentCard
+├── info/                # ContentCard, InfoMenuSidebar
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
