@@ -22,6 +22,7 @@ export function ContentCard({ content }: ContentCardProps) {
       params: {
         url: content.url,
         source: content.source,
+        content: JSON.stringify(content),
       },
     });
   };
