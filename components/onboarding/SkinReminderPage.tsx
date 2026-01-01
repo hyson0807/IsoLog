@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, Platform, Alert, Linking } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
+import {
+  requestNotificationPermission,
+  getDetailedPermissionStatus,
+} from '@/services/notificationService';
 import { OnboardingPage } from './OnboardingPage';
 import { formatTime } from '@/utils/timeFormat';
 
@@ -21,6 +25,30 @@ export function SkinReminderPage({
   const { t, i18n } = useTranslation();
   const [showTimePicker, setShowTimePicker] = useState(false);
   const isKorean = i18n.language === 'ko';
+
+  const handleToggle = async (value: boolean) => {
+    if (value) {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        const status = await getDetailedPermissionStatus();
+        if (status === 'denied') {
+          Alert.alert(
+            t('notification.permissionDeniedTitle'),
+            t('notification.permissionDeniedMessage'),
+            [
+              { text: t('common.cancel'), style: 'cancel' },
+              {
+                text: t('notification.openSettings'),
+                onPress: () => Linking.openSettings(),
+              },
+            ]
+          );
+          return;
+        }
+      }
+    }
+    onEnabledChange(value);
+  };
 
   const handleTimeChange = (_event: unknown, date?: Date) => {
     if (Platform.OS === 'android') {
@@ -54,7 +82,7 @@ export function SkinReminderPage({
           </Text>
           <Switch
             value={enabled}
-            onValueChange={onEnabledChange}
+            onValueChange={handleToggle}
             trackColor={{ false: '#D1D5DB', true: '#86EFAC' }}
             thumbColor={enabled ? '#22C55E' : '#F3F4F6'}
           />

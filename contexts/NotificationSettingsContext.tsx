@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { scheduleSkinConditionReminder } from '@/services/notificationService';
 
 const NOTIFICATION_STORAGE_KEY = '@isoLog/notification_settings';
 const LEGACY_PREMIUM_STORAGE_KEY = '@isoLog/premium_data';
@@ -177,12 +178,16 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
 
   // Set skin condition reminder time
   const setSkinConditionReminderTime = useCallback(
-    (hour: number, minute: number) => {
+    async (hour: number, minute: number) => {
       const newTime = { hour, minute };
       setSkinConditionReminderTimeState(newTime);
       saveData({ skinConditionReminderTime: newTime });
+      // 알림 직접 재스케줄링
+      if (notificationEnabled && skinConditionReminderEnabled) {
+        await scheduleSkinConditionReminder(hour, minute);
+      }
     },
-    [saveData]
+    [saveData, notificationEnabled, skinConditionReminderEnabled]
   );
 
   const value = useMemo(

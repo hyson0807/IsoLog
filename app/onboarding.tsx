@@ -16,7 +16,12 @@ import { FrequencyType } from '@/types/medication';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { getToday } from '@/utils/dateUtils';
+import { getToday, getUpcomingMedicationDays } from '@/utils/dateUtils';
+import {
+  scheduleSkinConditionReminder,
+  scheduleUpcomingReminders,
+} from '@/services/notificationService';
+import { frequencyOptions } from '@/constants/frequency';
 
 import { PageIndicator } from '@/components/onboarding/PageIndicator';
 import { WelcomePage } from '@/components/onboarding/WelcomePage';
@@ -105,10 +110,35 @@ export default function OnboardingScreen() {
       );
     }
 
-    // 3. Mark onboarding as complete
+    // 3. Schedule notifications directly
+    if (onboardingData.medicationReminderEnabled && frequency !== 'none') {
+      const frequencyDays = frequencyOptions.find((opt) => opt.type === frequency)?.days || 1;
+      const upcomingDays = getUpcomingMedicationDays(
+        onboardingData.referenceDate,
+        frequencyDays,
+        7
+      );
+      await scheduleUpcomingReminders(
+        upcomingDays,
+        new Set(),
+        true,
+        onboardingData.medicationReminderTime.hour,
+        onboardingData.medicationReminderTime.minute,
+        true
+      );
+    }
+
+    if (onboardingData.skinReminderEnabled) {
+      await scheduleSkinConditionReminder(
+        onboardingData.skinReminderTime.hour,
+        onboardingData.skinReminderTime.minute
+      );
+    }
+
+    // 4. Mark onboarding as complete
     await completeOnboarding();
 
-    // 4. Navigate to home
+    // 5. Navigate to home
     router.replace('/(tabs)');
   }, [
     onboardingData,

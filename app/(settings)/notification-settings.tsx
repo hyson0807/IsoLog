@@ -5,7 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useNotificationSettings } from '@/hooks/useNotificationSettings';
+import { useMedicationContext } from '@/contexts/MedicationContext';
 import { formatTime } from '@/utils/timeFormat';
+import { getUpcomingMedicationDays } from '@/utils/dateUtils';
+import { scheduleUpcomingReminders } from '@/services/notificationService';
+import { frequencyOptions } from '@/constants/frequency';
 import {
   MasterToggle,
   NotificationItem,
@@ -33,6 +37,8 @@ export default function NotificationSettingsScreen() {
     setSkinConditionReminderTime,
   } = useNotificationSettings();
 
+  const { schedule, takenDates } = useMedicationContext();
+
   const [activeTimePicker, setActiveTimePicker] = useState<TimePickerType>(null);
 
   // 복용 리마인더 시간 선택
@@ -47,9 +53,28 @@ export default function NotificationSettingsScreen() {
     setActiveTimePicker('skinCondition');
   };
 
-  const handleTimeSave = (hour: number, minute: number) => {
+  const handleTimeSave = async (hour: number, minute: number) => {
     if (activeTimePicker === 'medication') {
       setNotificationTime(hour, minute);
+      // 복용 알림 즉시 리스케줄링
+      if (notificationEnabled && medicationReminderEnabled && schedule.frequency !== 'none') {
+        const frequencyDays = frequencyOptions.find(
+          (opt) => opt.type === schedule.frequency
+        )?.days || 1;
+        const upcomingDays = getUpcomingMedicationDays(
+          schedule.referenceDate,
+          frequencyDays,
+          7
+        );
+        await scheduleUpcomingReminders(
+          upcomingDays,
+          takenDates,
+          true,
+          hour,
+          minute,
+          true
+        );
+      }
     } else if (activeTimePicker === 'skinCondition') {
       setSkinConditionReminderTime(hour, minute);
     }

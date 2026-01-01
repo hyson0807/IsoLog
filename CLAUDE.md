@@ -99,9 +99,9 @@ components/
 ├── info/                # ContentCard
 └── tracking/            # (TBD)
 
-contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext
+contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService
-hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, useNotificationPermission, useTodayDate, useInterstitialAd, etc.
+hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, useNotificationPermission, useNotificationSettings, useTodayDate, useInterstitialAd
 constants/               # theme, frequency, skin, revenuecat, admob
 types/                   # medication.ts
 utils/                   # dateUtils, deviceId, reviewService, timeFormat
