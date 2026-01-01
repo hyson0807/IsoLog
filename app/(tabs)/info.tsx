@@ -2,15 +2,17 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
-  ScrollView,
+  Animated,
   RefreshControl,
   ActivityIndicator,
   Pressable,
   TextInput,
   Keyboard,
+  StyleSheet,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScrollToTop } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -22,11 +24,33 @@ import {
   type TabType,
 } from "@/services/contentService";
 
+// 헤더 및 sticky header 높이 상수
+const HEADER_HEIGHT = 72;
+const STICKY_HEADER_HEIGHT = 100; // 검색창 + 탭바
+
 export default function InfoScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
+
+  // Animated scroll value for header animation
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Header translateY (moves up as user scrolls, hides behind status bar)
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT],
+    extrapolate: "clamp",
+  });
+
+  // Sticky header (search + tabs) translateY - follows header then stays fixed
+  const stickyHeaderTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [HEADER_HEIGHT, 0],
+    extrapolate: "clamp",
+  });
 
   const [contents, setContents] = useState<CuratedContent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,22 +130,17 @@ export default function InfoScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
-      <ScrollView
-        ref={scrollRef}
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[1]}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#F97316"
-          />
-        }
+    <SafeAreaView className="flex-1 bg-white" edges={[]}>
+      {/* Status bar 배경 - 헤더가 이 뒤로 숨겨짐 */}
+      <View style={[styles.statusBarBackground, { height: insets.top }]} />
+
+      {/* 헤더 - 스크롤 시 위로 사라짐 */}
+      <Animated.View
+        style={[
+          styles.header,
+          { top: insets.top, transform: [{ translateY: headerTranslateY }] },
+        ]}
       >
-        {/* 헤더 - 스크롤 시 사라짐 */}
         <View className="flex-row items-start justify-between bg-white px-5 py-4">
           <View className="flex-1">
             <Text className="text-xl font-bold text-gray-900">
@@ -139,83 +158,109 @@ export default function InfoScreen() {
             <Ionicons name="menu" size={24} color="#374151" />
           </Pressable>
         </View>
+      </Animated.View>
 
-        {/* Sticky Header: 검색창 + 탭 바 */}
-        <View className="bg-white">
-          {/* 검색창 */}
-          <View className="px-4 pb-3 pt-2">
-            <View className="flex-row items-center rounded-lg border border-gray-200 bg-gray-50 px-3">
-              <Ionicons name="search" size={18} color="#9CA3AF" />
-              <TextInput
-                className="flex-1 px-2 py-2.5 text-sm text-gray-700"
-                placeholder={t("info.searchPlaceholder", "제목 또는 내용 검색")}
-                placeholderTextColor="#9CA3AF"
-                value={searchQuery}
-                onChangeText={handleSearchChange}
-                returnKeyType="search"
-                onSubmitEditing={() => Keyboard.dismiss()}
-              />
-              {searchQuery.length > 0 && (
-                <Pressable onPress={clearSearch} hitSlop={8}>
-                  <Ionicons name="close-circle" size={18} color="#9CA3AF" />
-                </Pressable>
-              )}
-            </View>
-          </View>
-
-          {/* 탭 바 */}
-          <View className="flex-row border-b border-gray-200">
-            <Pressable
-              className={`flex-1 py-3 items-center border-b-2 ${
-                activeTab === "all"
-                  ? "border-orange-500"
-                  : "border-transparent"
-              }`}
-              onPress={() => handleTabChange("all")}
-            >
-              <Text
-                className={`font-medium ${
-                  activeTab === "all" ? "text-orange-500" : "text-gray-500"
-                }`}
-              >
-                {t("info.tabs.all", "All")}
-              </Text>
-            </Pressable>
-            <Pressable
-              className={`flex-1 py-3 items-center border-b-2 ${
-                activeTab === "article"
-                  ? "border-orange-500"
-                  : "border-transparent"
-              }`}
-              onPress={() => handleTabChange("article")}
-            >
-              <Text
-                className={`font-medium ${
-                  activeTab === "article" ? "text-orange-500" : "text-gray-500"
-                }`}
-              >
-                {t("info.tabs.articles", "Articles")}
-              </Text>
-            </Pressable>
-            <Pressable
-              className={`flex-1 py-3 items-center border-b-2 ${
-                activeTab === "social"
-                  ? "border-orange-500"
-                  : "border-transparent"
-              }`}
-              onPress={() => handleTabChange("social")}
-            >
-              <Text
-                className={`font-medium ${
-                  activeTab === "social" ? "text-orange-500" : "text-gray-500"
-                }`}
-              >
-                {t("info.tabs.social", "Social")}
-              </Text>
-            </Pressable>
+      {/* Sticky Header: 검색창 + 탭 바 - 헤더를 따라가다가 상단에 고정 */}
+      <Animated.View
+        style={[
+          styles.stickyHeader,
+          { top: insets.top, transform: [{ translateY: stickyHeaderTranslateY }] },
+        ]}
+      >
+        {/* 검색창 */}
+        <View className="bg-white px-4 pb-3 pt-2">
+          <View className="flex-row items-center rounded-lg border border-gray-200 bg-gray-50 px-3">
+            <Ionicons name="search" size={18} color="#9CA3AF" />
+            <TextInput
+              className="flex-1 px-2 py-2.5 text-sm text-gray-700"
+              placeholder={t("info.searchPlaceholder", "제목 또는 내용 검색")}
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={handleSearchChange}
+              returnKeyType="search"
+              onSubmitEditing={() => Keyboard.dismiss()}
+            />
+            {searchQuery.length > 0 && (
+              <Pressable onPress={clearSearch} hitSlop={8}>
+                <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+              </Pressable>
+            )}
           </View>
         </View>
 
+        {/* 탭 바 */}
+        <View className="flex-row border-b border-gray-200 bg-white">
+          <Pressable
+            className={`flex-1 py-3 items-center border-b-2 ${
+              activeTab === "all"
+                ? "border-orange-500"
+                : "border-transparent"
+            }`}
+            onPress={() => handleTabChange("all")}
+          >
+            <Text
+              className={`font-medium ${
+                activeTab === "all" ? "text-orange-500" : "text-gray-500"
+              }`}
+            >
+              {t("info.tabs.all", "All")}
+            </Text>
+          </Pressable>
+          <Pressable
+            className={`flex-1 py-3 items-center border-b-2 ${
+              activeTab === "article"
+                ? "border-orange-500"
+                : "border-transparent"
+            }`}
+            onPress={() => handleTabChange("article")}
+          >
+            <Text
+              className={`font-medium ${
+                activeTab === "article" ? "text-orange-500" : "text-gray-500"
+              }`}
+            >
+              {t("info.tabs.articles", "Articles")}
+            </Text>
+          </Pressable>
+          <Pressable
+            className={`flex-1 py-3 items-center border-b-2 ${
+              activeTab === "social"
+                ? "border-orange-500"
+                : "border-transparent"
+            }`}
+            onPress={() => handleTabChange("social")}
+          >
+            <Text
+              className={`font-medium ${
+                activeTab === "social" ? "text-orange-500" : "text-gray-500"
+              }`}
+            >
+              {t("info.tabs.social", "Social")}
+            </Text>
+          </Pressable>
+        </View>
+      </Animated.View>
+
+      {/* 콘텐츠 스크롤 영역 - RefreshControl이 탭바 아래에서 동작 */}
+      <Animated.ScrollView
+        ref={scrollRef}
+        style={[styles.scrollView, { marginTop: insets.top + STICKY_HEADER_HEIGHT }]}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: HEADER_HEIGHT }]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#F97316"
+          />
+        }
+      >
         {/* 콘텐츠 영역 */}
         <View className="px-4 pt-4">
           {/* 로딩 상태 */}
@@ -254,7 +299,7 @@ export default function InfoScreen() {
           {/* 하단 여백 */}
           <View className="h-8" />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
 
       {/* 메뉴 사이드바 */}
       <InfoMenuSidebar
@@ -265,3 +310,35 @@ export default function InfoScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  statusBarBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 30,
+    backgroundColor: "white",
+  },
+  header: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT,
+    zIndex: 10,
+    backgroundColor: "white",
+  },
+  stickyHeader: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    backgroundColor: "white",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 0,
+  },
+});
