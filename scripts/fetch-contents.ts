@@ -52,18 +52,21 @@ const KO_ALLOWED_DOMAINS = [
   "x.com",
 ];
 
+// 한국어 검색용 site 필터 (스팸 방지)
+const KO_SITE_FILTER = "site:*.kr OR site:naver.com OR site:tistory.com OR site:brunch.co.kr OR site:dcinside.com";
+
 // 검색 키워드 (블로그/커뮤니티)
 const ARTICLE_KEYWORDS = [
-  { keyword: "이소티논", language: "ko" },
-  { keyword: "로아큐탄", language: "ko" },
+  { keyword: `이소티논 ${KO_SITE_FILTER}`, language: "ko" },
+  { keyword: `로아큐탄 ${KO_SITE_FILTER}`, language: "ko" },
   { keyword: "isotretinoin", language: "en" },
   { keyword: "accutane", language: "en" },
 ];
 
-// 소셜 미디어 검색 키워드
+// 소셜 미디어 검색 키워드 (YouTube 중심)
 const SOCIAL_KEYWORDS = [
-  { keyword: "이소티논", language: "ko" },
-  { keyword: "로아큐탄", language: "ko" },
+  { keyword: "이소티논 site:youtube.com", language: "ko" },
+  { keyword: "로아큐탄 site:youtube.com", language: "ko" },
   { keyword: "isotretinoin", language: "en" },
   { keyword: "accutane", language: "en" },
 ];
@@ -101,8 +104,8 @@ async function searchGoogle(
     return null;
   }
 
-  // dateRestrict=m1: 지난 1개월 내 글만, sort=date: 최신순 정렬
-  let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(keyword)}&num=5&dateRestrict=m1&sort=date`;
+  // dateRestrict=w1: 지난 1주일 내 글만, sort=date: 최신순 정렬 (매일 실행용)
+  let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(keyword)}&num=10&dateRestrict=w1&sort=date`;
 
   if (searchType === "news") {
     url += "&tbm=nws";
@@ -321,7 +324,8 @@ function extractDateFromSnippet(snippet: string): { date: string | null; cleanSn
   const koPattern = /^(\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.?)\s*[—\-·]\s*/;
   match = snippet.match(koPattern);
   if (match) {
-    const dateStr = match[1].replace(/\s/g, "").replace(/\./g, "-").replace(/-$/, "");
+    const parts = match[1].split(".").map((p) => p.trim()).filter(Boolean);
+    const dateStr = `${parts[0]}-${parts[1].padStart(2, "0")}-${parts[2].padStart(2, "0")}`;
     return { date: dateStr, cleanSnippet: snippet.replace(koPattern, "") };
   }
 
