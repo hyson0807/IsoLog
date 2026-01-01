@@ -332,20 +332,41 @@ export async function fetchCuratedContents(language: string, limit = 20) {
 - [x] **Step 4**: Google Custom Search API 키 생성
 - [x] **Step 5**: 로컬 크롤링 테스트 완료
 - [x] **Step 6**: 앱 정보탭 구현 완료
+- [x] **Step 7**: 뉴스 탭 기능 추가
 
 ### 구현 완료 항목
 
 #### 로컬 크롤링 스크립트
 - `scripts/fetch-contents.ts` - Google Search API → DynamoDB 저장
+  - 블로그/커뮤니티 글 수집 (ARTICLE_KEYWORDS)
+  - 뉴스 수집 (NEWS_KEYWORDS, `tbm=nws` 파라미터)
+  - `contentType` 필드로 article/news 구분
 
 #### 앱 정보탭
 - `services/contentService.ts` - DynamoDB 조회 서비스
+  - `contentType` 파라미터 추가 (article/news)
+  - 기존 데이터 호환 (contentType 없으면 article로 처리)
 - `components/info/ContentCard.tsx` - 콘텐츠 카드 컴포넌트
 - `app/(tabs)/info.tsx` - 정보탭 화면
+  - 블로그/뉴스 탭 바 UI 추가
 
 #### 환경 설정
 - `.env.local` - AWS 자격 증명 (개발용)
 - `react-native-get-random-values` - crypto 폴리필
+
+### DynamoDB 스키마 변경
+
+기존 테이블에 `contentType` 속성 추가:
+
+```javascript
+{
+  // 기존 속성들...
+  contentType: "article" | "news",  // 새로 추가
+}
+```
+
+- 기존 데이터: contentType 없음 → "article"로 처리
+- 새 데이터: contentType 명시적으로 저장
 
 ---
 

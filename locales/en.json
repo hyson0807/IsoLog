@@ -241,7 +241,19 @@
   "info": {
     "title": "Info",
     "subtitle": "Useful information about isotretinoin",
-    "empty": "No content available."
+    "empty": "No content available.",
+    "tabs": {
+      "articles": "Articles",
+      "news": "News",
+      "social": "Social"
+    },
+    "date": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{{count}} days ago",
+      "weeksAgo": "{{count}} weeks ago",
+      "monthsAgo": "{{count}} months ago"
+    }
   },
   "update": {
     "updating": "Preparing a better IsoLog for you",

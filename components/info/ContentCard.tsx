@@ -1,5 +1,6 @@
 import { Pressable, Text, View, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import type { CuratedContent } from "@/services/contentService";
 
 interface ContentCardProps {
@@ -7,6 +8,8 @@ interface ContentCardProps {
 }
 
 export function ContentCard({ content }: ContentCardProps) {
+  const { t } = useTranslation();
+
   const handlePress = () => {
     Linking.openURL(content.url);
   };
@@ -18,11 +21,11 @@ export function ContentCard({ content }: ContentCardProps) {
     const diffTime = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "오늘";
-    if (diffDays === 1) return "어제";
-    if (diffDays < 7) return `${diffDays}일 전`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)}주 전`;
-    return `${Math.floor(diffDays / 30)}개월 전`;
+    if (diffDays === 0) return t("info.date.today", "Today");
+    if (diffDays === 1) return t("info.date.yesterday", "Yesterday");
+    if (diffDays < 7) return t("info.date.daysAgo", "{{count}} days ago", { count: diffDays });
+    if (diffDays < 30) return t("info.date.weeksAgo", "{{count}} weeks ago", { count: Math.floor(diffDays / 7) });
+    return t("info.date.monthsAgo", "{{count}} months ago", { count: Math.floor(diffDays / 30) });
   };
 
   return (
@@ -60,12 +63,14 @@ export function ContentCard({ content }: ContentCardProps) {
           <Text className="ml-1 text-xs text-gray-400">{content.source}</Text>
         </View>
 
-        <View className="flex-row items-center">
-          <Ionicons name="time-outline" size={14} color="#9CA3AF" />
-          <Text className="ml-1 text-xs text-gray-400">
-            {formatDate(content.createdAt)}
-          </Text>
-        </View>
+        {content.publishedAt && (
+          <View className="flex-row items-center">
+            <Ionicons name="time-outline" size={14} color="#9CA3AF" />
+            <Text className="ml-1 text-xs text-gray-400">
+              {formatDate(content.publishedAt)}
+            </Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );

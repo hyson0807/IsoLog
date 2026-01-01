@@ -32,6 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 다국어 지원 | `.claude/docs/i18n.md` |
 | OTA 업데이트 | `.claude/docs/ota-updates.md` |
 | 온보딩 | `.claude/docs/onboarding.md` |
+| 콘텐츠 큐레이션 (정보탭) | `.claude/docs/content-curation.md` |
 
 ## Development Commands
 
@@ -71,6 +72,7 @@ app/
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
+│   ├── info.tsx         # Info screen (curated contents)
 │   └── tracking.tsx     # Tracking screen
 ├── (settings)/          # 설정 관련 그룹 (URL에 미포함)
 │   ├── settings.tsx     # 설정 페이지 (/settings)
@@ -86,17 +88,18 @@ app/
 └── global.css           # Tailwind CSS imports
 
 components/
-├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, etc.
+├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, WarningConfirmModal, NotificationPromptSnackbar
 ├── home/                # StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard
-├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, MonthlySummary
+├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, FrequencySettingButton, MonthlySummary, WeekdayRow
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
+├── info/                # ContentCard
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext
-services/                # notificationService
-hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, etc.
+services/                # notificationService, contentService
+hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, useNotificationPermission, useTodayDate, useInterstitialAd, etc.
 constants/               # theme, frequency, skin, revenuecat, admob
 types/                   # medication.ts
 utils/                   # dateUtils, deviceId, reviewService, timeFormat
@@ -109,4 +112,4 @@ locales/                 # ko.json, en.json, index.ts
 - **React Compiler**: Enabled
 - **Typed Routes**: Enabled
 - **TypeScript**: Strict mode
-- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 트래킹)
+- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 정보 | 트래킹)

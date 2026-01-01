@@ -241,7 +241,19 @@
   "info": {
     "title": "정보",
     "subtitle": "이소티논 관련 유용한 정보",
-    "empty": "콘텐츠가 없습니다."
+    "empty": "콘텐츠가 없습니다.",
+    "tabs": {
+      "articles": "블로그",
+      "news": "뉴스",
+      "social": "소셜"
+    },
+    "date": {
+      "today": "오늘",
+      "yesterday": "어제",
+      "daysAgo": "{{count}}일 전",
+      "weeksAgo": "{{count}}주 전",
+      "monthsAgo": "{{count}}개월 전"
+    }
   },
   "update": {
     "updating": "더 나은 IsoLog를 준비하고 있어요",

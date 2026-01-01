@@ -23,13 +23,39 @@ const GOOGLE_CX = process.env.GOOGLE_CX;
 const TABLE_NAME = "isolog-curated-contents";
 const AWS_REGION = "us-east-1";
 
-// 검색 키워드
-const KEYWORDS = [
-  { keyword: "이소티논 후기", language: "ko" },
-  { keyword: "이소티논 부작용", language: "ko" },
-  { keyword: "로아큐탄 경험", language: "ko" },
-  { keyword: "isotretinoin experience", language: "en" },
-  { keyword: "accutane journey", language: "en" },
+// 콘텐츠 타입
+type ContentType = "article" | "news" | "social";
+
+// 소셜 미디어 도메인
+const SOCIAL_DOMAINS = [
+  "youtube.com", "youtu.be",
+  "instagram.com",
+  "twitter.com", "x.com",
+  "tiktok.com",
+];
+
+// 검색 키워드 (블로그/커뮤니티)
+const ARTICLE_KEYWORDS = [
+  { keyword: "이소티논", language: "ko" },
+  { keyword: "로아큐탄", language: "ko" },
+  { keyword: "isotretinoin", language: "en" },
+  { keyword: "accutane", language: "en" },
+];
+
+// 뉴스 검색 키워드
+const NEWS_KEYWORDS = [
+  { keyword: "isotretinoin", language: "en" },
+  { keyword: "accutane", language: "en" },
+  { keyword: "이소티논", language: "ko" },
+  { keyword: "로아큐탄", language: "ko" },
+];
+
+// 소셜 미디어 검색 키워드
+const SOCIAL_KEYWORDS = [
+  { keyword: "이소티논", language: "ko" },
+  { keyword: "로아큐탄", language: "ko" },
+  { keyword: "isotretinoin", language: "en" },
+  { keyword: "accutane", language: "en" },
 ];
 
 // DynamoDB 클라이언트
@@ -41,16 +67,30 @@ function hashUrl(url: string): string {
   return crypto.createHash("md5").update(url).digest("hex").substring(0, 12);
 }
 
+// URL이 소셜 미디어인지 확인
+function isSocialUrl(url: string): boolean {
+  return SOCIAL_DOMAINS.some((domain) => url.includes(domain));
+}
+
 // Google Custom Search API 호출
 async function searchGoogle(
-  keyword: string
+  keyword: string,
+  searchType: "web" | "news" | "social" = "web"
 ): Promise<GoogleSearchResult | null> {
   if (!GOOGLE_API_KEY || !GOOGLE_CX) {
     console.error("GOOGLE_API_KEY 또는 GOOGLE_CX가 설정되지 않았습니다.");
     return null;
   }
 
-  const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(keyword)}&num=5`;
+  // dateRestrict=m1: 지난 1개월 내 글만, sort=date: 최신순 정렬
+  let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(keyword)}&num=5&dateRestrict=m1&sort=date`;
+
+  if (searchType === "news") {
+    url += "&tbm=nws";
+  } else if (searchType === "social") {
+    // 소셜 미디어 검색 (YouTube, Instagram, Twitter, TikTok)
+    url += "&tbm=vid";
+  }
 
   try {
     const response = await fetch(url);
@@ -91,7 +131,8 @@ async function isUrlExists(urlHash: string): Promise<boolean> {
 async function saveContent(
   item: GoogleSearchItem,
   language: string,
-  keyword: string
+  keyword: string,
+  contentType: ContentType
 ): Promise<boolean> {
   const urlHash = hashUrl(item.link);
   const createdAt = new Date().toISOString();
@@ -103,6 +144,16 @@ async function saveContent(
     return false;
   }
 
+  // snippet에서 발행일 추출
+  const { date: extractedDate, cleanSnippet } = extractDateFromSnippet(item.snippet);
+
+  // 발행일: snippet에서 추출 또는 metatags에서 가져오기
+  const metatags = item.pagemap?.metatags?.[0];
+  const publishedAt = extractedDate
+    || metatags?.["article:published_time"]?.split("T")[0]
+    || metatags?.date
+    || null;
+
   const command = new PutCommand({
     TableName: TABLE_NAME,
     Item: {
@@ -111,11 +162,13 @@ async function saveContent(
       url: item.link,
       urlHash,
       title: item.title,
-      snippet: item.snippet,
+      snippet: cleanSnippet,
       source: item.displayLink,
       thumbnailUrl: item.pagemap?.cse_thumbnail?.[0]?.src || null,
       language,
+      contentType,
       searchKeyword: keyword,
+      publishedAt,
       isApproved: true,
       viewCount: 0,
       createdAt,
@@ -146,17 +199,24 @@ async function main() {
   let totalInserted = 0;
   let totalSkipped = 0;
 
-  for (const { keyword, language } of KEYWORDS) {
+  // 1. 블로그/커뮤니티 글 수집 (소셜 미디어 제외)
+  console.log("📝 블로그/커뮤니티 글 수집\n");
+  for (const { keyword, language } of ARTICLE_KEYWORDS) {
     console.log(`🔍 검색: "${keyword}" (${language})`);
 
-    const data = await searchGoogle(keyword);
+    const data = await searchGoogle(keyword, "web");
     if (!data || !data.items) {
       console.log("   결과 없음\n");
       continue;
     }
 
     for (const item of data.items) {
-      const saved = await saveContent(item, language, keyword);
+      if (isSocialUrl(item.link)) {
+        console.log(`  ⏭️  소셜 제외: ${item.title.substring(0, 30)}...`);
+        totalSkipped++;
+        continue;
+      }
+      const saved = await saveContent(item, language, keyword, "article");
       if (saved) {
         totalInserted++;
       } else {
@@ -165,8 +225,65 @@ async function main() {
     }
 
     console.log("");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
 
-    // API 할당량 보호를 위한 딜레이
+  // 2. 뉴스 수집 (소셜 미디어 제외)
+  console.log("📰 뉴스 수집\n");
+  for (const { keyword, language } of NEWS_KEYWORDS) {
+    console.log(`🔍 뉴스 검색: "${keyword}" (${language})`);
+
+    const data = await searchGoogle(keyword, "news");
+    if (!data || !data.items) {
+      console.log("   결과 없음\n");
+      continue;
+    }
+
+    for (const item of data.items) {
+      if (isSocialUrl(item.link)) {
+        console.log(`  ⏭️  소셜 제외: ${item.title.substring(0, 30)}...`);
+        totalSkipped++;
+        continue;
+      }
+      const saved = await saveContent(item, language, keyword, "news");
+      if (saved) {
+        totalInserted++;
+      } else {
+        totalSkipped++;
+      }
+    }
+
+    console.log("");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  // 3. 소셜 미디어 수집
+  console.log("📱 소셜 미디어 수집\n");
+  for (const { keyword, language } of SOCIAL_KEYWORDS) {
+    console.log(`🔍 소셜 검색: "${keyword}" (${language})`);
+
+    const data = await searchGoogle(keyword, "social");
+    if (!data || !data.items) {
+      console.log("   결과 없음\n");
+      continue;
+    }
+
+    for (const item of data.items) {
+      // 소셜 도메인이 아니면 스킵
+      if (!isSocialUrl(item.link)) {
+        console.log(`  ⏭️  비소셜 제외: ${item.title.substring(0, 30)}...`);
+        totalSkipped++;
+        continue;
+      }
+      const saved = await saveContent(item, language, keyword, "social");
+      if (saved) {
+        totalInserted++;
+      } else {
+        totalSkipped++;
+      }
+    }
+
+    console.log("");
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
@@ -187,7 +304,68 @@ interface GoogleSearchItem {
   displayLink: string;
   pagemap?: {
     cse_thumbnail?: Array<{ src: string }>;
+    metatags?: Array<{
+      "article:published_time"?: string;
+      "og:updated_time"?: string;
+      date?: string;
+    }>;
   };
+}
+
+// snippet에서 날짜 추출
+function extractDateFromSnippet(snippet: string): { date: string | null; cleanSnippet: string } {
+  const now = new Date();
+
+  // 상대적 시간 패턴: "7 hours ago ...", "1 day ago ...", "2 days ago ..."
+  const relativePattern = /^(\d+)\s+(hour|hours|day|days|week|weeks|month|months)\s+ago\s*\.{3}\s*/i;
+  let match = snippet.match(relativePattern);
+  if (match) {
+    const num = parseInt(match[1]);
+    const unit = match[2].toLowerCase();
+    const date = new Date(now);
+
+    if (unit.startsWith("hour")) {
+      date.setHours(date.getHours() - num);
+    } else if (unit.startsWith("day")) {
+      date.setDate(date.getDate() - num);
+    } else if (unit.startsWith("week")) {
+      date.setDate(date.getDate() - num * 7);
+    } else if (unit.startsWith("month")) {
+      date.setMonth(date.getMonth() - num);
+    }
+
+    return {
+      date: date.toISOString().split("T")[0],
+      cleanSnippet: snippet.replace(relativePattern, "")
+    };
+  }
+
+  // 한국어 날짜 패턴: "2024. 1. 15. —" 또는 "2024. 01. 15 —"
+  const koPattern = /^(\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.?)\s*[—\-·]\s*/;
+  match = snippet.match(koPattern);
+  if (match) {
+    const dateStr = match[1].replace(/\s/g, "").replace(/\./g, "-").replace(/-$/, "");
+    return { date: dateStr, cleanSnippet: snippet.replace(koPattern, "") };
+  }
+
+  // 영어 날짜 패턴: "Jan 15, 2024 —" 또는 "January 15, 2024 —"
+  const enPattern = /^([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})\s*[—\-·]\s*/;
+  match = snippet.match(enPattern);
+  if (match) {
+    const parsed = new Date(match[1]);
+    if (!isNaN(parsed.getTime())) {
+      return { date: parsed.toISOString().split("T")[0], cleanSnippet: snippet.replace(enPattern, "") };
+    }
+  }
+
+  // ISO 날짜 패턴: "2024-01-15 —"
+  const isoPattern = /^(\d{4}-\d{2}-\d{2})\s*[—\-·]\s*/;
+  match = snippet.match(isoPattern);
+  if (match) {
+    return { date: match[1], cleanSnippet: snippet.replace(isoPattern, "") };
+  }
+
+  return { date: null, cleanSnippet: snippet };
 }
 
 // 실행

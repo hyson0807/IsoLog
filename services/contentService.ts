@@ -9,6 +9,8 @@ const TABLE_NAME = "isolog-curated-contents";
 const AWS_REGION = "us-east-1";
 
 // 콘텐츠 타입
+export type ContentType = "article" | "news" | "social";
+
 export interface CuratedContent {
   url: string;
   title: string;
@@ -16,6 +18,8 @@ export interface CuratedContent {
   source: string;
   thumbnailUrl?: string | null;
   language: string;
+  contentType?: ContentType;
+  publishedAt?: string | null;
   createdAt: string;
 }
 
@@ -43,10 +47,11 @@ function getDocClient(): DynamoDBDocumentClient {
 }
 
 /**
- * 언어별 큐레이션 콘텐츠 가져오기
+ * 언어별, 타입별 큐레이션 콘텐츠 가져오기
  */
 export async function fetchCuratedContents(
   language: string,
+  contentType: ContentType = "article",
   limit: number = 20
 ): Promise<CuratedContent[]> {
   try {
@@ -56,21 +61,35 @@ export async function fetchCuratedContents(
       TableName: TABLE_NAME,
       IndexName: "language-createdAt-index",
       KeyConditionExpression: "#lang = :lang",
+      FilterExpression: "contentType = :contentType OR attribute_not_exists(contentType)",
       ExpressionAttributeNames: { "#lang": "language" },
-      ExpressionAttributeValues: { ":lang": language },
+      ExpressionAttributeValues: {
+        ":lang": language,
+        ":contentType": contentType,
+      },
       ScanIndexForward: false, // 최신순
-      Limit: limit,
+      Limit: limit * 2, // FilterExpression 때문에 여유있게 조회
     });
 
     const { Items } = await client.send(command);
 
-    return (Items || []).map((item) => ({
+    // contentType이 없는 기존 데이터는 article로 처리
+    const filtered = (Items || [])
+      .filter((item) => {
+        const type = item.contentType || "article";
+        return type === contentType;
+      })
+      .slice(0, limit);
+
+    return filtered.map((item) => ({
       url: item.url,
       title: item.title,
       snippet: item.snippet,
       source: item.source,
       thumbnailUrl: item.thumbnailUrl,
       language: item.language,
+      contentType: item.contentType || "article",
+      publishedAt: item.publishedAt || null,
       createdAt: item.createdAt,
     }));
   } catch (error) {
