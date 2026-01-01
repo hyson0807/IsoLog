@@ -79,6 +79,12 @@ export async function fetchCuratedContents(
         const type = item.contentType || "article";
         return type === contentType;
       })
+      .sort((a, b) => {
+        // publishedAt 기준 정렬, 없으면 createdAt으로 fallback
+        const dateA = a.publishedAt || a.createdAt;
+        const dateB = b.publishedAt || b.createdAt;
+        return dateB.localeCompare(dateA); // 최신순
+      })
       .slice(0, limit);
 
     return filtered.map((item) => ({

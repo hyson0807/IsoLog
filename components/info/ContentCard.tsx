@@ -1,6 +1,7 @@
-import { Pressable, Text, View, Linking } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
 import type { CuratedContent } from "@/services/contentService";
 
 interface ContentCardProps {
@@ -11,7 +12,13 @@ export function ContentCard({ content }: ContentCardProps) {
   const { t } = useTranslation();
 
   const handlePress = () => {
-    Linking.openURL(content.url);
+    router.push({
+      pathname: "/content",
+      params: {
+        url: content.url,
+        source: content.source,
+      },
+    });
   };
 
   // 날짜 포맷팅
