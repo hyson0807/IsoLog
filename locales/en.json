@@ -315,7 +315,9 @@
       "section5Title": "5. Advertising",
       "section5Content": "Free version users may see ads through Google AdMob. The advertising service may collect device information according to Google's Privacy Policy.",
       "section6Title": "6. Data Deletion",
-      "section6Content": "Uninstalling the app will delete all data stored on your device. Data recovery is not possible, so please back up any necessary information before deletion."
+      "section6Content": "Uninstalling the app will delete all data stored on your device. Data recovery is not possible, so please back up any necessary information before deletion.",
+      "section7Title": "7. External Content",
+      "section7Content": "The Info tab provides curated external content related to Isotretinoin. Content includes titles, summaries, and source information collected via Google Search API. Original content is displayed directly from source websites through WebView. Liked content is stored only on your device and is not transmitted externally."
     }
   },
   "onboarding": {

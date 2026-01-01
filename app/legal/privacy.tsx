@@ -23,7 +23,7 @@ export default function PrivacyScreen() {
 
       <ScrollView className="flex-1 px-5 py-6" showsVerticalScrollIndicator={false}>
         {/* Last Updated */}
-        <Text className="mb-6 text-sm text-gray-400">{t('legal.lastUpdated')}: 2024-12-12</Text>
+        <Text className="mb-6 text-sm text-gray-400">{t('legal.lastUpdated')}: 2025-01-01</Text>
 
         {/* Section 1 */}
         <View className="mb-6">
@@ -56,9 +56,15 @@ export default function PrivacyScreen() {
         </View>
 
         {/* Section 6 */}
-        <View className="mb-10">
+        <View className="mb-6">
           <Text className="mb-2 text-lg font-bold text-gray-900">{t('legal.privacy.section6Title')}</Text>
           <Text className="leading-6 text-gray-600">{t('legal.privacy.section6Content')}</Text>
+        </View>
+
+        {/* Section 7 */}
+        <View className="mb-10">
+          <Text className="mb-2 text-lg font-bold text-gray-900">{t('legal.privacy.section7Title')}</Text>
+          <Text className="leading-6 text-gray-600">{t('legal.privacy.section7Content')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
