@@ -64,11 +64,13 @@ export async function fetchCuratedContents(
       TableName: TABLE_NAME,
       IndexName: "language-createdAt-index",
       KeyConditionExpression: "#lang = :lang",
-      FilterExpression: "contentType = :contentType OR attribute_not_exists(contentType)",
+      FilterExpression:
+        "(contentType = :contentType OR attribute_not_exists(contentType)) AND (isBanned <> :true OR attribute_not_exists(isBanned))",
       ExpressionAttributeNames: { "#lang": "language" },
       ExpressionAttributeValues: {
         ":lang": language,
         ":contentType": contentType,
+        ":true": true,
       },
       ScanIndexForward: false, // 최신순
       Limit: limit * 2, // FilterExpression 때문에 여유있게 조회

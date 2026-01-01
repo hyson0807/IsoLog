@@ -13,6 +13,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
+  GetCommand,
 } from "@aws-sdk/lib-dynamodb";
 import crypto from "crypto";
 
@@ -136,6 +137,23 @@ async function saveContent(
   contentType: ContentType
 ): Promise<boolean> {
   const urlHash = hashUrl(item.link);
+
+  // Ban된 URL인지 확인
+  try {
+    const getCommand = new GetCommand({
+      TableName: TABLE_NAME,
+      Key: { PK: "CONTENT", SK: urlHash },
+      ProjectionExpression: "isBanned",
+    });
+    const { Item } = await docClient.send(getCommand);
+    if (Item?.isBanned === true) {
+      console.log(`  🚫 Ban된 URL: ${item.title.substring(0, 30)}...`);
+      return false;
+    }
+  } catch {
+    // 아이템이 없으면 계속 진행
+  }
+
   const createdAt = new Date().toISOString();
 
   // snippet에서 발행일 추출
