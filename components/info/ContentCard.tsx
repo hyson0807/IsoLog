@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
@@ -76,13 +76,22 @@ export function ContentCard({ content }: ContentCardProps) {
         {content.title}
       </Text>
 
-      {/* 스니펫 */}
-      <Text
-        className="mt-2 text-sm leading-5 text-gray-600"
-        numberOfLines={3}
-      >
-        {content.snippet}
-      </Text>
+      {/* 스니펫 + 썸네일 */}
+      <View className="mt-2 flex-row">
+        {content.thumbnailUrl && (
+          <Image
+            source={{ uri: content.thumbnailUrl }}
+            className="mr-3 h-16 w-16 rounded-lg bg-gray-100"
+            resizeMode="cover"
+          />
+        )}
+        <Text
+          className="flex-1 text-sm leading-5 text-gray-600"
+          numberOfLines={3}
+        >
+          {content.snippet}
+        </Text>
+      </View>
 
       {/* 하단 정보 */}
       <View className="mt-3 flex-row items-center justify-between">
