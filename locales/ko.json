@@ -242,10 +242,12 @@
     "title": "정보",
     "subtitle": "이소티논 관련 유용한 정보",
     "empty": "콘텐츠가 없습니다.",
+    "searchPlaceholder": "제목 또는 내용 검색",
+    "noSearchResults": "검색 결과가 없습니다.",
     "tabs": {
-      "articles": "블로그",
-      "news": "뉴스",
-      "social": "소셜"
+      "all": "전체",
+      "articles": "Articles",
+      "social": "Social"
     },
     "date": {
       "today": "오늘",

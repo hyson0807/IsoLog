@@ -242,9 +242,11 @@
     "title": "Info",
     "subtitle": "Useful information about isotretinoin",
     "empty": "No content available.",
+    "searchPlaceholder": "Search by title or content",
+    "noSearchResults": "No search results.",
     "tabs": {
+      "all": "All",
       "articles": "Articles",
-      "news": "News",
       "social": "Social"
     },
     "date": {

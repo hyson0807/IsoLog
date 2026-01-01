@@ -80,6 +80,8 @@ app/
 ├── (premium)/           # 프리미엄 관련 그룹 (URL에 미포함)
 │   ├── paywall.tsx      # 프리미엄 구매 페이지 (/paywall)
 │   └── subscription.tsx # 구독 관리 페이지 (/subscription)
+├── (info)/              # 정보탭 상세 그룹 (URL에 미포함)
+│   └── content.tsx      # 콘텐츠 상세 WebView (/content?url=...)
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)

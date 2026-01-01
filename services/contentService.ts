@@ -8,8 +8,11 @@ import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 const TABLE_NAME = "isolog-curated-contents";
 const AWS_REGION = "us-east-1";
 
-// 콘텐츠 타입
+// 콘텐츠 타입 (DB에 저장된 실제 타입)
 export type ContentType = "article" | "news" | "social";
+
+// UI 탭 타입
+export type TabType = "all" | "article" | "social";
 
 export interface CuratedContent {
   url: string;
@@ -102,4 +105,46 @@ export async function fetchCuratedContents(
     console.error("콘텐츠 조회 실패:", error);
     throw error;
   }
+}
+
+/**
+ * 탭 타입에 따라 콘텐츠 가져오기
+ * - all: article, news, social 모두
+ * - article: article + news
+ * - social: social만
+ */
+export async function fetchContentsByTab(
+  language: string,
+  tabType: TabType,
+  limit: number = 20
+): Promise<CuratedContent[]> {
+  let contentTypes: ContentType[];
+
+  switch (tabType) {
+    case "all":
+      contentTypes = ["article", "news", "social"];
+      break;
+    case "article":
+      contentTypes = ["article", "news"];
+      break;
+    case "social":
+      contentTypes = ["social"];
+      break;
+    default:
+      contentTypes = ["article"];
+  }
+
+  // 각 타입별로 병렬 fetch
+  const results = await Promise.all(
+    contentTypes.map((type) => fetchCuratedContents(language, type, limit))
+  );
+
+  // 결과 병합 및 정렬
+  const merged = results.flat().sort((a, b) => {
+    const dateA = a.publishedAt || a.createdAt;
+    const dateB = b.publishedAt || b.createdAt;
+    return dateB.localeCompare(dateA); // 최신순
+  });
+
+  return merged.slice(0, limit);
 }
