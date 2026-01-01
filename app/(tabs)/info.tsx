@@ -258,6 +258,7 @@ export default function InfoScreen() {
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor="#F97316"
+            progressViewOffset={HEADER_HEIGHT}
           />
         }
       >
