@@ -9,7 +9,7 @@ const TABLE_NAME = "isolog-curated-contents";
 const AWS_REGION = "us-east-1";
 
 // 콘텐츠 타입 (DB에 저장된 실제 타입)
-export type ContentType = "article" | "news" | "social";
+export type ContentType = "article" | "social";
 
 // UI 탭 타입
 export type TabType = "all" | "article" | "social";
@@ -109,8 +109,8 @@ export async function fetchCuratedContents(
 
 /**
  * 탭 타입에 따라 콘텐츠 가져오기
- * - all: article, news, social 모두
- * - article: article + news
+ * - all: article + social 모두
+ * - article: article만
  * - social: social만
  */
 export async function fetchContentsByTab(
@@ -122,10 +122,10 @@ export async function fetchContentsByTab(
 
   switch (tabType) {
     case "all":
-      contentTypes = ["article", "news", "social"];
+      contentTypes = ["article", "social"];
       break;
     case "article":
-      contentTypes = ["article", "news"];
+      contentTypes = ["article"];
       break;
     case "social":
       contentTypes = ["social"];

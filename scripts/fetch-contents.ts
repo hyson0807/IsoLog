@@ -13,7 +13,6 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
-  QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
 import crypto from "crypto";
 
@@ -24,7 +23,7 @@ const TABLE_NAME = "isolog-curated-contents";
 const AWS_REGION = "us-east-1";
 
 // 콘텐츠 타입
-type ContentType = "article" | "news" | "social";
+type ContentType = "article" | "social";
 
 // 소셜 미디어 도메인
 const SOCIAL_DOMAINS = [
@@ -34,20 +33,31 @@ const SOCIAL_DOMAINS = [
   "tiktok.com",
 ];
 
+// 한국어 콘텐츠 허용 도메인 (스팸 사이트 필터링용)
+const KO_ALLOWED_DOMAINS = [
+  // 한국 도메인
+  ".kr",
+  // 주요 한국 플랫폼
+  "naver.com",
+  "daum.net",
+  "tistory.com",
+  "brunch.co.kr",
+  "dcinside.com",
+  // 글로벌 플랫폼 (한국어 콘텐츠도 허용)
+  "medium.com",
+  "youtube.com",
+  "youtu.be",
+  "instagram.com",
+  "twitter.com",
+  "x.com",
+];
+
 // 검색 키워드 (블로그/커뮤니티)
 const ARTICLE_KEYWORDS = [
   { keyword: "이소티논", language: "ko" },
   { keyword: "로아큐탄", language: "ko" },
   { keyword: "isotretinoin", language: "en" },
   { keyword: "accutane", language: "en" },
-];
-
-// 뉴스 검색 키워드
-const NEWS_KEYWORDS = [
-  { keyword: "isotretinoin", language: "en" },
-  { keyword: "accutane", language: "en" },
-  { keyword: "이소티논", language: "ko" },
-  { keyword: "로아큐탄", language: "ko" },
 ];
 
 // 소셜 미디어 검색 키워드
@@ -70,6 +80,15 @@ function hashUrl(url: string): string {
 // URL이 소셜 미디어인지 확인
 function isSocialUrl(url: string): boolean {
   return SOCIAL_DOMAINS.some((domain) => url.includes(domain));
+}
+
+// 언어별 허용 도메인 확인 (스팸 필터링)
+function isAllowedDomain(url: string, language: string): boolean {
+  // 영어는 제한 없음
+  if (language === "en") return true;
+
+  // 한국어는 화이트리스트 체크
+  return KO_ALLOWED_DOMAINS.some((domain) => url.includes(domain));
 }
 
 // Google Custom Search API 호출
@@ -106,27 +125,6 @@ async function searchGoogle(
   }
 }
 
-// URL 중복 체크
-async function isUrlExists(urlHash: string): Promise<boolean> {
-  try {
-    const command = new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: "PK = :pk",
-      FilterExpression: "urlHash = :urlHash",
-      ExpressionAttributeValues: {
-        ":pk": "CONTENT",
-        ":urlHash": urlHash,
-      },
-      Limit: 1,
-    });
-
-    const result = await docClient.send(command);
-    return (result.Items?.length ?? 0) > 0;
-  } catch {
-    return false;
-  }
-}
-
 // DynamoDB에 콘텐츠 저장
 async function saveContent(
   item: GoogleSearchItem,
@@ -136,13 +134,6 @@ async function saveContent(
 ): Promise<boolean> {
   const urlHash = hashUrl(item.link);
   const createdAt = new Date().toISOString();
-
-  // 중복 체크
-  const exists = await isUrlExists(urlHash);
-  if (exists) {
-    console.log(`  ⏭️  중복: ${item.title.substring(0, 30)}...`);
-    return false;
-  }
 
   // snippet에서 발행일 추출
   const { date: extractedDate, cleanSnippet } = extractDateFromSnippet(item.snippet);
@@ -158,7 +149,7 @@ async function saveContent(
     TableName: TABLE_NAME,
     Item: {
       PK: "CONTENT",
-      SK: `${createdAt}#${urlHash}`,
+      SK: urlHash,
       url: item.link,
       urlHash,
       title: item.title,
@@ -173,13 +164,18 @@ async function saveContent(
       viewCount: 0,
       createdAt,
     },
+    ConditionExpression: "attribute_not_exists(SK)",
   });
 
   try {
     await docClient.send(command);
     console.log(`  ✅ 저장: ${item.title.substring(0, 30)}...`);
     return true;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "ConditionalCheckFailedException") {
+      console.log(`  ⏭️  중복: ${item.title.substring(0, 30)}...`);
+      return false;
+    }
     console.error(`  ❌ 저장 실패:`, error);
     return false;
   }
@@ -216,6 +212,11 @@ async function main() {
         totalSkipped++;
         continue;
       }
+      if (!isAllowedDomain(item.link, language)) {
+        console.log(`  🚫 스팸 제외: ${item.displayLink} - ${item.title.substring(0, 25)}...`);
+        totalSkipped++;
+        continue;
+      }
       const saved = await saveContent(item, language, keyword, "article");
       if (saved) {
         totalInserted++;
@@ -228,36 +229,7 @@ async function main() {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  // 2. 뉴스 수집 (소셜 미디어 제외)
-  console.log("📰 뉴스 수집\n");
-  for (const { keyword, language } of NEWS_KEYWORDS) {
-    console.log(`🔍 뉴스 검색: "${keyword}" (${language})`);
-
-    const data = await searchGoogle(keyword, "news");
-    if (!data || !data.items) {
-      console.log("   결과 없음\n");
-      continue;
-    }
-
-    for (const item of data.items) {
-      if (isSocialUrl(item.link)) {
-        console.log(`  ⏭️  소셜 제외: ${item.title.substring(0, 30)}...`);
-        totalSkipped++;
-        continue;
-      }
-      const saved = await saveContent(item, language, keyword, "news");
-      if (saved) {
-        totalInserted++;
-      } else {
-        totalSkipped++;
-      }
-    }
-
-    console.log("");
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-
-  // 3. 소셜 미디어 수집
+  // 2. 소셜 미디어 수집
   console.log("📱 소셜 미디어 수집\n");
   for (const { keyword, language } of SOCIAL_KEYWORDS) {
     console.log(`🔍 소셜 검색: "${keyword}" (${language})`);
@@ -272,6 +244,11 @@ async function main() {
       // 소셜 도메인이 아니면 스킵
       if (!isSocialUrl(item.link)) {
         console.log(`  ⏭️  비소셜 제외: ${item.title.substring(0, 30)}...`);
+        totalSkipped++;
+        continue;
+      }
+      if (!isAllowedDomain(item.link, language)) {
+        console.log(`  🚫 스팸 제외: ${item.displayLink} - ${item.title.substring(0, 25)}...`);
         totalSkipped++;
         continue;
       }

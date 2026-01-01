@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useMedicationContext } from '@/contexts/MedicationContext';
@@ -8,6 +9,7 @@ import { formatMonthYear, isDateInMonth } from '@/utils/dateUtils';
 
 export default function TrackingScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { today, takenDates } = useMedicationContext();
 
   const todayDate = useMemo(() => new Date(today + 'T00:00:00'), [today]);
@@ -56,9 +58,16 @@ export default function TrackingScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* 헤더: 월 네비게이션 */}
+        {/* 헤더: 뒤로가기 + 월 네비게이션 */}
         <View className="flex-row items-center justify-between px-5 py-4">
           <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+            >
+              <Ionicons name="arrow-back" size={24} color="#666666" />
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={handlePrevMonth}
               className="p-2"

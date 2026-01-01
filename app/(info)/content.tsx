@@ -15,6 +15,7 @@ export default function ContentScreen() {
     content: string;
   }>();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const { isLiked, toggleLike } = useLikedContents();
 
   const contentData: CuratedContent | null = useMemo(() => {
@@ -82,10 +83,35 @@ export default function ContentScreen() {
             <ActivityIndicator size="large" color="#F97316" />
           </View>
         )}
+        {error && (
+          <View className="absolute inset-0 items-center justify-center bg-white z-10">
+            <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+            <Text className="text-gray-500 mt-4">페이지를 불러올 수 없습니다</Text>
+            <Text className="text-gray-400 text-sm mt-1">
+              원본 페이지가 삭제되었거나 이동되었습니다
+            </Text>
+            <Pressable
+              onPress={handleBack}
+              className="mt-6 px-6 py-3 bg-orange-500 rounded-full active:bg-orange-600"
+            >
+              <Text className="text-white font-medium">돌아가기</Text>
+            </Pressable>
+          </View>
+        )}
         <WebView
           source={{ uri: url }}
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
+          onError={() => {
+            setLoading(false);
+            setError(true);
+          }}
+          onHttpError={(event) => {
+            if (event.nativeEvent.statusCode >= 400) {
+              setLoading(false);
+              setError(true);
+            }
+          }}
           style={{ flex: 1 }}
           startInLoadingState={true}
           javaScriptEnabled={true}
