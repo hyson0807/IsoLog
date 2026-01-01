@@ -23,7 +23,7 @@ export default function LikedContentsScreen() {
           <Ionicons name="arrow-back" size={24} color="#374151" />
         </Pressable>
         <Text className="text-lg font-bold text-gray-900">
-          {t("info.liked.title", "좋아요 목록")}
+          {t("info.liked.title")}
         </Text>
       </View>
 
@@ -35,14 +35,14 @@ export default function LikedContentsScreen() {
         {isLoading ? (
           <View className="items-center justify-center py-20">
             <Text className="text-gray-400">
-              {t("common.loading", "로딩 중...")}
+              {t("common.loading")}
             </Text>
           </View>
         ) : likedContents.length === 0 ? (
           <View className="items-center justify-center py-20">
             <Ionicons name="heart-outline" size={48} color="#D1D5DB" />
             <Text className="mt-4 text-center text-gray-400">
-              {t("info.liked.empty", "좋아요한 콘텐츠가 없습니다.")}
+              {t("info.liked.empty")}
             </Text>
           </View>
         ) : (

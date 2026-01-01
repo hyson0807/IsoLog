@@ -77,13 +77,13 @@ export default function InfoScreen() {
       const data = await fetchContentsByTab(currentLanguage, activeTab, 20);
       setContents(data);
     } catch (err) {
-      console.error("콘텐츠 로드 실패:", err);
-      setError("콘텐츠를 불러오는데 실패했습니다.");
+      console.error("Content load failed:", err);
+      setError(t("info.loadError"));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [currentLanguage, activeTab]);
+  }, [currentLanguage, activeTab, t]);
 
   // 초기 로드 및 탭 변경 시 로드
   useEffect(() => {
@@ -144,10 +144,10 @@ export default function InfoScreen() {
         <View className="flex-row items-start justify-between bg-white px-5 py-4">
           <View className="flex-1">
             <Text className="text-xl font-bold text-gray-900">
-              {t("info.title", "정보")}
+              {t("info.title")}
             </Text>
             <Text className="mt-1 text-sm text-gray-500">
-              {t("info.subtitle", "이소티논 관련 유용한 정보")}
+              {t("info.subtitle")}
             </Text>
           </View>
           <Pressable
@@ -173,7 +173,7 @@ export default function InfoScreen() {
             <Ionicons name="search" size={18} color="#9CA3AF" />
             <TextInput
               className="flex-1 px-2 py-2.5 text-sm text-gray-700"
-              placeholder={t("info.searchPlaceholder", "제목 또는 내용 검색")}
+              placeholder={t("info.searchPlaceholder")}
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
               onChangeText={handleSearchChange}
@@ -203,7 +203,7 @@ export default function InfoScreen() {
                 activeTab === "all" ? "text-orange-500" : "text-gray-500"
               }`}
             >
-              {t("info.tabs.all", "All")}
+              {t("info.tabs.all")}
             </Text>
           </Pressable>
           <Pressable
@@ -219,7 +219,7 @@ export default function InfoScreen() {
                 activeTab === "article" ? "text-orange-500" : "text-gray-500"
               }`}
             >
-              {t("info.tabs.articles", "Articles")}
+              {t("info.tabs.articles")}
             </Text>
           </Pressable>
           <Pressable
@@ -235,7 +235,7 @@ export default function InfoScreen() {
                 activeTab === "social" ? "text-orange-500" : "text-gray-500"
               }`}
             >
-              {t("info.tabs.social", "Social")}
+              {t("info.tabs.social")}
             </Text>
           </Pressable>
         </View>
@@ -285,8 +285,8 @@ export default function InfoScreen() {
                 <View className="items-center justify-center py-20">
                   <Text className="text-gray-400">
                     {searchQuery.trim()
-                      ? t("info.noSearchResults", "검색 결과가 없습니다.")
-                      : t("info.empty", "콘텐츠가 없습니다.")}
+                      ? t("info.noSearchResults")
+                      : t("info.empty")}
                   </Text>
                 </View>
               ) : (

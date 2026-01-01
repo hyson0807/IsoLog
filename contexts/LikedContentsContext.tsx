@@ -44,7 +44,7 @@ export function LikedContentsProvider({ children }: { children: ReactNode }) {
           setLikedContents(data.contents || []);
         }
       } catch (error) {
-        console.error('좋아요 데이터 로드 실패:', error);
+        console.error('Failed to load liked data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -63,7 +63,7 @@ export function LikedContentsProvider({ children }: { children: ReactNode }) {
         };
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (error) {
-        console.error('좋아요 데이터 저장 실패:', error);
+        console.error('Failed to save liked data:', error);
       }
     }
     saveData();

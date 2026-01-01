@@ -241,6 +241,7 @@
   "info": {
     "title": "Info",
     "subtitle": "Useful information about isotretinoin",
+    "loadError": "Failed to load content.",
     "empty": "No content available.",
     "searchPlaceholder": "Search by title or content",
     "noSearchResults": "No search results.",

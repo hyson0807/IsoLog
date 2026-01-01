@@ -133,7 +133,7 @@ export function InfoMenuSidebar({ visible, onClose, onSelectItem }: InfoMenuSide
               {/* 헤더 */}
               <View className="flex-row items-center justify-between border-b border-gray-100 px-5 pb-4 pt-6">
                 <Text className="text-xl font-bold text-gray-900">
-                  {t('info.menu.title', '메뉴')}
+                  {t('info.menu.title')}
                 </Text>
                 <TouchableOpacity
                   onPress={onClose}
@@ -153,7 +153,7 @@ export function InfoMenuSidebar({ visible, onClose, onSelectItem }: InfoMenuSide
                   >
                     <Ionicons name={item.icon} size={22} color={item.iconColor} />
                     <Text className="ml-4 text-base font-medium text-gray-700">
-                      {t(item.labelKey, item.type === 'liked' ? '좋아요 목록' : '')}
+                      {t(item.labelKey)}
                     </Text>
                     <View className="ml-auto">
                       <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
