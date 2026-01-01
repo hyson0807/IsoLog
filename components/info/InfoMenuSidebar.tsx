@@ -87,7 +87,8 @@ export function InfoMenuSidebar({ visible, onClose, onSelectItem }: InfoMenuSide
         setModalVisible(false);
       });
     }
-  }, [visible, onSelectItem]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Animated refs are stable
+  }, [visible]);
 
   const handleItemPress = async (type: InfoMenuItemType) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

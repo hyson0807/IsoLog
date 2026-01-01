@@ -54,7 +54,7 @@ export default function HomeScreen() {
     }
   }, [isOnboardingLoading, shouldShowOnboarding, router]);
 
-  const { isPremium } = usePremiumContext();
+  usePremiumContext();
   const {
     notificationEnabled,
     setNotificationEnabled,

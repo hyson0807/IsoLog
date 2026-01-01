@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
 import { SkinRecord, TroubleLevel, DrynessLevel } from '@/types/medication';

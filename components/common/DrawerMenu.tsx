@@ -90,6 +90,7 @@ export function DrawerMenu({ visible, onClose }: DrawerMenuProps) {
         setModalVisible(false);
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Animated refs are stable
   }, [visible]);
 
   const handleMenuPress = async (route: MenuItem['route']) => {
