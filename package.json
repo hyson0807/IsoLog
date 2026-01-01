@@ -44,6 +44,7 @@
     "react-i18next": "^16.4.1",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
+    "react-native-get-random-values": "^2.0.0",
     "react-native-google-mobile-ads": "^16.0.0",
     "react-native-purchases": "^9.6.10",
     "react-native-purchases-ui": "^9.6.10",
@@ -54,6 +55,8 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.958.0",
+    "@aws-sdk/lib-dynamodb": "^3.958.0",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",

@@ -93,6 +93,16 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="info"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name="newspaper-outline" focused={focused} />
+          ),
+          tabBarButton: (props) => <TabBarButton {...props} />,
+        }}
+      />
+
+      <Tabs.Screen
         name="tracking"
         options={{
           tabBarIcon: ({ focused }) => (

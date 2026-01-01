@@ -1,3 +1,4 @@
+import 'react-native-get-random-values'; // crypto 폴리필 (AWS SDK용, 다른 import보다 먼저!)
 import React from 'react';
 import '@/locales';
 import { Stack } from "expo-router";

@@ -238,6 +238,11 @@
   "tracking": {
     "title": "트래킹"
   },
+  "info": {
+    "title": "정보",
+    "subtitle": "이소티논 관련 유용한 정보",
+    "empty": "콘텐츠가 없습니다."
+  },
   "update": {
     "updating": "더 나은 IsoLog를 준비하고 있어요",
     "pleaseWait": "잠시만 기다려주시면 곧 시작합니다"

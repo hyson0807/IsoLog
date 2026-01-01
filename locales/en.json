@@ -238,6 +238,11 @@
   "tracking": {
     "title": "Tracking"
   },
+  "info": {
+    "title": "Info",
+    "subtitle": "Useful information about isotretinoin",
+    "empty": "No content available."
+  },
   "update": {
     "updating": "Preparing a better IsoLog for you",
     "pleaseWait": "Just a moment, we'll be ready soon"
