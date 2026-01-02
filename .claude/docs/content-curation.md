@@ -92,7 +92,7 @@ AWS 서비스만으로 구성하는 방식. AWS 경험이 있거나 확장성을
 // Primary Key
 {
   PK: "CONTENT",                    // Partition Key (고정값)
-  SK: "2024-01-15T06:00:00Z#abc123" // Sort Key (createdAt#urlHash)
+  SK: "abc123"                      // Sort Key (urlHash)
 }
 
 // Attributes
@@ -104,8 +104,11 @@ AWS 서비스만으로 구성하는 방식. AWS 경험이 있거나 확장성을
   source: "blog.example.com",
   thumbnailUrl: "https://...",
   language: "ko",                   // 'ko' | 'en'
+  contentType: "article",           // 'article' | 'social'
   searchKeyword: "이소티논 후기",
-  isApproved: true,
+  publishedAt: "2024-01-15",        // 원본 글 발행일
+  isVerified: false,                // ⭐ 관리자 승인 여부 (앱 노출 조건)
+  isBanned: false,                  // ⭐ 차단 여부 (true면 앱에서 숨김)
   viewCount: 0,
   createdAt: "2024-01-15T06:00:00Z"
 }
@@ -367,6 +370,172 @@ export async function fetchCuratedContents(language: string, limit = 20) {
 
 - 기존 데이터: contentType 없음 → "article"로 처리
 - 새 데이터: contentType 명시적으로 저장
+
+---
+
+## 콘텐츠 관리 플로우
+
+### 핵심 필드 설명
+
+| 필드 | 용도 | 기본값 | 설명 |
+|------|------|--------|------|
+| `isVerified` | 앱 노출 여부 | `false` | **관리자가 승인한 콘텐츠만 앱에 표시** |
+| `isBanned` | 차단 여부 | `false` | `true`면 앱에서 완전히 숨김 |
+
+### 콘텐츠 라이프사이클
+
+```
+┌────────────────┐     ┌────────────────┐     ┌────────────────┐
+│  크롤링 스크립트 │     │   관리자 페이지  │     │      앱        │
+│                │     │                │     │                │
+│  글 수집       │────▶│  검토          │────▶│  승인된 글만   │
+│  isVerified    │     │  isVerified    │     │  표시          │
+│  = false       │     │  = true로 변경  │     │                │
+│                │     │  (또는 ban)     │     │                │
+└────────────────┘     └────────────────┘     └────────────────┘
+```
+
+### 앱에서 콘텐츠 조회 조건
+
+```typescript
+// contentService.ts의 FilterExpression
+FilterExpression: `
+  (contentType = :contentType OR attribute_not_exists(contentType))
+  AND (isBanned <> :true OR attribute_not_exists(isBanned))
+  AND isVerified = :true
+`
+```
+
+**조건 요약:**
+- `isVerified = true` 필수
+- `isBanned = true`가 아니어야 함
+
+---
+
+## 크롤링 스크립트 작성 시 주의사항
+
+### 필수 체크리스트
+
+새로운 크롤링 스크립트 작성 시 반드시 확인:
+
+- [ ] `isVerified: false` 설정 (관리자 승인 전까지 앱에 노출 안 됨)
+- [ ] `isBanned: false` 설정 (또는 미설정)
+- [ ] `language` 필드 올바르게 설정 (검색 키워드에 따라 다를 수 있음)
+- [ ] `contentType` 필드 설정 (`"article"` 또는 `"social"`)
+
+### 올바른 저장 예시
+
+```typescript
+const command = new PutCommand({
+  TableName: TABLE_NAME,
+  Item: {
+    PK: "CONTENT",
+    SK: urlHash,
+    url,
+    title,
+    snippet,
+    source,
+    language: "ko",           // 실제 콘텐츠 언어에 맞게
+    contentType: "article",
+    isVerified: false,        // ⭐ 반드시 false!
+    // isBanned는 설정하지 않음 (기본 false 취급)
+    viewCount: 0,
+    createdAt,
+  },
+});
+```
+
+### 잘못된 예시
+
+```typescript
+// ❌ 잘못된 예시 1: isVerified 누락
+Item: {
+  // isVerified 없음 → undefined → 앱에서 안 보임
+}
+
+// ❌ 잘못된 예시 2: isVerified: true
+Item: {
+  isVerified: true,  // 관리자 승인 없이 바로 앱에 노출됨!
+}
+```
+
+---
+
+## 데이터 삭제/수정 스크립트 작성 시 주의사항
+
+### 삭제 전 반드시 확인
+
+데이터를 삭제하는 스크립트 실행 전:
+
+1. **삭제 대상 미리 확인**
+   ```typescript
+   // 삭제 전 조회만 먼저 실행
+   const { Items } = await docClient.send(new ScanCommand({
+     TableName: TABLE_NAME,
+     FilterExpression: "...",
+   }));
+   console.log("삭제 대상:", Items?.length);
+   Items?.slice(0, 5).forEach(i => console.log(i.title));
+   ```
+
+2. **중요 데이터 보존 확인**
+   - `isBanned = true`인 항목은 삭제하면 안 됨 (다시 ban 처리 필요)
+   - `isVerified = true`인 항목은 이미 승인된 콘텐츠
+
+### 안전한 삭제 필터 예시
+
+```typescript
+// ✅ 안전: isBanned와 isVerified 모두 체크
+FilterExpression: `
+  PK = :pk
+  AND attribute_not_exists(isVerified)
+  AND (isBanned <> :true OR attribute_not_exists(isBanned))
+`
+
+// ❌ 위험: isVerified만 체크 → ban된 글도 삭제됨
+FilterExpression: "PK = :pk AND attribute_not_exists(isVerified)"
+```
+
+---
+
+## DynamoDB 쿼리 주의사항
+
+### Limit의 동작 방식
+
+**중요:** DynamoDB의 `Limit`은 **필터링 전**에 적용됩니다.
+
+```
+Query: Limit=40, FilterExpression="isVerified = true"
+
+동작 순서:
+1. 인덱스에서 40개 가져옴 (최신순)
+2. FilterExpression 적용
+3. 남은 것만 반환
+
+문제 상황:
+- 최근에 isVerified=false인 글 100개 추가
+- Limit=40이면 40개 모두 isVerified=false
+- 필터 후 결과 0개 → 기존 verified 글도 안 보임
+```
+
+### 해결 방법
+
+1. **Limit 여유있게 설정**
+   ```typescript
+   Limit: limit * 3,  // 필요한 양의 3배
+   ```
+
+2. **또는 GSI에 isVerified 포함** (근본적 해결)
+
+---
+
+## 스크립트 목록
+
+| 스크립트 | 용도 | 주의사항 |
+|----------|------|----------|
+| `fetch-contents.ts` | Google 검색 크롤링 | isVerified 확인 필요 |
+| `fetch-contents-archive.ts` | Google 아카이브 크롤링 | isVerified 확인 필요 |
+| `fetch-naver-contents.ts` | 네이버 검색 크롤링 | isVerified: false로 설정됨 ✅ |
 
 ---
 

@@ -154,7 +154,7 @@ async function saveContent(
       contentType,
       searchKeyword: keyword,
       publishedAt,
-      isApproved: true,
+      isVerified: false, // 관리자 페이지에서 true로 변경해야 앱에 노출됨
       viewCount: 0,
       createdAt,
     },
