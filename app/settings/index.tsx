@@ -5,8 +5,8 @@ import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { PremiumSection } from '@/components/settings/PremiumSection';
-import { LanguageBottomSheet } from '@/components/settings/LanguageBottomSheet';
+import { PremiumSection } from './_components/PremiumSection';
+import { LanguageBottomSheet } from './_components/LanguageBottomSheet';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { supportedLanguages } from '@/locales';
 
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
         <View className="px-5 pt-6">
           <Text className="mb-3 text-sm font-medium text-gray-500">{t('settings.notification')}</Text>
           <TouchableOpacity
-            onPress={() => router.push('/notification-settings')}
+            onPress={() => router.push('/settings/notification-settings')}
             className="flex-row items-center justify-between rounded-xl bg-white px-4 py-4"
           >
             <View className="flex-row items-center">

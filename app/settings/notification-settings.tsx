@@ -15,7 +15,7 @@ import {
   NotificationItem,
   TimeSettingRow,
 } from '@/components/notification-settings';
-import { NotificationTimeBottomSheet } from '@/components/settings/NotificationTimeBottomSheet';
+import { NotificationTimeBottomSheet } from './_components/NotificationTimeBottomSheet';
 
 type TimePickerType = 'medication' | 'skinCondition' | null;
 

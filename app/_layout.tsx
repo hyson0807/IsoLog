@@ -34,14 +34,14 @@ function AppContent() {
         }}
       />
       <Stack.Screen
-        name="(settings)/settings"
+        name="settings"
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
       <Stack.Screen
-        name="(settings)/notification-settings"
+        name="settings/notification-settings"
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
