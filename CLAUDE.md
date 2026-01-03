@@ -72,7 +72,12 @@ app/
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── index.tsx        # Home screen (medication check)
 │   ├── calendar.tsx     # Calendar screen (monthly view)
-│   └── info.tsx         # Info screen (curated contents)
+│   └── info/            # Info tab (중첩 라우트)
+│       ├── _layout.tsx      # Stack navigation
+│       ├── _components/     # info 전용 컴포넌트 (ContentCard, InfoMenuSidebar)
+│       ├── index.tsx        # 정보 목록 (/info)
+│       ├── content.tsx      # 콘텐츠 상세 WebView (/info/content)
+│       └── liked.tsx        # 좋아요한 콘텐츠 (/info/liked)
 ├── tracking.tsx         # Tracking screen (/tracking, DrawerMenu에서 접근)
 ├── (settings)/          # 설정 관련 그룹 (URL에 미포함)
 │   ├── settings.tsx     # 설정 페이지 (/settings)
@@ -80,9 +85,6 @@ app/
 ├── (premium)/           # 프리미엄 관련 그룹 (URL에 미포함)
 │   ├── paywall.tsx      # 프리미엄 구매 페이지 (/paywall)
 │   └── subscription.tsx # 구독 관리 페이지 (/subscription)
-├── (info)/              # 정보탭 상세 그룹 (URL에 미포함)
-│   ├── content.tsx      # 콘텐츠 상세 WebView (/content?url=...)
-│   └── liked.tsx        # 좋아요한 콘텐츠 목록 (/liked)
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)
@@ -97,7 +99,6 @@ components/
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
-├── info/                # ContentCard, InfoMenuSidebar
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
