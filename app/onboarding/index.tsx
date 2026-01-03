@@ -23,12 +23,12 @@ import {
 } from '@/services/notificationService';
 import { frequencyOptions } from '@/constants/frequency';
 
-import { PageIndicator } from '@/components/onboarding/PageIndicator';
-import { WelcomePage } from '@/components/onboarding/WelcomePage';
-import { FrequencyPage } from '@/components/onboarding/FrequencyPage';
-import { DateSelectPage } from '@/components/onboarding/DateSelectPage';
-import { MedicationReminderPage } from '@/components/onboarding/MedicationReminderPage';
-import { SkinReminderPage } from '@/components/onboarding/SkinReminderPage';
+import { PageIndicator } from './_components/PageIndicator';
+import { WelcomePage } from './_components/WelcomePage';
+import { FrequencyPage } from './_components/FrequencyPage';
+import { DateSelectPage } from './_components/DateSelectPage';
+import { MedicationReminderPage } from './_components/MedicationReminderPage';
+import { SkinReminderPage } from './_components/SkinReminderPage';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TOTAL_PAGES = 5;
@@ -139,7 +139,7 @@ export default function OnboardingScreen() {
     await completeOnboarding();
 
     // 5. Navigate to home
-    router.replace('/(tabs)');
+    router.replace('/(tabs)/home');
   }, [
     onboardingData,
     updateFrequency,

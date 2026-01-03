@@ -92,7 +92,10 @@ app/
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)
-├── onboarding.tsx       # 온보딩 화면 (첫 실행 시 fullScreenModal)
+├── onboarding/          # Onboarding (colocation)
+│   ├── _components/     # onboarding 전용 컴포넌트 (WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator)
+│   └── index.tsx        # 온보딩 화면 (첫 실행 시 fullScreenModal)
+├── index.tsx            # 루트 리다이렉트 (/home으로 이동)
 ├── _layout.tsx          # Root layout with Provider 설정
 └── global.css           # Tailwind CSS imports
 
@@ -100,7 +103,6 @@ components/
 ├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, WarningConfirmModal, NotificationPromptSnackbar
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
-├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
 └── tracking/            # (TBD)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
