@@ -14,7 +14,7 @@ import {
   MedicationCheckCard,
   SkinRecordCard,
   DailyTipCard,
-} from '@/components/home';
+} from './_components';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';

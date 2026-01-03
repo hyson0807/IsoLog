@@ -70,7 +70,9 @@ npm run lint         # Run ESLint
 app/
 ├── (tabs)/              # Tab navigation screens
 │   ├── _layout.tsx      # Tab bar configuration
-│   ├── index.tsx        # Home screen (medication check)
+│   ├── home/            # Home tab (colocation)
+│   │   ├── _components/     # home 전용 컴포넌트 (StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard)
+│   │   └── index.tsx        # 홈 화면 (/home)
 │   ├── calendar/        # Calendar tab (colocation)
 │   │   ├── _components/     # calendar 전용 컴포넌트
 │   │   └── index.tsx        # 캘린더 화면 (/calendar)
@@ -96,7 +98,6 @@ app/
 
 components/
 ├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, WarningConfirmModal, NotificationPromptSnackbar
-├── home/                # StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
@@ -121,4 +122,4 @@ scripts/                 # 콘텐츠 크롤링 및 관리 스크립트
 - **React Compiler**: Enabled
 - **Typed Routes**: Enabled
 - **TypeScript**: Strict mode
-- **Tab Navigation**: `initialRouteName="index"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 정보)
+- **Tab Navigation**: `initialRouteName="home"` (홈이 기본 화면, 탭 순서: 캘린더 | 홈 | 정보)
