@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, Pressable, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, Platform, ScrollView, Dimensions } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,9 @@ import { FrequencyType } from '@/types/medication';
 import { frequencyOptions } from '@/constants/frequency';
 import { getToday } from '@/utils/dateUtils';
 import { getLocales } from 'expo-localization';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CARD_WIDTH = (SCREEN_WIDTH - 40 - 24) / 2.5; // 패딩 40px, gap 24px 고려, 2.5개 보이도록
 
 interface FrequencyBottomSheetProps {
   visible: boolean;
@@ -138,7 +141,8 @@ export function FrequencyBottomSheet({
                 <TouchableOpacity
                   key={option.type}
                   onPress={() => handleFrequencyChange(option.type)}
-                  className={`w-32 rounded-xl border-2 p-3 ${
+                  style={{ width: CARD_WIDTH }}
+                  className={`rounded-xl border-2 p-3 ${
                     isSelected
                       ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-200 bg-white'
