@@ -61,9 +61,9 @@ export default function OnboardingScreen() {
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     referenceDate: getToday(),
     frequency: null,
-    medicationReminderEnabled: true,
+    medicationReminderEnabled: false,
     medicationReminderTime: { hour: 22, minute: 0 },
-    skinReminderEnabled: true,
+    skinReminderEnabled: false,
     skinReminderTime: { hour: 21, minute: 0 },
   });
 
