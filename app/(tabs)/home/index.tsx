@@ -4,18 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
-  Header,
-  DrawerMenu,
-} from '@/components/navigation';
-import {
-  WarningConfirmModal,
-  NotificationPromptSnackbar,
-} from '@/components/overlay';
-import {
   StatusCard,
   MedicationCheckCard,
   SkinRecordCard,
   DailyTipCard,
+  DrawerMenu,
+  Header,
+  WarningConfirmModal,
+  NotificationPromptSnackbar,
 } from './_components';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';

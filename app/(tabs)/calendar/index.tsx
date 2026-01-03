@@ -8,8 +8,8 @@ import {
   DayDetailSheet,
   FrequencySettingButton,
   FrequencyBottomSheet,
+  AdBanner,
 } from './_components';
-import { AdBanner } from '@/components/feedback';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 
 export default function CalendarScreen() {

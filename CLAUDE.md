@@ -71,10 +71,10 @@ app/
 ├── (tabs)/              # Tab navigation screens
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── home/            # Home tab (colocation)
-│   │   ├── _components/     # home 전용 컴포넌트 (StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard)
+│   │   ├── _components/     # home 전용 컴포넌트 (Header, DrawerMenu, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, WarningConfirmModal, NotificationPromptSnackbar)
 │   │   └── index.tsx        # 홈 화면 (/home)
 │   ├── calendar/        # Calendar tab (colocation)
-│   │   ├── _components/     # calendar 전용 컴포넌트
+│   │   ├── _components/     # calendar 전용 컴포넌트 (CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, AdBanner 등)
 │   │   └── index.tsx        # 캘린더 화면 (/calendar)
 │   └── info/            # Info tab (중첩 라우트)
 │       ├── _layout.tsx      # Stack navigation
@@ -103,9 +103,7 @@ app/
 └── global.css           # Tailwind CSS imports
 
 components/
-├── navigation/          # Header, DrawerMenu
-├── feedback/            # AdBanner, UpdateLoadingScreen
-└── overlay/             # WarningConfirmModal, NotificationPromptSnackbar
+└── feedback/            # UpdateLoadingScreen (루트 레이아웃용)
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService
