@@ -19,17 +19,42 @@ ls components/<target>/
 grep -r "from.*components/<target>" app/ --include="*.tsx"
 ```
 
-### 2. 폴더 생성 및 파일 이동
+### 2. 폴더 구조 변경 (단일 파일인 경우)
+
+단일 파일(`<target>.tsx`)을 폴더 구조로 변경해야 하는 경우:
 
 ```bash
-# _components 폴더 생성
+# 폴더 생성
 mkdir -p app/(tabs)/<target>/_components
 
-# 컴포넌트 이동
-mv components/<target>/*.tsx app/(tabs)/<target>/_components/
+# 파일 이동
+mv app/(tabs)/<target>.tsx app/(tabs)/<target>/index.tsx
+
+# ⚠️ 중요: _layout.tsx 생성 필수!
 ```
 
-### 3. Import 경로 수정
+**`_layout.tsx` 생성** (expo-router 폴더 구조 필수):
+```tsx
+import { Stack } from "expo-router";
+
+export default function Layout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+    </Stack>
+  );
+}
+```
+
+### 3. 컴포넌트 이동
+
+```bash
+# 컴포넌트 이동
+mv components/<target>/*.tsx app/(tabs)/<target>/_components/
+mv components/<target>/*.ts app/(tabs)/<target>/_components/
+```
+
+### 4. Import 경로 수정
 
 변경 전:
 ```tsx
@@ -41,7 +66,7 @@ import { Component } from "@/components/<target>/Component";
 import { Component } from "./_components/Component";
 ```
 
-### 4. 정리
+### 5. 정리
 
 ```bash
 # 빈 폴더 삭제
@@ -50,7 +75,7 @@ rmdir components/<target>/
 # CLAUDE.md 문서 최신화
 ```
 
-### 5. 커밋
+### 6. 커밋
 
 ```bash
 git add -A && git commit -m "refactor: <target> 컴포넌트를 페이지 근처로 colocation"
