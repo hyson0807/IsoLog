@@ -10,6 +10,8 @@ import {
   Keyboard,
   StyleSheet,
   ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -60,6 +62,11 @@ export default function InfoScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [menuSidebarVisible, setMenuSidebarVisible] = useState(false);
 
+  // 페이지네이션 상태
+  const [lastKey, setLastKey] = useState<Record<string, any> | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
   // 메뉴 항목 선택 핸들러
   const handleMenuSelect = (type: InfoMenuItemType) => {
     if (type === "liked") {
@@ -70,12 +77,14 @@ export default function InfoScreen() {
   // 현재 언어 (ko 또는 en)
   const currentLanguage = i18n.language.startsWith("ko") ? "ko" : "en";
 
-  // 콘텐츠 로드
-  const loadContents = useCallback(async () => {
+  // 초기 콘텐츠 로드
+  const loadInitial = useCallback(async () => {
     try {
       setError(null);
-      const data = await fetchContentsByTab(currentLanguage, activeTab, 20);
-      setContents(data);
+      const result = await fetchContentsByTab(currentLanguage, activeTab, 20);
+      setContents(result.items);
+      setLastKey(result.lastKey);
+      setHasMore(!!result.lastKey);
     } catch (err) {
       console.error("Content load failed:", err);
       setError(t("info.loadError"));
@@ -85,17 +94,38 @@ export default function InfoScreen() {
     }
   }, [currentLanguage, activeTab, t]);
 
+  // 추가 콘텐츠 로드 (스크롤 끝에 도달 시)
+  const loadMore = useCallback(async () => {
+    if (!hasMore || isLoadingMore || loading || searchQuery.trim()) return;
+
+    setIsLoadingMore(true);
+    try {
+      const result = await fetchContentsByTab(currentLanguage, activeTab, 20, lastKey);
+      setContents((prev) => [...prev, ...result.items]);
+      setLastKey(result.lastKey);
+      setHasMore(!!result.lastKey);
+    } catch (err) {
+      console.error("Load more failed:", err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, isLoadingMore, loading, searchQuery, currentLanguage, activeTab, lastKey]);
+
   // 초기 로드 및 탭 변경 시 로드
   useEffect(() => {
     setLoading(true);
-    loadContents();
-  }, [loadContents]);
+    setLastKey(null);
+    setHasMore(true);
+    loadInitial();
+  }, [loadInitial]);
 
   // 새로고침
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    loadContents();
-  }, [loadContents]);
+    setLastKey(null);
+    setHasMore(true);
+    loadInitial();
+  }, [loadInitial]);
 
   // 탭 변경
   const handleTabChange = (tab: TabType) => {
@@ -128,6 +158,21 @@ export default function InfoScreen() {
     setSearchQuery("");
     Keyboard.dismiss();
   };
+
+  // 스크롤 끝에 도달했는지 확인 (무한 스크롤용)
+  const handleScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+      const paddingToBottom = 100; // 하단에서 100px 전에 로드 시작
+      const isCloseToBottom =
+        layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+
+      if (isCloseToBottom) {
+        loadMore();
+      }
+    },
+    [loadMore]
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={[]}>
@@ -253,6 +298,8 @@ export default function InfoScreen() {
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
+        onScrollEndDrag={handleScrollEnd}
+        onMomentumScrollEnd={handleScrollEnd}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -295,6 +342,20 @@ export default function InfoScreen() {
                 ))
               )}
             </>
+          )}
+
+          {/* 추가 로딩 인디케이터 */}
+          {isLoadingMore && (
+            <View className="items-center justify-center py-4">
+              <ActivityIndicator size="small" color="#F97316" />
+            </View>
+          )}
+
+          {/* 더 이상 콘텐츠 없음 표시 */}
+          {!loading && !hasMore && filteredContents.length > 0 && !searchQuery.trim() && (
+            <View className="items-center justify-center py-4">
+              <Text className="text-sm text-gray-400">{t("info.noMoreContents")}</Text>
+            </View>
           )}
 
           {/* 하단 여백 */}

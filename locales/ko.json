@@ -245,6 +245,7 @@
     "empty": "콘텐츠가 없습니다.",
     "searchPlaceholder": "제목 또는 내용 검색",
     "noSearchResults": "검색 결과가 없습니다.",
+    "noMoreContents": "더 이상 콘텐츠가 없습니다",
     "likedList": "좋아요 목록",
     "emptyLiked": "좋아요한 콘텐츠가 없습니다.",
     "menu": {

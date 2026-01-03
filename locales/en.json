@@ -245,6 +245,7 @@
     "empty": "No content available.",
     "searchPlaceholder": "Search by title or content",
     "noSearchResults": "No search results.",
+    "noMoreContents": "No more contents",
     "likedList": "Liked",
     "emptyLiked": "No liked content yet.",
     "menu": {

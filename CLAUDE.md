@@ -107,6 +107,12 @@ constants/               # theme, frequency, skin, revenuecat, admob
 types/                   # medication.ts
 utils/                   # dateUtils, deviceId, reviewService, timeFormat
 locales/                 # ko.json, en.json, index.ts
+scripts/                 # 콘텐츠 크롤링 및 관리 스크립트
+├── fetch-contents.ts          # Google 검색 크롤링
+├── fetch-naver-contents.ts    # 네이버 검색 크롤링
+├── fetch-contents-archive.ts  # 아카이브 크롤링
+├── approve-content.ts         # 콘텐츠 승인/취소 CLI
+└── migrate-to-verified-gsi.ts # GSI 마이그레이션
 ```
 
 ### Key Configurations
