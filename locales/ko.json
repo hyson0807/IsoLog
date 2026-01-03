@@ -239,8 +239,8 @@
     "title": "트래킹"
   },
   "info": {
-    "title": "정보",
-    "subtitle": "이소티논 관련 유용한 정보",
+    "title": "이소티논 관련 글",
+    "subtitle": "주기적으로 업데이트 됩니다",
     "loadError": "콘텐츠를 불러오는데 실패했습니다.",
     "empty": "콘텐츠가 없습니다.",
     "searchPlaceholder": "제목 또는 내용 검색",
