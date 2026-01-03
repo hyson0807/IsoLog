@@ -70,7 +70,7 @@ export default function InfoScreen() {
   // 메뉴 항목 선택 핸들러
   const handleMenuSelect = (type: InfoMenuItemType) => {
     if (type === "liked") {
-      router.push("/liked");
+      router.push("/info/liked");
     }
   };
 

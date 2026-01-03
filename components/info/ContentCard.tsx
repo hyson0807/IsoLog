@@ -18,7 +18,7 @@ export function ContentCard({ content }: ContentCardProps) {
 
   const handlePress = () => {
     router.push({
-      pathname: "/content",
+      pathname: "/info/content",
       params: {
         url: content.url,
         source: content.source,
