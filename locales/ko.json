@@ -346,8 +346,8 @@
       "selectFrequency": "복용 주기 선택"
     },
     "page3": {
-      "title": "마지막 복용일을 선택하세요",
-      "subtitle": "언제 마지막으로 약을 복용하셨나요?",
+      "title": "복용 시작 예정일을 선택해 주세요",
+      "subtitle": "또는 마지막에 복용한 날짜를 선택해주세요",
       "lastDoseDate": "마지막 복용 날짜",
       "cycleStartHint": "선택한 날짜로부터 주기 세팅이 시작됩니다"
     },

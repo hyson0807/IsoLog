@@ -346,8 +346,8 @@
       "selectFrequency": "Select dosing frequency"
     },
     "page3": {
-      "title": "Select your last dose date",
-      "subtitle": "When did you last take your medication?",
+      "title": "Select your planned start date",
+      "subtitle": "Or select the date of your last dose",
       "lastDoseDate": "Last dose date",
       "cycleStartHint": "Your schedule will start from the selected date"
     },
