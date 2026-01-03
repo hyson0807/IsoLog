@@ -46,7 +46,7 @@ export default function SettingsScreen() {
       <View className="flex-row items-center border-b border-gray-100 bg-white px-5 py-4">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mr-4 h-10 w-10 items-center justify-center rounded-full"
         >
           <Ionicons name="arrow-back" size={24} color="#666666" />
         </TouchableOpacity>

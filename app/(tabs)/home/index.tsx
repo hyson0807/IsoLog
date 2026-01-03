@@ -184,28 +184,6 @@ export default function HomeScreen() {
     setTimeout(() => tryRequestReview(), 1000);
   };
 
-  // 알림 아이콘 클릭 핸들러
-  const handleNotificationPress = async () => {
-    // 알림 OFF로 변경하는 경우 → 권한과 관계없이 항상 허용
-    if (notificationEnabled) {
-      setNotificationEnabled(false);
-      return;
-    }
-
-    // 알림 ON으로 변경하려는 경우 → 권한 체크 필요
-    // 권한이 명시적으로 거부된 상태면 설정으로 안내
-    if (permissionStatus === 'denied') {
-      showPermissionDeniedAlert();
-      return;
-    }
-
-    // 아직 요청 안 한 상태면 권한 요청 후 켜기
-    const granted = await requestPermission();
-    if (granted) {
-      setNotificationEnabled(true);
-    }
-  };
-
   // 피부 기록 완료 후 전면 광고 표시
   const handleSkinRecordComplete = useCallback(() => {
     setTimeout(() => showAd(), 300);
@@ -239,8 +217,6 @@ export default function HomeScreen() {
         <Header
           today={today}
           onMenuPress={() => setIsDrawerVisible(true)}
-          notificationEnabled={notificationEnabled}
-          onNotificationPress={handleNotificationPress}
         />
 
         <View className="mt-4">
