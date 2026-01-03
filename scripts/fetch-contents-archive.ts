@@ -5,10 +5,13 @@
  * 사용법:
  *   npx ts-node scripts/fetch-contents-archive.ts
  *
- * 환경 변수 필요:
+ * 환경 변수 (.env.local):
  *   GOOGLE_API_KEY - Google API 키
  *   GOOGLE_CX - 검색 엔진 ID
  */
+
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
@@ -263,12 +266,12 @@ interface GoogleSearchItem {
   snippet: string;
   displayLink: string;
   pagemap?: {
-    cse_thumbnail?: Array<{ src: string }>;
-    metatags?: Array<{
+    cse_thumbnail?: { src: string }[];
+    metatags?: {
       "article:published_time"?: string;
       "og:updated_time"?: string;
       date?: string;
-    }>;
+    }[];
   };
 }
 

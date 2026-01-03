@@ -4,7 +4,7 @@
  * 사용법:
  *   npx ts-node scripts/fetch-naver-contents.ts
  *
- * 환경 변수 필요:
+ * 환경 변수 (.env.local):
  *   NAVER_CLIENT_ID - 네이버 개발자 센터 Client ID
  *   NAVER_CLIENT_SECRET - 네이버 개발자 센터 Client Secret
  *
@@ -12,6 +12,9 @@
  *   https://developers.naver.com/apps/#/register
  *   - 사용 API: 검색 선택
  */
+
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
@@ -30,8 +33,8 @@ const AWS_REGION = "us-east-1";
 // 콘텐츠 타입
 type ContentType = "article" | "social";
 
-// 검색 타입
-type SearchType = "blog" | "cafearticle" | "news";
+// 검색 타입 (블로그, 카페, 지식인)
+type SearchType = "blog" | "cafearticle" | "kin";
 
 // 검색 키워드
 const SEARCH_KEYWORDS = [
@@ -91,15 +94,6 @@ async function searchNaver(
   }
 }
 
-// 네이버 URL을 실제 URL로 변환 (블로그)
-function extractRealUrl(item: NaverBlogItem | NaverCafeItem): string {
-  // 블로그: bloggerlink가 있으면 원본 블로그 URL 사용
-  if ("bloggerlink" in item && item.bloggerlink) {
-    return item.link;
-  }
-  return item.link;
-}
-
 // 소스 도메인 추출
 function extractSource(url: string): string {
   try {
@@ -112,7 +106,7 @@ function extractSource(url: string): string {
 
 // DynamoDB에 콘텐츠 저장
 async function saveContent(
-  item: NaverBlogItem | NaverCafeItem | NaverNewsItem,
+  item: NaverBlogItem | NaverCafeItem | NaverKinItem,
   searchType: SearchType,
   keyword: string
 ): Promise<boolean> {
@@ -139,22 +133,16 @@ async function saveContent(
   const title = stripHtml(item.title);
   const snippet = stripHtml(item.description);
 
-  // 발행일 추출
+  // 발행일 추출 (블로그만 postdate 제공)
   let publishedAt: string | null = null;
   if ("postdate" in item && item.postdate) {
     // 블로그: YYYYMMDD 형식
     const d = item.postdate;
     publishedAt = `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`;
-  } else if ("pubDate" in item && item.pubDate) {
-    // 뉴스: RFC 2822 형식
-    const date = new Date(item.pubDate);
-    if (!isNaN(date.getTime())) {
-      publishedAt = date.toISOString().split("T")[0];
-    }
   }
 
-  // 콘텐츠 타입 결정
-  const contentType: ContentType = searchType === "news" ? "article" : "article";
+  // 콘텐츠 타입 (모두 article)
+  const contentType: ContentType = "article";
 
   const command = new PutCommand({
     TableName: TABLE_NAME,
@@ -208,13 +196,13 @@ async function main() {
   let totalInserted = 0;
   let totalSkipped = 0;
 
-  // 검색 타입별로 수집
-  const searchTypes: SearchType[] = ["blog", "cafearticle", "news"];
+  // 검색 타입별로 수집 (블로그, 카페, 지식인)
+  const searchTypes: SearchType[] = ["blog", "cafearticle", "kin"];
 
   for (const searchType of searchTypes) {
     const typeLabel =
       searchType === "blog" ? "📝 블로그" :
-      searchType === "cafearticle" ? "☕ 카페" : "📰 뉴스";
+      searchType === "cafearticle" ? "☕ 카페" : "💡 지식인";
 
     console.log(`\n${typeLabel} 검색\n${"=".repeat(40)}`);
 
@@ -255,7 +243,7 @@ interface NaverSearchResult {
   total: number;
   start: number;
   display: number;
-  items: (NaverBlogItem | NaverCafeItem | NaverNewsItem)[];
+  items: (NaverBlogItem | NaverCafeItem | NaverKinItem)[];
 }
 
 interface NaverBlogItem {
@@ -275,12 +263,10 @@ interface NaverCafeItem {
   cafeurl: string;
 }
 
-interface NaverNewsItem {
+interface NaverKinItem {
   title: string;
-  originallink: string;
   link: string;
   description: string;
-  pubDate: string; // RFC 2822
 }
 
 // 실행

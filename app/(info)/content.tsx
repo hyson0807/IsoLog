@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { useState, useMemo, useEffect } from "react";
+import { View, Text, Pressable, ActivityIndicator, Linking, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,32 @@ import { WebView } from "react-native-webview";
 import * as Haptics from "expo-haptics";
 import { useLikedContents } from "@/contexts/LikedContentsContext";
 import type { CuratedContent } from "@/services/contentService";
+
+// 네이버 도메인 체크
+const NAVER_DOMAINS = [
+  "blog.naver.com",
+  "m.blog.naver.com",
+  "cafe.naver.com",
+  "m.cafe.naver.com",
+  "kin.naver.com",
+  "m.kin.naver.com",
+];
+
+function isNaverUrl(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname;
+    return NAVER_DOMAINS.some((domain) => hostname.includes(domain));
+  } catch {
+    return false;
+  }
+}
+
+// User-Agent (모바일 Safari)
+const USER_AGENT = Platform.select({
+  ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+  android: "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+  default: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
+});
 
 export default function ContentScreen() {
   const { url, source, content: contentParam } = useLocalSearchParams<{
@@ -29,8 +55,24 @@ export default function ContentScreen() {
 
   const liked = url ? isLiked(url) : false;
 
+  // 네이버 URL은 외부 브라우저로 열기
+  useEffect(() => {
+    if (url && isNaverUrl(url)) {
+      Linking.openURL(url);
+      router.back();
+    }
+  }, [url]);
+
   const handleBack = () => {
     router.back();
+  };
+
+  // 외부 브라우저로 열기 (에러 시 폴백)
+  const openInBrowser = async () => {
+    if (url) {
+      await Linking.openURL(url);
+      router.back();
+    }
   };
 
   const handleLikePress = () => {
@@ -90,16 +132,25 @@ export default function ContentScreen() {
             <Text className="text-gray-400 text-sm mt-1">
               원본 페이지가 삭제되었거나 이동되었습니다
             </Text>
-            <Pressable
-              onPress={handleBack}
-              className="mt-6 px-6 py-3 bg-orange-500 rounded-full active:bg-orange-600"
-            >
-              <Text className="text-white font-medium">돌아가기</Text>
-            </Pressable>
+            <View className="flex-row mt-6 gap-3">
+              <Pressable
+                onPress={openInBrowser}
+                className="px-6 py-3 bg-orange-500 rounded-full active:bg-orange-600"
+              >
+                <Text className="text-white font-medium">브라우저에서 열기</Text>
+              </Pressable>
+              <Pressable
+                onPress={handleBack}
+                className="px-6 py-3 bg-gray-200 rounded-full active:bg-gray-300"
+              >
+                <Text className="text-gray-700 font-medium">돌아가기</Text>
+              </Pressable>
+            </View>
           </View>
         )}
         <WebView
           source={{ uri: url }}
+          userAgent={USER_AGENT}
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
           onError={() => {
@@ -116,6 +167,7 @@ export default function ContentScreen() {
           startInLoadingState={true}
           javaScriptEnabled={true}
           domStorageEnabled={true}
+          sharedCookiesEnabled={true}
         />
       </View>
     </SafeAreaView>
