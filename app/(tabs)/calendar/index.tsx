@@ -8,7 +8,7 @@ import {
   DayDetailSheet,
   FrequencySettingButton,
   FrequencyBottomSheet,
-} from '@/components/calendar';
+} from './_components';
 import { AdBanner } from '@/components/common';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 

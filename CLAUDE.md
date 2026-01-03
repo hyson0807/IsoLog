@@ -71,7 +71,9 @@ app/
 ├── (tabs)/              # Tab navigation screens
 │   ├── _layout.tsx      # Tab bar configuration
 │   ├── index.tsx        # Home screen (medication check)
-│   ├── calendar.tsx     # Calendar screen (monthly view)
+│   ├── calendar/        # Calendar tab (colocation)
+│   │   ├── _components/     # calendar 전용 컴포넌트
+│   │   └── index.tsx        # 캘린더 화면 (/calendar)
 │   └── info/            # Info tab (중첩 라우트)
 │       ├── _layout.tsx      # Stack navigation
 │       ├── _components/     # info 전용 컴포넌트 (ContentCard, InfoMenuSidebar)
@@ -95,7 +97,6 @@ app/
 components/
 ├── common/              # Header, DrawerMenu, AdBanner, UpdateLoadingScreen, WarningConfirmModal, NotificationPromptSnackbar
 ├── home/                # StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard
-├── calendar/            # CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, FrequencySettingButton, MonthlySummary, WeekdayRow
 ├── settings/            # PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet
 ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow
 ├── onboarding/          # OnboardingPage, WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator
