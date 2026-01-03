@@ -7,7 +7,7 @@ import { MedicationProvider } from "@/contexts/MedicationContext";
 import { PremiumProvider } from "@/contexts/PremiumContext";
 import { NotificationSettingsProvider } from "@/contexts/NotificationSettingsContext";
 import { LikedContentsProvider } from "@/contexts/LikedContentsContext";
-import { UpdateLoadingScreen } from "@/components/common/UpdateLoadingScreen";
+import { UpdateLoadingScreen } from "@/components/feedback";
 import { useAppUpdates } from "@/hooks/useAppUpdates";
 import "./global.css";
 

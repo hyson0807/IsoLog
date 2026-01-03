@@ -5,10 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
   Header,
-  WarningConfirmModal,
   DrawerMenu,
+} from '@/components/navigation';
+import {
+  WarningConfirmModal,
   NotificationPromptSnackbar,
-} from '@/components/common';
+} from '@/components/overlay';
 import {
   StatusCard,
   MedicationCheckCard,
