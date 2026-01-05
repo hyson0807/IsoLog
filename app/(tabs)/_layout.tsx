@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Pressable, View, GestureResponderEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 interface TabIconProps {
   name: keyof typeof Ionicons.glyphMap;
@@ -10,16 +17,31 @@ interface TabIconProps {
 }
 
 function TabIcon({ name, focused }: TabIconProps) {
+  const scale = useSharedValue(focused ? 1 : 0);
+
+  useEffect(() => {
+    scale.value = withSpring(focused ? 1 : 0, {
+      damping: 15,
+      stiffness: 150,
+    });
+  }, [focused, scale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: interpolate(scale.value, [0, 1], [1, 1.2]) }],
+  }));
+
   return (
     <View
       className="items-center justify-center"
       style={{ width: 56, height: 40 }}
     >
-      <Ionicons
-        name={name}
-        size={24}
-        color={focused ? '#F97316' : '#9E9E9E'}
-      />
+      <Animated.View style={animatedStyle}>
+        <Ionicons
+          name={name}
+          size={24}
+          color={focused ? '#F97316' : '#9E9E9E'}
+        />
+      </Animated.View>
     </View>
   );
 }
