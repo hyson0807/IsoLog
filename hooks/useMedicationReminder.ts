@@ -23,8 +23,8 @@ export function useMedicationReminder() {
   const { todayStatus, isMedicationDay, hasTaken, schedule, takenDates } = useMedicationContext();
   const {
     notificationEnabled,
-    notificationTime,
     medicationReminderEnabled,
+    medicationReminderTime,
     isLoading: notificationLoading,
   } = useNotificationSettingsContext();
 
@@ -50,15 +50,15 @@ export function useMedicationReminder() {
       upcomingMedicationDays,
       takenDates,
       notificationEnabled,
-      notificationTime.hour,
-      notificationTime.minute,
+      medicationReminderTime.hour,
+      medicationReminderTime.minute,
       medicationReminderEnabled
     );
   }, [
     upcomingMedicationDays,
     takenDates,
     notificationEnabled,
-    notificationTime,
+    medicationReminderTime,
     medicationReminderEnabled,
     notificationLoading,
   ]);
@@ -76,7 +76,7 @@ export function useMedicationReminder() {
     } else {
       // 복용 해제 → 알림 다시 예약 (복용일인 경우만)
       if (isMedicationDay(date)) {
-        await scheduleReminder(date, notificationTime.hour, notificationTime.minute);
+        await scheduleReminder(date, medicationReminderTime.hour, medicationReminderTime.minute);
       }
     }
   };

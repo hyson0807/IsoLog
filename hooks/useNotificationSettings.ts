@@ -14,10 +14,10 @@ export function useNotificationSettings() {
   const {
     notificationEnabled,
     setNotificationEnabled,
-    notificationTime,
-    setNotificationTime,
     medicationReminderEnabled,
     setMedicationReminderEnabled,
+    medicationReminderTime,
+    setMedicationReminderTime,
     skinConditionReminderEnabled,
     setSkinConditionReminderEnabled,
     skinConditionReminderTime,
@@ -101,15 +101,15 @@ export function useNotificationSettings() {
   return {
     // 상태
     notificationEnabled,
-    notificationTime,
     medicationReminderEnabled,
+    medicationReminderTime,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
 
     // 핸들러
     handleMasterToggle,
-    setNotificationTime,
     setMedicationReminderEnabled,
+    setMedicationReminderTime,
     setSkinConditionReminderEnabled,
     setSkinConditionReminderTime,
   };

@@ -26,13 +26,13 @@ export default function NotificationSettingsScreen() {
 
   const {
     notificationEnabled,
-    notificationTime,
     medicationReminderEnabled,
+    medicationReminderTime,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
     handleMasterToggle,
-    setNotificationTime,
     setMedicationReminderEnabled,
+    setMedicationReminderTime,
     setSkinConditionReminderEnabled,
     setSkinConditionReminderTime,
   } = useNotificationSettings();
@@ -55,7 +55,7 @@ export default function NotificationSettingsScreen() {
 
   const handleTimeSave = async (hour: number, minute: number) => {
     if (activeTimePicker === 'medication') {
-      setNotificationTime(hour, minute);
+      setMedicationReminderTime(hour, minute);
       // 복용 알림 즉시 리스케줄링
       if (notificationEnabled && medicationReminderEnabled && schedule.frequency !== 'none') {
         const frequencyDays = frequencyOptions.find(
@@ -87,7 +87,7 @@ export default function NotificationSettingsScreen() {
 
   const getCurrentTimePickerValues = () => {
     if (activeTimePicker === 'medication') {
-      return { hour: notificationTime.hour, minute: notificationTime.minute };
+      return { hour: medicationReminderTime.hour, minute: medicationReminderTime.minute };
     }
     return { hour: skinConditionReminderTime.hour, minute: skinConditionReminderTime.minute };
   };
@@ -131,8 +131,8 @@ export default function NotificationSettingsScreen() {
               trackActiveColor="#93C5FD"
             >
               <TimeSettingRow
-                hour={notificationTime.hour}
-                minute={notificationTime.minute}
+                hour={medicationReminderTime.hour}
+                minute={medicationReminderTime.minute}
                 onPress={handleMedicationTimePress}
                 enabled={notificationEnabled && medicationReminderEnabled}
                 activeColor="#3B82F6"

@@ -53,8 +53,8 @@ export default function OnboardingScreen() {
   const { updateFrequency } = useMedicationContext();
   const {
     setNotificationEnabled,
-    setNotificationTime,
     setMedicationReminderEnabled,
+    setMedicationReminderTime,
     setSkinConditionReminderEnabled,
     setSkinConditionReminderTime,
   } = useNotificationSettingsContext();
@@ -97,7 +97,7 @@ export default function OnboardingScreen() {
     }
 
     if (onboardingData.medicationReminderEnabled) {
-      setNotificationTime(
+      setMedicationReminderTime(
         onboardingData.medicationReminderTime.hour,
         onboardingData.medicationReminderTime.minute
       );
@@ -146,8 +146,8 @@ export default function OnboardingScreen() {
     onboardingData,
     updateFrequency,
     setNotificationEnabled,
-    setNotificationTime,
     setMedicationReminderEnabled,
+    setMedicationReminderTime,
     setSkinConditionReminderEnabled,
     setSkinConditionReminderTime,
     completeOnboarding,

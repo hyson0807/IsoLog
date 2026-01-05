@@ -10,14 +10,17 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleSkinConditionReminder } from '@/services/notificationService';
 
+// 저장 위치 이름 (알림, 프리미엄 관련 데이터 저장 위치 이름)
 const NOTIFICATION_STORAGE_KEY = '@isoLog/notification_settings';
 const LEGACY_PREMIUM_STORAGE_KEY = '@isoLog/premium_data';
 
+// 알림 시간 객체는 시간과 분으로 이루어져있다.
 interface NotificationTime {
   hour: number;
   minute: number;
 }
 
+// 알림설정에 관한 데이터 저장 형식 ( 알림 활성 유무, 알림 시간대, 복용유무 알림 활성 유무, 스킨기록 활성 유무, 스킨기록 알림 시간대 )
 interface NotificationSettingsStorageData {
   notificationEnabled: boolean;
   notificationTime: NotificationTime;
@@ -30,29 +33,29 @@ interface NotificationSettingsContextValue {
   // State
   isLoading: boolean;
   notificationEnabled: boolean;
-  notificationTime: NotificationTime;
   medicationReminderEnabled: boolean;
+  medicationReminderTime: NotificationTime;
   skinConditionReminderEnabled: boolean;
   skinConditionReminderTime: NotificationTime;
 
   // Actions
   setNotificationEnabled: (enabled: boolean) => void;
-  setNotificationTime: (hour: number, minute: number) => void;
   setMedicationReminderEnabled: (enabled: boolean) => void;
+  setMedicationReminderTime: (hour: number, minute: number) => void;
   setSkinConditionReminderEnabled: (enabled: boolean) => void;
   setSkinConditionReminderTime: (hour: number, minute: number) => void;
 }
 
 const NotificationSettingsContext = createContext<NotificationSettingsContextValue | undefined>(undefined);
 
-const DEFAULT_NOTIFICATION_TIME: NotificationTime = { hour: 22, minute: 0 };
+const DEFAULT_MEDICATION_REMINDER_TIME: NotificationTime = { hour: 22, minute: 0 };
 const DEFAULT_SKIN_CONDITION_TIME: NotificationTime = { hour: 21, minute: 0 };
 
 export function NotificationSettingsProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationEnabled, setNotificationEnabledState] = useState(false);
-  const [notificationTime, setNotificationTimeState] = useState<NotificationTime>(DEFAULT_NOTIFICATION_TIME);
   const [medicationReminderEnabled, setMedicationReminderEnabledState] = useState(true);
+  const [medicationReminderTime, setMedicationReminderTimeState] = useState<NotificationTime>(DEFAULT_MEDICATION_REMINDER_TIME);
   const [skinConditionReminderEnabled, setSkinConditionReminderEnabledState] = useState(true);
   const [skinConditionReminderTime, setSkinConditionReminderTimeState] = useState<NotificationTime>(DEFAULT_SKIN_CONDITION_TIME);
 
@@ -65,10 +68,10 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
 
         if (stored) {
           // Already migrated, use new data
-          const data: NotificationSettingsStorageData = JSON.parse(stored);
+          const data: NotificationSettingsStorageData = JSON.parse(stored); //저장된 문자열 데이터를 객체로 복원
           setNotificationEnabledState(data.notificationEnabled);
-          setNotificationTimeState(data.notificationTime ?? DEFAULT_NOTIFICATION_TIME);
           setMedicationReminderEnabledState(data.medicationReminderEnabled ?? true);
+          setMedicationReminderTimeState(data.notificationTime ?? DEFAULT_MEDICATION_REMINDER_TIME);
           setSkinConditionReminderEnabledState(data.skinConditionReminderEnabled ?? true);
           setSkinConditionReminderTimeState(data.skinConditionReminderTime ?? DEFAULT_SKIN_CONDITION_TIME);
         } else {
@@ -79,7 +82,7 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
             const parsed = JSON.parse(legacyData);
             const notificationData: NotificationSettingsStorageData = {
               notificationEnabled: parsed.notificationEnabled ?? false,
-              notificationTime: parsed.notificationTime ?? DEFAULT_NOTIFICATION_TIME,
+              notificationTime: parsed.notificationTime ?? DEFAULT_MEDICATION_REMINDER_TIME,
               medicationReminderEnabled: parsed.medicationReminderEnabled ?? true,
               skinConditionReminderEnabled: parsed.skinConditionReminderEnabled ?? true,
               skinConditionReminderTime: parsed.skinConditionReminderTime ?? DEFAULT_SKIN_CONDITION_TIME,
@@ -87,8 +90,8 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
 
             // Apply migrated data to state
             setNotificationEnabledState(notificationData.notificationEnabled);
-            setNotificationTimeState(notificationData.notificationTime);
             setMedicationReminderEnabledState(notificationData.medicationReminderEnabled);
+            setMedicationReminderTimeState(notificationData.notificationTime);
             setSkinConditionReminderEnabledState(notificationData.skinConditionReminderEnabled);
             setSkinConditionReminderTimeState(notificationData.skinConditionReminderTime);
 
@@ -110,13 +113,13 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
   // Helper to get current data for saving
   const getCurrentData = useCallback((): NotificationSettingsStorageData => ({
     notificationEnabled,
-    notificationTime,
+    notificationTime: medicationReminderTime,
     medicationReminderEnabled,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
   }), [
     notificationEnabled,
-    notificationTime,
+    medicationReminderTime,
     medicationReminderEnabled,
     skinConditionReminderEnabled,
     skinConditionReminderTime,
@@ -148,11 +151,11 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
     [saveData]
   );
 
-  // Set notification time
-  const setNotificationTime = useCallback(
+  // Set medication reminder time
+  const setMedicationReminderTime = useCallback(
     (hour: number, minute: number) => {
       const newTime = { hour, minute };
-      setNotificationTimeState(newTime);
+      setMedicationReminderTimeState(newTime);
       saveData({ notificationTime: newTime });
     },
     [saveData]
@@ -194,26 +197,26 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
     () => ({
       isLoading,
       notificationEnabled,
-      notificationTime,
       medicationReminderEnabled,
+      medicationReminderTime,
       skinConditionReminderEnabled,
       skinConditionReminderTime,
       setNotificationEnabled,
-      setNotificationTime,
       setMedicationReminderEnabled,
+      setMedicationReminderTime,
       setSkinConditionReminderEnabled,
       setSkinConditionReminderTime,
     }),
     [
       isLoading,
       notificationEnabled,
-      notificationTime,
       medicationReminderEnabled,
+      medicationReminderTime,
       skinConditionReminderEnabled,
       skinConditionReminderTime,
       setNotificationEnabled,
-      setNotificationTime,
       setMedicationReminderEnabled,
+      setMedicationReminderTime,
       setSkinConditionReminderEnabled,
       setSkinConditionReminderTime,
     ]
