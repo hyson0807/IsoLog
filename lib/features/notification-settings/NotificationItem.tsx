@@ -3,12 +3,12 @@ import { View, Text, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface NotificationItemProps {
-  /** 아이콘 이름 (Ionicons) */
-  icon: keyof typeof Ionicons.glyphMap;
+  /** 아이콘 이름 (Ionicons) - 없으면 아이콘 미표시 */
+  icon?: keyof typeof Ionicons.glyphMap;
   /** 아이콘 색상 */
-  iconColor: string;
+  iconColor?: string;
   /** 아이콘 배경 색상 (Tailwind class) */
-  iconBgClass: string;
+  iconBgClass?: string;
   /** 알림 제목 */
   title: string;
   /** 알림 설명 */
@@ -60,9 +60,11 @@ export function NotificationItem({
           activeOpacity={disabled ? 1 : 0.7}
           className="flex-1 flex-row items-center"
         >
-          <View className={`mr-3 h-10 w-10 items-center justify-center rounded-full ${iconBgClass}`}>
-            <Ionicons name={icon} size={20} color={iconColor} />
-          </View>
+          {icon && (
+            <View className={`mr-3 h-10 w-10 items-center justify-center rounded-full ${iconBgClass}`}>
+              <Ionicons name={icon} size={20} color={iconColor} />
+            </View>
+          )}
           <View className="flex-1">
             <Text className="text-base font-medium text-gray-900">{title}</Text>
             <Text className="mt-0.5 text-sm text-gray-500">{description}</Text>

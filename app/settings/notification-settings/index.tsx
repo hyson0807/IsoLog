@@ -98,7 +98,7 @@ export default function NotificationSettingsScreen() {
       <View className="flex-row items-center border-b border-gray-100 bg-white px-5 py-4">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mr-4 h-10 w-10 items-center justify-center rounded-full "
         >
           <Ionicons name="arrow-back" size={24} color="#666666" />
         </TouchableOpacity>
@@ -112,30 +112,27 @@ export default function NotificationSettingsScreen() {
         <MasterToggle enabled={notificationEnabled} onToggle={handleMasterToggle} />
 
         {/* 서브 알림 섹션 */}
-        <View className="px-5 pt-6">
+        <View className="px-5 pl-8 pt-6">
           <Text className="mb-3 text-sm font-medium text-gray-500">
             {t('notificationSettings.subNotifications')}
           </Text>
           <View className="rounded-xl bg-white">
             {/* 복용 리마인더 */}
             <NotificationItem
-              icon="medical"
-              iconColor="#3B82F6"
-              iconBgClass="bg-blue-100"
               title={t('notification.title')}
               description={t('notification.description')}
               enabled={medicationReminderEnabled}
               onToggle={setMedicationReminderEnabled}
               disabled={!notificationEnabled}
-              activeColor="#3B82F6"
-              trackActiveColor="#93C5FD"
+              activeColor="#6B7280"
+              trackActiveColor="#D1D5DB"
             >
               <TimeSettingRow
                 hour={medicationReminderTime.hour}
                 minute={medicationReminderTime.minute}
                 onPress={handleMedicationTimePress}
                 enabled={notificationEnabled && medicationReminderEnabled}
-                activeColor="#3B82F6"
+                activeColor="#6B7280"
               />
             </NotificationItem>
 
@@ -144,23 +141,20 @@ export default function NotificationSettingsScreen() {
 
             {/* 피부 상태 기록 리마인더 */}
             <NotificationItem
-              icon="sparkles"
-              iconColor="#10B981"
-              iconBgClass="bg-emerald-100"
               title={t('notification.skinCondition')}
               description={t('notification.skinConditionDesc')}
               enabled={skinConditionReminderEnabled}
               onToggle={setSkinConditionReminderEnabled}
               disabled={!notificationEnabled}
-              activeColor="#10B981"
-              trackActiveColor="#6EE7B7"
+              activeColor="#6B7280"
+              trackActiveColor="#D1D5DB"
             >
               <TimeSettingRow
                 hour={skinConditionReminderTime.hour}
                 minute={skinConditionReminderTime.minute}
                 onPress={handleSkinConditionTimePress}
                 enabled={notificationEnabled && skinConditionReminderEnabled}
-                activeColor="#10B981"
+                activeColor="#6B7280"
               />
             </NotificationItem>
           </View>

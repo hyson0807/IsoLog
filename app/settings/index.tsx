@@ -70,8 +70,8 @@ export default function SettingsScreen() {
             className="flex-row items-center justify-between rounded-xl bg-white px-4 py-4"
           >
             <View className="flex-row items-center">
-              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
-                <Ionicons name="notifications" size={20} color="#F97316" />
+              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Ionicons name="notifications-outline" size={20} color="#6B7280" />
               </View>
               <Text className="text-base text-gray-700">{t('settings.notificationSettings')}</Text>
             </View>

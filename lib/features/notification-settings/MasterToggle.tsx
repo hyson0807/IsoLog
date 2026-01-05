@@ -21,11 +21,11 @@ export function MasterToggle({ enabled, onToggle }: MasterToggleProps) {
             activeOpacity={0.7}
             className="flex-1 flex-row items-center"
           >
-            <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
-              <Ionicons name="notifications" size={20} color="#F97316" />
+            <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+              <Ionicons name="notifications" size={20} color="#6B7280" />
             </View>
             <View className="flex-1">
-              <Text className="text-base font-medium text-gray-900">
+              <Text className="text-lg font-bold text-gray-900">
                 {t('notificationSettings.masterToggle')}
               </Text>
               <Text className="mt-0.5 text-sm text-gray-500">
@@ -36,8 +36,8 @@ export function MasterToggle({ enabled, onToggle }: MasterToggleProps) {
           <Switch
             value={enabled}
             onValueChange={onToggle}
-            trackColor={{ false: '#E5E7EB', true: '#FDBA74' }}
-            thumbColor={enabled ? '#F97316' : '#F3F4F6'}
+            trackColor={{ false: '#E5E7EB', true: '#D1D5DB' }}
+            thumbColor={enabled ? '#6B7280' : '#F3F4F6'}
             ios_backgroundColor="#E5E7EB"
           />
         </View>
