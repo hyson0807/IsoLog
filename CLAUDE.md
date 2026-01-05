@@ -100,8 +100,8 @@ lib/
 └── features/            # feature 컴포넌트
     ├── app/             # UpdateLoadingScreen (루트 레이아웃용)
     ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar
-    ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, AdBanner
-    ├── info/            # ContentCard, InfoMenuSidebar
+    ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, MonthlySummary, AdBanner
+    ├── info/            # ContentCard, ContentCardSkeleton, InfoMenuSidebar
     ├── settings/        # PremiumSection, LanguageBottomSheet
     ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow, NotificationTimeBottomSheet
     └── onboarding/      # WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator, OnboardingPage

@@ -18,7 +18,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useScrollToTop } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
-import { ContentCard, InfoMenuSidebar, type InfoMenuItemType } from '@lib/features/info';
+import { ContentCard, ContentCardSkeleton, InfoMenuSidebar, type InfoMenuItemType } from '@lib/features/info';
 import {
   fetchContentsByTab,
   type CuratedContent,
@@ -310,11 +310,13 @@ export default function InfoScreen() {
       >
         {/* 콘텐츠 영역 */}
         <View className="px-4 pt-4">
-          {/* 로딩 상태 */}
+          {/* 로딩 상태 - 스켈레톤 UI */}
           {loading && (
-            <View className="items-center justify-center py-20">
-              <ActivityIndicator size="large" color="#F97316" />
-            </View>
+            <>
+              <ContentCardSkeleton />
+              <ContentCardSkeleton />
+              <ContentCardSkeleton />
+            </>
           )}
 
           {/* 에러 상태 */}
