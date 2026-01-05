@@ -99,7 +99,7 @@ app/
 lib/
 └── features/            # feature 컴포넌트
     ├── app/             # UpdateLoadingScreen (루트 레이아웃용)
-    ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar
+    ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar, AnnouncementModal, EmailCopiedToast
     ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, MonthlySummary, AdBanner
     ├── info/            # ContentCard, ContentCardSkeleton, InfoMenuSidebar
     ├── settings/        # PremiumSection, LanguageBottomSheet
@@ -108,8 +108,8 @@ lib/
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService
-hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, useNotificationPermission, useNotificationSettings, useTodayDate, useInterstitialAd
-constants/               # theme, frequency, skin, revenuecat, admob
+hooks/                   # useIsAfterHour, useMedicationReminder, useSkinConditionReminder, useOnboarding, useAppUpdates, useNotificationPermission, useNotificationSettings, useTodayDate, useInterstitialAd, useAnnouncement
+constants/               # theme, frequency, skin, revenuecat, admob, announcement
 types/                   # medication.ts
 utils/                   # dateUtils, deviceId, reviewService, timeFormat
 locales/                 # ko.json, en.json, index.ts

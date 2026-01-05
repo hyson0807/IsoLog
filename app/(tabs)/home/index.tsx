@@ -11,6 +11,7 @@ import {
   Header,
   WarningConfirmModal,
   NotificationPromptSnackbar,
+  AnnouncementModal,
 } from '@lib/features/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
@@ -20,6 +21,7 @@ import { useSkinConditionReminder } from '@/hooks/useSkinConditionReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useIsAfterHour } from '@/hooks/useIsAfterHour';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
+import { useAnnouncement } from '@/hooks/useAnnouncement';
 import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
@@ -50,6 +52,9 @@ export default function HomeScreen() {
 
   // 알림 권한 관리
   const { permissionStatus, requestPermission, recheckPermission } = useNotificationPermission();
+
+  // 공지사항 모달
+  const { shouldShowAnnouncement, markAsSeen } = useAnnouncement();
 
   // 앱 상태 추적 (설정에서 돌아왔을 때 권한 재확인용)
   const appState = useRef(AppState.currentState);
@@ -315,6 +320,12 @@ export default function HomeScreen() {
         visible={isSnackbarVisible}
         onPress={handleSnackbarPress}
         onDismiss={() => setIsSnackbarVisible(false)}
+      />
+
+      {/* 공지사항 모달 */}
+      <AnnouncementModal
+        visible={shouldShowAnnouncement}
+        onClose={markAsSeen}
       />
     </SafeAreaView>
   );

@@ -369,5 +369,13 @@
       "reminderTime": "Reminder time",
       "hint": "You can change these settings anytime"
     }
+  },
+  "announcement": {
+    "feedbackRequest": {
+      "title": "Help Us Grow IsoLog 🌱",
+      "message": "Is there anything inconvenient or any features you'd like to see? Feel free to share even the smallest feedback. Your input helps us build a better app.",
+      "copyEmail": "Copy Email",
+      "emailCopied": "Email copied"
+    }
   }
 }
