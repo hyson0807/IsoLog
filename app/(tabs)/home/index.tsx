@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { View, ScrollView, Alert, Linking, AppState, type AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import {
   StatusCard,
   MedicationCheckCard,
@@ -20,13 +19,11 @@ import { useMedicationReminder } from '@/hooks/useMedicationReminder';
 import { useSkinConditionReminder } from '@/hooks/useSkinConditionReminder';
 import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import { useIsAfterHour } from '@/hooks/useIsAfterHour';
-import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { tryRequestReview } from '@/utils/reviewService';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -42,15 +39,6 @@ export default function HomeScreen() {
     getSkinRecord,
     saveSkinRecord,
   } = useMedicationContext();
-
-  // 온보딩 상태 관리 - 온보딩 화면으로 리다이렉트
-  const { shouldShowOnboarding, isLoading: isOnboardingLoading } = useOnboarding();
-
-  useEffect(() => {
-    if (!isOnboardingLoading && shouldShowOnboarding) {
-      router.replace('/onboarding');
-    }
-  }, [isOnboardingLoading, shouldShowOnboarding, router]);
 
   usePremiumContext();
   const {
