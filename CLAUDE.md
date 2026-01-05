@@ -90,23 +90,21 @@ app/
 ├── legal/               # 법적 문서
 │   ├── privacy.tsx      # 개인정보보호정책 (/legal/privacy)
 │   └── terms.tsx        # 이용약관 (/legal/terms)
-├── onboarding/          # Onboarding (colocation)
-│   ├── _components/     # onboarding 전용 컴포넌트 (WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator)
+├── onboarding/          # Onboarding
 │   └── index.tsx        # 온보딩 화면 (첫 실행 시 fullScreenModal)
 ├── index.tsx            # 루트 리다이렉트 (/home으로 이동)
 ├── _layout.tsx          # Root layout with Provider 설정
 └── global.css           # Tailwind CSS imports
 
-components/
-└── feedback/            # UpdateLoadingScreen (루트 레이아웃용)
-
 lib/
 └── features/            # feature 컴포넌트
+    ├── app/             # UpdateLoadingScreen (루트 레이아웃용)
     ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar
     ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, AdBanner
     ├── info/            # ContentCard, InfoMenuSidebar
     ├── settings/        # PremiumSection, LanguageBottomSheet
-    └── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow, NotificationTimeBottomSheet
+    ├── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow, NotificationTimeBottomSheet
+    └── onboarding/      # WelcomePage, FrequencyPage, DateSelectPage, MedicationReminderPage, SkinReminderPage, PageIndicator, OnboardingPage
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService

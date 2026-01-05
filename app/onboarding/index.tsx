@@ -23,12 +23,14 @@ import {
 } from '@/services/notificationService';
 import { frequencyOptions } from '@/constants/frequency';
 
-import { PageIndicator } from './_components/PageIndicator';
-import { WelcomePage } from './_components/WelcomePage';
-import { FrequencyPage } from './_components/FrequencyPage';
-import { DateSelectPage } from './_components/DateSelectPage';
-import { MedicationReminderPage } from './_components/MedicationReminderPage';
-import { SkinReminderPage } from './_components/SkinReminderPage';
+import {
+  PageIndicator,
+  WelcomePage,
+  FrequencyPage,
+  DateSelectPage,
+  MedicationReminderPage,
+  SkinReminderPage,
+} from '@lib/features/onboarding';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TOTAL_PAGES = 5;
