@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useLikedContents } from "@/contexts/LikedContentsContext";
-import { ContentCard } from "./_components/ContentCard";
+import { ContentCard } from '@lib/features/info';
 
 export default function LikedContentsScreen() {
   const { t } = useTranslation();

@@ -62,7 +62,7 @@ npm run lint         # Run ESLint
 - **Store Review**: `expo-store-review`
 - **OTA Updates**: `expo-updates` for EAS Update
 - **Clipboard**: `expo-clipboard`
-- **Path Aliases**: `@/*` maps to project root
+- **Path Aliases**: `@/*` maps to project root, `@lib/*` maps to lib folder
 
 ### Project Structure
 
@@ -70,15 +70,12 @@ npm run lint         # Run ESLint
 app/
 ├── (tabs)/              # Tab navigation screens
 │   ├── _layout.tsx      # Tab bar configuration
-│   ├── home/            # Home tab (colocation)
-│   │   ├── _components/     # home 전용 컴포넌트 (Header, DrawerMenu, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, WarningConfirmModal, NotificationPromptSnackbar)
+│   ├── home/
 │   │   └── index.tsx        # 홈 화면 (/home)
-│   ├── calendar/        # Calendar tab (colocation)
-│   │   ├── _components/     # calendar 전용 컴포넌트 (CalendarHeader, CalendarGrid, DayCell, DayDetailSheet, FrequencyBottomSheet, AdBanner 등)
+│   ├── calendar/
 │   │   └── index.tsx        # 캘린더 화면 (/calendar)
 │   └── info/            # Info tab (중첩 라우트)
 │       ├── _layout.tsx      # Stack navigation
-│       ├── _components/     # info 전용 컴포넌트 (ContentCard, InfoMenuSidebar)
 │       ├── index.tsx        # 정보 목록 (/info)
 │       ├── content.tsx      # 콘텐츠 상세 WebView (/info/content)
 │       └── liked.tsx        # 좋아요한 콘텐츠 (/info/liked)
@@ -104,6 +101,12 @@ app/
 
 components/
 └── feedback/            # UpdateLoadingScreen (루트 레이아웃용)
+
+lib/
+└── features/            # 탭별 feature 컴포넌트
+    ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar
+    ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, AdBanner
+    └── info/            # ContentCard, InfoMenuSidebar
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService

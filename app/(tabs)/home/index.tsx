@@ -12,7 +12,7 @@ import {
   Header,
   WarningConfirmModal,
   NotificationPromptSnackbar,
-} from './_components';
+} from '@lib/features/home';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { useNotificationSettingsContext } from '@/contexts/NotificationSettingsContext';

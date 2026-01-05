@@ -9,7 +9,7 @@ import {
   FrequencySettingButton,
   FrequencyBottomSheet,
   AdBanner,
-} from './_components';
+} from '@lib/features/calendar';
 import { useMedicationContext } from '@/contexts/MedicationContext';
 
 export default function CalendarScreen() {

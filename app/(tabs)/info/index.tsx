@@ -18,8 +18,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useScrollToTop } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
-import { ContentCard } from "./_components/ContentCard";
-import { InfoMenuSidebar, type InfoMenuItemType } from "./_components/InfoMenuSidebar";
+import { ContentCard, InfoMenuSidebar, type InfoMenuItemType } from '@lib/features/info';
 import {
   fetchContentsByTab,
   type CuratedContent,
