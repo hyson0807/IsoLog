@@ -10,10 +10,12 @@ import { formatTime } from '@/utils/timeFormat';
 import { getUpcomingMedicationDays } from '@/utils/dateUtils';
 import { scheduleUpcomingReminders } from '@/services/notificationService';
 import { frequencyOptions } from '@/constants/frequency';
-import { MasterToggle } from './_components/MasterToggle';
-import { NotificationItem } from './_components/NotificationItem';
-import { TimeSettingRow } from './_components/TimeSettingRow';
-import { NotificationTimeBottomSheet } from './_components/NotificationTimeBottomSheet';
+import {
+  MasterToggle,
+  NotificationItem,
+  TimeSettingRow,
+  NotificationTimeBottomSheet,
+} from '@lib/features/notification-settings';
 
 type TimePickerType = 'medication' | 'skinCondition' | null;
 

@@ -5,8 +5,7 @@ import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { PremiumSection } from './_components/PremiumSection';
-import { LanguageBottomSheet } from './_components/LanguageBottomSheet';
+import { PremiumSection, LanguageBottomSheet } from '@lib/features/settings';
 import { usePremiumContext } from '@/contexts/PremiumContext';
 import { supportedLanguages } from '@/locales';
 

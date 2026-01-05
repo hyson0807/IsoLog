@@ -80,11 +80,9 @@ app/
 │       ├── content.tsx      # 콘텐츠 상세 WebView (/info/content)
 │       └── liked.tsx        # 좋아요한 콘텐츠 (/info/liked)
 ├── tracking.tsx         # Tracking screen (/tracking, DrawerMenu에서 접근)
-├── settings/            # Settings (colocation)
-│   ├── _components/     # settings 전용 컴포넌트 (PremiumSection, NotificationToggle, LanguageBottomSheet, NotificationTimeBottomSheet)
+├── settings/            # Settings
 │   ├── index.tsx        # 설정 페이지 (/settings)
-│   └── notification-settings/  # 알림 설정 (중첩 colocation)
-│       ├── _components/     # notification-settings 전용 컴포넌트 (MasterToggle, NotificationItem, TimeSettingRow)
+│   └── notification-settings/  # 알림 설정
 │       └── index.tsx        # 알림 설정 페이지 (/settings/notification-settings)
 ├── (premium)/           # 프리미엄 관련 그룹 (URL에 미포함)
 │   ├── paywall.tsx      # 프리미엄 구매 페이지 (/paywall)
@@ -103,10 +101,12 @@ components/
 └── feedback/            # UpdateLoadingScreen (루트 레이아웃용)
 
 lib/
-└── features/            # 탭별 feature 컴포넌트
+└── features/            # feature 컴포넌트
     ├── home/            # Header, StatusCard, MedicationCheckCard, SkinRecordCard, DailyTipCard, DrawerMenu, WarningConfirmModal, NotificationPromptSnackbar
     ├── calendar/        # CalendarHeader, WeekdayRow, CalendarGrid, DayCell, DayDetailSheet, FrequencySettingButton, FrequencyBottomSheet, AdBanner
-    └── info/            # ContentCard, InfoMenuSidebar
+    ├── info/            # ContentCard, InfoMenuSidebar
+    ├── settings/        # PremiumSection, LanguageBottomSheet
+    └── notification-settings/  # MasterToggle, NotificationItem, TimeSettingRow, NotificationTimeBottomSheet
 
 contexts/                # MedicationContext, PremiumContext, NotificationSettingsContext, LikedContentsContext
 services/                # notificationService, contentService
