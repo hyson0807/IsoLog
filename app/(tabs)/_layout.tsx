@@ -12,15 +12,13 @@ interface TabIconProps {
 function TabIcon({ name, focused }: TabIconProps) {
   return (
     <View
-      className={`items-center justify-center rounded-2xl ${
-        focused ? 'bg-orange-500' : 'bg-transparent'
-      }`}
+      className="items-center justify-center"
       style={{ width: 56, height: 40 }}
     >
       <Ionicons
         name={name}
         size={24}
-        color={focused ? '#FFFFFF' : '#9E9E9E'}
+        color={focused ? '#F97316' : '#9E9E9E'}
       />
     </View>
   );
@@ -76,7 +74,7 @@ export default function TabLayout() {
             name="calendar"
             options={{
                 tabBarIcon: ({ focused }) => (
-                    <TabIcon name="calendar-outline" focused={focused} />
+                    <TabIcon name="calendar" focused={focused} />
                 ),
                 tabBarButton: (props) => <TabBarButton {...props} />,
             }}
@@ -96,7 +94,7 @@ export default function TabLayout() {
         name="info"
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="newspaper-outline" focused={focused} />
+            <TabIcon name="newspaper" focused={focused} />
           ),
           tabBarButton: (props) => <TabBarButton {...props} />,
         }}
