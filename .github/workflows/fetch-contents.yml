@@ -1,8 +1,8 @@
-name: Fetch Contents Daily
+name: Fetch Contents Every 3 Days
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # UTC 00:00 = KST 09:00
+    - cron: '0 0 */3 * *'  # UTC 00:00 = KST 09:00, 3일마다
   workflow_dispatch:  # 수동 실행 가능
 
 jobs:
@@ -23,6 +23,14 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CX: ${{ secrets.GOOGLE_CX }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+
+      - name: Verify contents with AI
+        run: npx tsx scripts/verify-contents-ai.ts
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-1

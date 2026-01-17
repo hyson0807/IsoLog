@@ -58,6 +58,7 @@
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.958.0",
     "@aws-sdk/lib-dynamodb": "^3.958.0",
+    "openai": "^4.77.0",
     "@types/react": "~19.1.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.25.0",
