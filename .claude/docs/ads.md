@@ -24,6 +24,8 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 - 개발 환경: 테스트 광고 자동 사용 (`TestIds`)
 - 프리미엄 유저: 모든 광고 비표시
 - 웹 플랫폼: 광고 미지원
+- **AppState 리스너**: 앱이 백그라운드에서 포그라운드로 돌아올 때 광고 자동 재로드
+- **에러 재시도**: 광고 로드 실패 시 3초 후 자동 재시도 (전면 광고)
 
 ## 빌드 요구사항
 
@@ -35,6 +37,6 @@ Google AdMob 광고가 앱에 통합되어 있습니다.
 ## 관련 파일
 
 - `constants/admob.ts` - AdMob 플랫폼별 Ad Unit ID
-- `components/common/AdBanner.tsx` - Google AdMob 배너 광고
+- `lib/features/calendar/AdBanner.tsx` - Google AdMob 배너 광고
 - `hooks/useInterstitialAd.ts` - 전면 광고 관리
 - `contexts/PremiumContext.tsx` - 프리미엄 상태로 광고 표시 여부 결정
