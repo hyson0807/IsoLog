@@ -322,11 +322,11 @@ export default function HomeScreen() {
         onDismiss={() => setIsSnackbarVisible(false)}
       />
 
-      {/* 공지사항 모달 */}
-      <AnnouncementModal
+      {/* 공지사항 모달 - 온보딩 디버깅을 위해 임시 비활성화 */}
+      {/* <AnnouncementModal
         visible={shouldShowAnnouncement}
         onClose={markAsSeen}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
