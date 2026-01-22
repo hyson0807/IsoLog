@@ -42,6 +42,8 @@ interface Content {
   source: string;
   language: string;
   contentType: string;
+  publishedAt?: string;
+  createdAt?: string;
   isVerified?: boolean;
   isBanned?: boolean;
   aiScore?: number;
@@ -131,7 +133,7 @@ async function analyzeContent(content: Content): Promise<AIAnalysisResult> {
 // DynamoDB에 AI 분석 결과 저장
 // 반환값: { success: boolean, autoVerified: boolean, autoBanned: boolean }
 async function saveAnalysisResult(
-  urlHash: string,
+  content: Content,
   result: AIAnalysisResult
 ): Promise<{ success: boolean; autoVerified: boolean; autoBanned: boolean }> {
   const now = new Date().toISOString();
@@ -143,7 +145,9 @@ async function saveAnalysisResult(
     "SET aiScore = :score, aiReason = :reason, aiVerdict = :verdict, aiAnalyzedAt = :analyzedAt";
 
   if (autoVerify) {
-    updateExpression += ", isVerified = :verified, verifiedAt = :verifiedAt";
+    // GSI 필드 (verifiedLanguage, publishDate) 포함 - 앱에서 조회 가능하도록
+    updateExpression +=
+      ", isVerified = :verified, verifiedAt = :verifiedAt, verifiedLanguage = :vl, publishDate = :pd";
   } else if (autoBan) {
     updateExpression += ", isBanned = :banned, bannedAt = :bannedAt";
   }
@@ -158,6 +162,9 @@ async function saveAnalysisResult(
   if (autoVerify) {
     expressionValues[":verified"] = true;
     expressionValues[":verifiedAt"] = now;
+    // GSI 필드 설정 - 앱이 verifiedLanguage-publishDate-index GSI로 조회함
+    expressionValues[":vl"] = `VERIFIED#${content.language}`;
+    expressionValues[":pd"] = content.publishedAt || content.createdAt || now;
   } else if (autoBan) {
     expressionValues[":banned"] = true;
     expressionValues[":bannedAt"] = now;
@@ -165,7 +172,7 @@ async function saveAnalysisResult(
 
   const command = new UpdateCommand({
     TableName: TABLE_NAME,
-    Key: { PK: "CONTENT", SK: urlHash },
+    Key: { PK: "CONTENT", SK: content.urlHash },
     UpdateExpression: updateExpression,
     ExpressionAttributeValues: expressionValues,
   });
@@ -233,7 +240,7 @@ async function main() {
 
     // 결과 저장
     const { success, autoVerified, autoBanned: wasBanned } =
-      await saveAnalysisResult(content.urlHash, result);
+      await saveAnalysisResult(content, result);
     if (!success) {
       console.log("  ⚠️ 저장 실패, 다음으로 진행\n");
       continue;
