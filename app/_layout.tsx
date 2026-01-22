@@ -27,7 +27,7 @@ function AppContent() {
       <Stack.Screen name="index" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen
-        name="onboarding"
+        name="onboarding/index"
         options={{
           presentation: 'fullScreenModal',
           animation: 'fade',
@@ -35,7 +35,7 @@ function AppContent() {
         }}
       />
       <Stack.Screen
-        name="settings"
+        name="settings/index"
         options={{
           presentation: 'card',
           animation: 'slide_from_right',

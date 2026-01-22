@@ -101,13 +101,15 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Configure RevenueCat
-        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-
-        await Purchases.configure({
-          apiKey: getRevenueCatApiKey(),
-          appUserID: id,
-        });
+        // Configure RevenueCat (중복 초기화 방지)
+        const isConfigured = await Purchases.isConfigured();
+        if (!isConfigured) {
+          Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+          await Purchases.configure({
+            apiKey: getRevenueCatApiKey(),
+            appUserID: id,
+          });
+        }
 
         // Get initial customer info
         const info = await Purchases.getCustomerInfo();
