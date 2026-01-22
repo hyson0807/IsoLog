@@ -115,6 +115,10 @@
       "label": "Every 3 Days",
       "description": "Take 1 pill every 3 days"
     },
+    "every4days": {
+      "label": "Every 4 Days",
+      "description": "Take 1 pill every 4 days"
+    },
     "weekly": {
       "label": "Once a Week",
       "description": "Take 1 pill every week"

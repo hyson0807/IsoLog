@@ -115,6 +115,10 @@
       "label": "3일에 1알",
       "description": "3일에 1알씩 복용합니다"
     },
+    "every4days": {
+      "label": "4일에 1알",
+      "description": "4일에 1알씩 복용합니다"
+    },
     "weekly": {
       "label": "주 1회",
       "description": "일주일에 1알씩 복용합니다"

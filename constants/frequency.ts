@@ -27,6 +27,12 @@ export const frequencyOptions: FrequencyOption[] = [
     days: 3,
   },
   {
+    type: 'every4days',
+    label: '4일에 1알',
+    description: '4일에 1알씩 복용합니다',
+    days: 4,
+  },
+  {
     type: 'weekly',
     label: '주 1회',
     description: '일주일에 1알씩 복용합니다',

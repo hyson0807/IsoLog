@@ -71,6 +71,7 @@
 | `daily` | 매일 복용 | 매일 1알 |
 | `every2days` | 격일 복용 | 2일에 1알 |
 | `every3days` | 3일에 1알 | 3일에 1알 |
+| `every4days` | 4일에 1알 | 4일에 1알 |
 | `weekly` | 주 1회 | 7일에 1알 |
 
 **UI 구성** (`FrequencyBottomSheet`):
